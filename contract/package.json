@@ -6,7 +6,8 @@
     "compile": "hardhat compile",
     "test": "hardhat test",
     "dev": "hardhat node --port 8545",
-    "deploy": "hardhat run scripts/deploy.js"
+    "deploy": "hardhat run scripts/deploy.ts",
+    "typechain": "hardhat typechain"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.4.7",
@@ -19,6 +20,9 @@
     "@openzeppelin/contracts": "^4.7.3",
     "@typechain/ethers-v5": "^10.1.0",
     "@typechain/hardhat": "^6.1.2",
+    "@types/chai": "^4.2.0",
+    "@types/mocha": "^9.1.0",
+    "@types/node": ">=12.0.0",
     "chai": "^4.2.0",
     "dotenv": "^16.0.2",
     "ethers": "^5.4.7",
@@ -27,6 +31,8 @@
     "prettier": "^2.7.1",
     "prettier-plugin-solidity": "^1.0.0-beta.24",
     "solidity-coverage": "^0.8.0",
-    "typechain": "^8.1.0"
+    "ts-node": ">=8.0.0",
+    "typechain": "^8.1.0",
+    "typescript": ">=4.5.0"
   }
 }
