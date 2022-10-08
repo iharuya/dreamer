@@ -1,4 +1,4 @@
-import { HardhatUserConfig } from "hardhat/config";
+import { HardhatUserConfig } from "hardhat/config"
 import "@nomicfoundation/hardhat-toolbox"
 import "@nomiclabs/hardhat-etherscan"
 import "dotenv/config"
@@ -32,7 +32,7 @@ const config: HardhatUserConfig = {
       accounts: {
         mnemonic: process.env.DEV_MNEMONIC as string,
       },
-    }
+    },
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_APIKEY,

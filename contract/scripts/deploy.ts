@@ -10,7 +10,7 @@ async function main() {
   console.log("Deployer:", deployer.address)
 
   if (network.name === "localhost") {
-    await sendValues(signers.map(signer => signer.address))
+    await sendValues(signers.map((signer) => signer.address))
   }
   console.log("Deployer balance:", ethers.utils.formatEther(await deployer.getBalance()).toString())
 

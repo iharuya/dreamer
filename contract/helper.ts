@@ -1,10 +1,11 @@
 import { run, ethers } from "hardhat"
 
+interface NetworkConfig {
+  confirmations?: number
+  verify?: boolean
+}
 interface NetworksConfig {
-  [networkName: string]: {
-    confirmations?: number,
-    verify?: boolean
-  } | undefined
+  [networkName: string]: NetworkConfig | undefined
 }
 export const networksConfig: NetworksConfig = {
   goerli: {
@@ -13,12 +14,14 @@ export const networksConfig: NetworksConfig = {
   },
   mumbai: {
     confirmations: 6,
-    verify: false
-  }
+    verify: false,
+  },
 }
 
 export async function sendValues(addresses: string[]) {
-  let sender = new ethers.Wallet("0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")
+  let sender = new ethers.Wallet(
+    "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+  )
   sender = sender.connect(ethers.provider)
   const sendAmount = ethers.utils.parseEther("1")
   for (const address of addresses) {
