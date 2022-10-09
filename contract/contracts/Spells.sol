@@ -7,8 +7,11 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract Spells is ERC721, Ownable {
     uint256 private _tokenId = 1;
     uint256 private immutable _mintPrice;
-    string public baseURI;
+    string private _baseUri;
     event Minted(uint256 indexed tokenId, address indexed to, string spell);
+    struct Good {
+        uint256 likes;
+    }
 
     constructor(uint256 mintPrice_) ERC721("Spells", "SPL") {
         setBaseURI("https://example.com/");
@@ -22,11 +25,11 @@ contract Spells is ERC721, Ownable {
         _tokenId++;
     }
 
-    function setBaseURI(string memory URI_) public onlyOwner {
-        baseURI = URI_;
+    function setBaseURI(string memory newUri_) public onlyOwner {
+        _baseUri = newUri_;
     }
 
     function _baseURI() internal view override returns (string memory) {
-        return baseURI;
+        return _baseUri;
     }
 }
