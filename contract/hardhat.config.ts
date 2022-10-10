@@ -19,24 +19,27 @@ const config: HardhatUserConfig = {
     localhost: {
       url: "http://127.0.0.1:8545",
       accounts: {
-        mnemonic: process.env.DEV_MNEMONIC as string,
+        mnemonic: process.env.DEV_MNEMONIC || "",
       },
     },
     goerli: {
       url: process.env.GOERLI_RPC_URL,
       accounts: {
-        mnemonic: process.env.DEV_MNEMONIC as string,
+        mnemonic: process.env.DEV_MNEMONIC || "",
       },
     },
     mumbai: {
       url: process.env.MUMBAI_RPC_URL,
       accounts: {
-        mnemonic: process.env.DEV_MNEMONIC as string,
+        mnemonic: process.env.DEV_MNEMONIC || "",
       },
     },
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_APIKEY,
+    apiKey: {
+      goerli: process.env.ETHERSCAN_APIKEY || "",
+      polygonMumbai: process.env.POLYGONSCAN_APIKEY || ""
+    },
   },
 }
 

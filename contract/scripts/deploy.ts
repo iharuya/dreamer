@@ -1,30 +1,35 @@
 import { network, ethers } from "hardhat"
 import { networksConfig, sendValues, verify } from "../helper"
-require("dotenv").config()
+import type { Contract } from "@ethersproject/contracts"
+import "dotenv/config"
+
+const networkConfigHelper = networksConfig[network.name]
 
 async function main() {
   const signers = await ethers.getSigners()
   const deployer = signers[0]
-  const networkConfigHelper = networksConfig[network.name]
   console.log("Network:", network.name)
   console.log("Deployer:", deployer.address)
-
   if (network.name === "localhost") {
     await sendValues(signers.map((signer) => signer.address))
   }
   console.log("Deployer balance:", ethers.utils.formatEther(await deployer.getBalance()).toString())
 
-  const factory = await ethers.getContractFactory("Spells")
   const mintPrice = ethers.utils.parseEther("0.01")
-  const params = [mintPrice]
+  const spells = await deployContract("Spells", [mintPrice])
+  const votes = await deployContract("Votes", [spells.address])
+}
+
+async function deployContract(name: string, params: any[]): Promise<Contract> {
+  const factory = await ethers.getContractFactory(name)
   const contract = await factory.deploy(...params)
   await contract.deployed()
   await contract.deployTransaction.wait(networkConfigHelper?.confirmations || 1)
-  console.log("Contract deployed to:", contract.address)
-
+  console.log(`Contract "${name}" deployed to ${contract.address}`)
   if (networkConfigHelper?.verify) {
     await verify(contract.address, params)
   }
+  return contract
 }
 
 main().catch((err) => {

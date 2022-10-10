@@ -1,4 +1,5 @@
 import { run, ethers } from "hardhat"
+import "dotenv/config"
 
 interface NetworkConfig {
   confirmations?: number
@@ -10,11 +11,11 @@ interface NetworksConfig {
 export const networksConfig: NetworksConfig = {
   goerli: {
     confirmations: 6,
-    verify: true,
+    verify: process.env.ETHERSCAN_APIKEY ? true : false,
   },
   mumbai: {
     confirmations: 6,
-    verify: false,
+    verify: process.env.POLYGONSCAN_APIKEY ? true : false,
   },
 }
 
@@ -30,11 +31,11 @@ export async function sendValues(addresses: string[]) {
   }
 }
 
-export async function verify(contractAddress: string, args: any[]) {
+export async function verify(address: string, args: any[]) {
   console.log("Verifying contract...")
   try {
     await run("verify:verify", {
-      address: contractAddress,
+      address: address,
       constructorArguments: args,
     })
     console.log("Verified")
