@@ -6,26 +6,27 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./ISpells.sol";
 
 contract Spells is ERC721, Ownable, ISpells {
-    uint256 public tokenId = 1;
+    uint256 public nextTokenId = 1;
     uint256 public immutable MINT_PRICE;
     string private _baseUri;
 
-    constructor(uint256 mintPrice) ERC721("Spells", "SPL") {
-        setBaseURI("https://example.com/metadata/spells/");
+    constructor(uint256 mintPrice, string memory baseUri) ERC721("Spells", "SPL") {
         MINT_PRICE = mintPrice;
+        setBaseUri(baseUri);
     }
 
     function addSpell(string memory spell) public payable {
         require(msg.value == MINT_PRICE, "Wrong price");
-        _safeMint(msg.sender, tokenId);
-        emit Minted(tokenId, msg.sender, spell);
-        tokenId++;
+        _safeMint(msg.sender, nextTokenId);
+        emit Minted(nextTokenId, msg.sender, spell);
+        nextTokenId++;
     }
 
-    function setBaseURI(string memory uri) public onlyOwner {
+    function setBaseUri(string memory uri) public onlyOwner {
         _baseUri = uri;
     }
 
+    // ERC721: tokenURI() uses this function inside
     function _baseURI() internal view override returns (string memory) {
         return _baseUri;
     }

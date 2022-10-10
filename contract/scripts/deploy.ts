@@ -16,8 +16,8 @@ async function main() {
   console.log("Deployer balance:", ethers.utils.formatEther(await deployer.getBalance()).toString())
 
   const mintPrice = ethers.utils.parseEther("0.01")
-  const spells = await deployContract("Spells", [mintPrice])
-  const votes = await deployContract("Votes", [spells.address])
+  const spells = await deployContract("Spells", [mintPrice, "https://example.com/metadata/spells/"])
+  const votes = await deployContract("Votes", [spells.address, "https://example.com/metadata/votes/{id}"])
 }
 
 async function deployContract(name: string, params: any[]): Promise<Contract> {

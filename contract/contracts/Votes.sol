@@ -12,7 +12,7 @@ contract Votes is ERC1155, Ownable, ERC1155Supply {
     uint256 public delta;
     address public immutable SPELLS;
 
-    constructor(address spells) ERC1155("https://example.com/metadata/votes/{id}") {
+    constructor(address spells, string memory uri) ERC1155(uri) {
         alpha = 1e16;
         beta = 1e15;
         delta = 1e14;
@@ -25,8 +25,7 @@ contract Votes is ERC1155, Ownable, ERC1155Supply {
 
     function vote(uint256 tokenId, uint256 amount) public payable {
         require(msg.value == voteCost(tokenId, amount), "Wrong price");
-        require(tokenId > 0, "Wrong tokenId");
-        require(tokenId < ISpells(SPELLS).tokenId(), "Wrong tokenId");
+        require(0 < tokenId && tokenId < ISpells(SPELLS).nextTokenId(), "Wrong tokenId");
         _mint(msg.sender, tokenId, amount, "");
     }
 
