@@ -3,26 +3,23 @@ pragma solidity ^0.8.17;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./ISpells.sol";
 
-contract Spells is ERC721, Ownable {
-    uint256 private _tokenId = 1;
+contract Spells is ERC721, Ownable, ISpells {
+    uint256 public tokenId = 1;
     uint256 private immutable _mintPrice;
     string private _baseUri;
-    event Minted(uint256 indexed tokenId, address indexed to, string spell);
-    struct Good {
-        uint256 likes;
-    }
 
     constructor(uint256 mintPrice_) ERC721("Spells", "SPL") {
-        setBaseURI("https://example.com/");
+        setBaseURI("https://example.com/metadata/spells/");
         _mintPrice = mintPrice_;
     }
 
     function addSpell(string memory spell_) public payable {
         require(msg.value == _mintPrice, "Wrong price");
-        _safeMint(msg.sender, _tokenId);
-        emit Minted(_tokenId, msg.sender, spell_);
-        _tokenId++;
+        _safeMint(msg.sender, tokenId);
+        emit Minted(tokenId, msg.sender, spell_);
+        tokenId++;
     }
 
     function setBaseURI(string memory newUri_) public onlyOwner {
