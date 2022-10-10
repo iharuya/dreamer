@@ -39,7 +39,7 @@ export async function verify(address: string, args: any[]) {
       constructorArguments: args,
     })
     console.log("Verified")
-  } catch (error) {
+  } catch (error: any) {
     if (error.message.toLowerCase().includes("already verified")) {
       console.log("Already verified")
     } else {
