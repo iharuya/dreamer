@@ -47,13 +47,13 @@ contract Votes is ERC1155, Ownable, ERC1155Supply {
     function voteCost(uint256 tokenId, uint256 amount) public view returns (uint256) {
         uint256 a = totalSupply(tokenId) + 1;
         uint256 b = a + amount - 1;
-        return ((b - a + 1) * (4 * (alpha + delta) + beta * (a + b - 2))) / 2;
+        return ((b - a + 1) * (2 * (alpha + delta) + beta * (a + b - 2))) / 2;
     }
 
     function unvotePayback(uint256 tokenId, uint256 amount) public view returns (uint256) {
         uint256 b = totalSupply(tokenId);
         uint256 a = b + 1 - amount;
-        return ((b - a + 1) * (4 * alpha + beta * (a + b - 2))) / 2;
+        return ((b - a + 1) * (2 * alpha + beta * (a + b - 2))) / 2;
     }
 
     // The following functions are overrides required by Solidity.
