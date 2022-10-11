@@ -7,7 +7,12 @@ import "./IPrompts.sol";
 
 contract Prompts is ERC721, Ownable, IPrompts {
     uint256 public immutable MINT_PRICE;
-    uint256 public nextTokenId = 1;
+    uint256 public nextTokenId = 0; // id=index
+    struct Asset {
+        string prompt;
+        uint256 tickets;
+    }
+    Asset[] public assets;
     string private _baseUri;
 
     constructor(uint256 mintPrice, string memory baseUri) ERC721("Prompts", "PRPT") {
@@ -15,10 +20,23 @@ contract Prompts is ERC721, Ownable, IPrompts {
         setBaseUri(baseUri);
     }
 
-    function mint(string memory prompt) external payable {
+    function mintInValue(string memory prompt) external payable {
         require(msg.value == MINT_PRICE, "Wrong price");
-        _safeMint(msg.sender, nextTokenId);
-        emit Minted(nextTokenId, msg.sender, prompt);
+        _mintAsset(prompt, 10);
+    }
+
+    function mintInAsset(string memory prompt, uint256 tokenId) external {
+        require(ownerOf(tokenId) == msg.sender, "Not owner");
+        Asset storage asset = assets[tokenId];
+        require(asset.tickets > 0, "No tickets");
+        asset.tickets--;
+        _mintAsset(prompt, 0);
+    }
+
+    function _mintAsset(string memory prompt, uint256 tickets) internal {
+        _mint(msg.sender, nextTokenId);
+        assets.push(Asset(prompt, tickets));
+        emit AssetMinted(nextTokenId, msg.sender, prompt);
         nextTokenId++;
     }
 
