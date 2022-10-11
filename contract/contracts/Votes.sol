@@ -7,15 +7,21 @@ import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 import "./ISpells.sol";
 
 contract Votes is ERC1155, Ownable, ERC1155Supply {
-    uint256 public alpha;
-    uint256 public beta;
-    uint256 public delta;
     address public immutable SPELLS;
+    uint256 public immutable ALPHA;
+    uint256 public immutable BETA;
+    uint256 public immutable DELTA;
 
-    constructor(address spells, string memory uri) ERC1155(uri) {
-        alpha = 1e16;
-        beta = 1e15;
-        delta = 1e14;
+    constructor(
+        address spells,
+        uint256 alpha,
+        uint256 beta,
+        uint256 delta,
+        string memory uri
+    ) ERC1155(uri) {
+        ALPHA = alpha;
+        BETA = beta;
+        DELTA = delta;
         SPELLS = spells;
     }
 
@@ -47,13 +53,13 @@ contract Votes is ERC1155, Ownable, ERC1155Supply {
     function voteCost(uint256 tokenId, uint256 amount) public view returns (uint256) {
         uint256 a = totalSupply(tokenId) + 1;
         uint256 b = a + amount - 1;
-        return ((b - a + 1) * (2 * (alpha + delta) + beta * (a + b - 2))) / 2;
+        return ((b - a + 1) * (2 * (ALPHA + DELTA) + BETA * (a + b - 2))) / 2;
     }
 
     function unvotePayback(uint256 tokenId, uint256 amount) public view returns (uint256) {
         uint256 b = totalSupply(tokenId);
         uint256 a = b + 1 - amount;
-        return ((b - a + 1) * (2 * alpha + beta * (a + b - 2))) / 2;
+        return ((b - a + 1) * (2 * ALPHA + BETA * (a + b - 2))) / 2;
     }
 
     // The following functions are overrides required by Solidity.
