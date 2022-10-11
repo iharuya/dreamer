@@ -15,14 +15,14 @@ async function main() {
   }
   console.log("Deployer balance:", ethers.utils.formatEther(await deployer.getBalance()).toString())
 
-  const spellsParams = {
+  const promptsParams = {
     mintPrice: ethers.utils.parseEther("0.01"),
-    baseUri: "https://example.com/metadata/spells/",
+    baseUri: "https://example.com/metadata/prompts/",
   }
-  const spells = await deployContract("Spells", Object.values(spellsParams))
+  const prompts = await deployContract("Prompts", Object.values(promptsParams))
 
   const votesParams = {
-    spells: spells.address,
+    prompts: prompts.address,
     alpha: ethers.utils.parseEther("0.0099"),
     beta: ethers.utils.parseEther("0.001"),
     delta: ethers.utils.parseEther("0.0001"),

@@ -4,16 +4,16 @@ pragma solidity ^0.8.17;
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
-import "./ISpells.sol";
+import "./IPrompts.sol";
 
 contract Votes is ERC1155, Ownable, ERC1155Supply {
-    address public immutable SPELLS;
+    address public immutable PROMPTS;
     uint256 public immutable ALPHA;
     uint256 public immutable BETA;
     uint256 public immutable DELTA;
 
     constructor(
-        address spells,
+        address prompts,
         uint256 alpha,
         uint256 beta,
         uint256 delta,
@@ -22,16 +22,16 @@ contract Votes is ERC1155, Ownable, ERC1155Supply {
         ALPHA = alpha;
         BETA = beta;
         DELTA = delta;
-        SPELLS = spells;
+        PROMPTS = prompts;
     }
 
-    function setURI(string memory uri) public onlyOwner {
+    function setURI(string memory uri) external onlyOwner {
         _setURI(uri);
     }
 
-    function vote(uint256 tokenId, uint256 amount) public payable {
+    function vote(uint256 tokenId, uint256 amount) external payable {
         require(msg.value == voteCost(tokenId, amount), "Wrong price");
-        require(0 < tokenId && tokenId < ISpells(SPELLS).nextTokenId(), "Wrong tokenId");
+        require(0 < tokenId && tokenId < IPrompts(PROMPTS).nextTokenId(), "Wrong tokenId");
         _mint(msg.sender, tokenId, amount, "");
     }
 
@@ -39,7 +39,7 @@ contract Votes is ERC1155, Ownable, ERC1155Supply {
         address account,
         uint256 tokenId,
         uint256 amount
-    ) public virtual {
+    ) external virtual {
         require(
             account == msg.sender || isApprovedForAll(account, msg.sender),
             "Caller is not token owner nor approved"
@@ -63,7 +63,7 @@ contract Votes is ERC1155, Ownable, ERC1155Supply {
     }
 
     // Collect revenue from the spread. Call this with caution.
-    function withdraw(uint256 amount) public onlyOwner {
+    function withdraw(uint256 amount) external onlyOwner {
         (bool sent, ) = msg.sender.call{value: amount}("");
         require(sent, "Failed to send value");
     }

@@ -3,26 +3,26 @@ pragma solidity ^0.8.17;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./ISpells.sol";
+import "./IPrompts.sol";
 
-contract Spells is ERC721, Ownable, ISpells {
+contract Prompts is ERC721, Ownable, IPrompts {
     uint256 public immutable MINT_PRICE;
     uint256 public nextTokenId = 1;
     string private _baseUri;
 
-    constructor(uint256 mintPrice, string memory baseUri) ERC721("Spells", "SPL") {
+    constructor(uint256 mintPrice, string memory baseUri) ERC721("Prompts", "PRPT") {
         MINT_PRICE = mintPrice;
         setBaseUri(baseUri);
     }
 
-    function addSpell(string memory spell) public payable {
+    function mint(string memory prompt) external payable {
         require(msg.value == MINT_PRICE, "Wrong price");
         _safeMint(msg.sender, nextTokenId);
-        emit Minted(nextTokenId, msg.sender, spell);
+        emit Minted(nextTokenId, msg.sender, prompt);
         nextTokenId++;
     }
 
-    function withdraw(uint256 amount) public onlyOwner {
+    function withdraw(uint256 amount) external onlyOwner {
         (bool sent, ) = msg.sender.call{value: amount}("");
         require(sent, "Failed to send value");
     }
