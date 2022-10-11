@@ -62,8 +62,13 @@ contract Votes is ERC1155, Ownable, ERC1155Supply {
         return ((b - a + 1) * (2 * ALPHA + BETA * (a + b - 2))) / 2;
     }
 
-    // The following functions are overrides required by Solidity.
+    // Collect revenue from the spread. Call this with caution.
+    function withdraw(uint256 amount) public onlyOwner {
+        (bool sent, ) = msg.sender.call{value: amount}("");
+        require(sent, "Failed to send value");
+    }
 
+    // Patch supply features
     function _beforeTokenTransfer(
         address operator,
         address from,

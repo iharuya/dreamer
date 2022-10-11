@@ -23,7 +23,7 @@ async function main() {
 
   const votesParams = {
     spells: spells.address,
-    alpha: ethers.utils.parseEther("0.01"),
+    alpha: ethers.utils.parseEther("0.0099"),
     beta: ethers.utils.parseEther("0.001"),
     delta: ethers.utils.parseEther("0.0001"),
     uri: "https://example.com/metadata/votes/{id}",
