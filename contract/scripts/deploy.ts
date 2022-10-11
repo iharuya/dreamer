@@ -21,6 +21,7 @@ async function main() {
 }
 
 async function deployContract(name: string, params: any[]): Promise<Contract> {
+  console.log(`Deploying contract "${name}"...`)
   const factory = await ethers.getContractFactory(name)
   const contract = await factory.deploy(...params)
   await contract.deployed()

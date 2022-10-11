@@ -6,8 +6,8 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./ISpells.sol";
 
 contract Spells is ERC721, Ownable, ISpells {
-    uint256 public nextTokenId = 1;
     uint256 public immutable MINT_PRICE;
+    uint256 public nextTokenId = 1;
     string private _baseUri;
 
     constructor(uint256 mintPrice, string memory baseUri) ERC721("Spells", "SPL") {
@@ -20,6 +20,11 @@ contract Spells is ERC721, Ownable, ISpells {
         _safeMint(msg.sender, nextTokenId);
         emit Minted(nextTokenId, msg.sender, spell);
         nextTokenId++;
+    }
+
+    function withdraw(uint256 amount) public onlyOwner {
+        (bool sent, ) = msg.sender.call{value: amount}("");
+        require(sent, "Failed to send value");
     }
 
     function setBaseUri(string memory uri) public onlyOwner {
