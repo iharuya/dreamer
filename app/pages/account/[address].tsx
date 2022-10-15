@@ -1,10 +1,10 @@
 import { useRouter } from "next/router"
-import { ReactElement, useEffect, useState } from "react"
-import AppLayout from "@/components/layouts/app/Layout"
+import { useEffect, useState } from "react"
 import { useAccount } from "wagmi"
 import { isAddress } from "ethers/lib/utils"
+import type { NextPage } from "next"
 
-const Page = () => {
+const Page: NextPage = () => {
   const router = useRouter()
   const { address } = router.query
   const { address: connectedAddress } = useAccount()
@@ -29,10 +29,6 @@ const Page = () => {
       {isMe && <p>it &apos;s me!</p>}
     </>
   )
-}
-
-Page.getLayout = function getLayout(page: ReactElement) {
-  return <AppLayout>{page}</AppLayout>
 }
 
 export default Page

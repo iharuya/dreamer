@@ -2,8 +2,9 @@ import Link from "next/link"
 import { useAccount } from "wagmi"
 import { ConnectKitButton } from "connectkit"
 import { APP_NAME } from "@/constants/config"
+import type { FC } from "react"
 
-const Header = () => {
+const Component: FC = () => {
   const { address: connectedAddress, isConnected } = useAccount()
 
   return (
@@ -12,13 +13,13 @@ const Header = () => {
         <div className="mx-auto max-w-7xl px-4">
           <div className="flex items-center py-2 justify-start space-x-10">
             <div className="flex flex-1">
-              <Link href="/app">
+              <Link href="/">
                 <a className="text-2xl font-bold text-pink-500">{APP_NAME}</a>
               </Link>
             </div>
             <nav className="items-center justify-end flex flex-1 space-x-4">
               {isConnected && (
-                <Link href={`/app/account/${connectedAddress}`}>
+                <Link href={`/account/${connectedAddress}`}>
                   <a className="font-medium text-gray-600 hover:text-gray-900">
                     マイアカウント
                   </a>
@@ -36,4 +37,4 @@ const Header = () => {
     </>
   )
 }
-export default Header
+export default Component
