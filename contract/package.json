@@ -1,13 +1,15 @@
 {
-  "name": "kasou-waifu-contract",
+  "name": "contract",
   "license": "MIT",
   "scripts": {
-    "fix": "prettier --write .",
+    "dev": "hardhat node --port 8546",
     "compile": "hardhat compile",
     "test": "hardhat test",
-    "dev": "hardhat node --port 8545",
+    "execute": "hardhat run",
     "deploy": "hardhat run scripts/deploy.ts",
-    "typechain": "hardhat typechain"
+    "typechain": "hardhat typechain",
+    "fix": "prettier --write .",
+    "clean": "hardhat clean"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.4.7",

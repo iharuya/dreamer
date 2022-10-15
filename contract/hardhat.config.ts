@@ -17,19 +17,19 @@ const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
   networks: {
     localhost: {
-      url: "http://127.0.0.1:8545",
+      url: "http://127.0.0.1:8546",
       accounts: {
         mnemonic: process.env.DEV_MNEMONIC || "",
       },
     },
     goerli: {
-      url: process.env.GOERLI_RPC_URL,
+      url: process.env.GOERLI_RPC_URL || "",
       accounts: {
         mnemonic: process.env.DEV_MNEMONIC || "",
       },
     },
     mumbai: {
-      url: process.env.MUMBAI_RPC_URL,
+      url: process.env.MUMBAI_RPC_URL || "",
       accounts: {
         mnemonic: process.env.DEV_MNEMONIC || "",
       },

@@ -50,13 +50,21 @@ contract Votes is ERC1155, Ownable, ERC1155Supply {
         require(success, "Failed to send value");
     }
 
-    function voteCost(uint256 tokenId, uint256 amount) public view returns (uint256) {
+    function voteCost(uint256 tokenId, uint256 amount)
+        public
+        view
+        returns (uint256)
+    {
         uint256 a = totalSupply(tokenId) + 1;
         uint256 b = a + amount - 1;
         return ((b - a + 1) * (2 * (ALPHA + DELTA) + BETA * (a + b - 2))) / 2;
     }
 
-    function unvotePayback(uint256 tokenId, uint256 amount) public view returns (uint256) {
+    function unvotePayback(uint256 tokenId, uint256 amount)
+        public
+        view
+        returns (uint256)
+    {
         uint256 b = totalSupply(tokenId);
         uint256 a = b + 1 - amount;
         return ((b - a + 1) * (2 * ALPHA + BETA * (a + b - 2))) / 2;

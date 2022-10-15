@@ -15,7 +15,9 @@ contract Prompts is ERC721, Ownable, IPrompts {
     Asset[] public assets;
     string private _baseUri;
 
-    constructor(uint256 mintPrice, string memory baseUri) ERC721("Prompts", "PRPT") {
+    constructor(uint256 mintPrice, string memory baseUri)
+        ERC721("Prompts", "PRPT")
+    {
         MINT_PRICE = mintPrice;
         setBaseUri(baseUri);
     }
