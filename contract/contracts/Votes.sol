@@ -31,7 +31,7 @@ contract Votes is ERC1155, Ownable, ERC1155Supply {
 
     function vote(uint256 tokenId, uint256 amount) external payable {
         require(msg.value == voteCost(tokenId, amount), "Wrong price");
-        require(tokenId < IPrompts(PROMPTS).nextTokenId(), "Wrong tokenId");
+        require(tokenId < IPrompts(PROMPTS).nextTokenId(), "No such tokenId");
         _mint(msg.sender, tokenId, amount, "");
     }
 
