@@ -5,6 +5,7 @@ import colors from "tailwindcss/colors"
 import { WagmiConfig, createClient, configureChains, chain } from "wagmi"
 import { alchemyProvider } from "wagmi/providers/alchemy"
 import { publicProvider } from "wagmi/providers/public"
+import { jsonRpcProvider } from "wagmi/providers/jsonRpc"
 import { InjectedConnector } from "wagmi/connectors/injected"
 import { MetaMaskConnector } from "wagmi/connectors/metaMask"
 import { ConnectKitProvider } from "connectkit"
@@ -15,7 +16,14 @@ if (process.env.NODE_ENV == "development") {
 }
 const appProviders = [
   alchemyProvider({ priority: 0 }),
-  publicProvider({ priority: 1 }),
+  jsonRpcProvider({
+    rpc: (currentChain) => {
+      if (currentChain.id !== chain.hardhat.id) return null
+      return {http: "http://localhost:8546"}
+    },
+    priority: 1
+  }),
+  publicProvider({ priority: 2 }),
 ]
 const { chains, provider, webSocketProvider } = configureChains(
   appChains,
@@ -30,10 +38,9 @@ const client = createClient({
       chains,
       options: {
         name: (detectedName) =>
-          `埋め込み (${
-            typeof detectedName === "string"
-              ? detectedName
-              : detectedName.join(", ")
+          `埋め込み (${typeof detectedName === "string"
+            ? detectedName
+            : detectedName.join(", ")
           })`,
       },
     }),
