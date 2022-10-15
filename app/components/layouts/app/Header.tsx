@@ -3,7 +3,7 @@ import { useAccount } from "wagmi"
 import { ConnectKitButton } from "connectkit"
 import { APP_NAME } from "@/constants/config"
 
-export default function Header() {
+const Header = () => {
   const { address: connectedAddress, isConnected } = useAccount()
 
   return (
@@ -36,3 +36,4 @@ export default function Header() {
     </>
   )
 }
+export default Header

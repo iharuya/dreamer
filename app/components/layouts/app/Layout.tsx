@@ -19,9 +19,9 @@ const appProviders = [
   jsonRpcProvider({
     rpc: (currentChain) => {
       if (currentChain.id !== chain.hardhat.id) return null
-      return {http: "http://localhost:8546"}
+      return { http: "http://localhost:8546" }
     },
-    priority: 1
+    priority: 1,
   }),
   publicProvider({ priority: 2 }),
 ]
@@ -38,9 +38,10 @@ const client = createClient({
       chains,
       options: {
         name: (detectedName) =>
-          `埋め込み (${typeof detectedName === "string"
-            ? detectedName
-            : detectedName.join(", ")
+          `埋め込み (${
+            typeof detectedName === "string"
+              ? detectedName
+              : detectedName.join(", ")
           })`,
       },
     }),
@@ -52,7 +53,7 @@ const client = createClient({
 type Props = {
   children: ReactNode
 }
-export default function Layout(props: Props) {
+const Layout = (props: Props) => {
   return (
     <WagmiConfig client={client}>
       <ConnectKitProvider
@@ -74,3 +75,4 @@ export default function Layout(props: Props) {
     </WagmiConfig>
   )
 }
+export default Layout
