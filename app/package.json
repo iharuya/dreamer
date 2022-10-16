@@ -13,6 +13,7 @@
     "@next-auth/prisma-adapter": "^1.0.5",
     "@prisma/client": "^4.4.0",
     "connectkit": "^0.0.2",
+    "daisyui": "^2.31.0",
     "ethers": "^5.7.1",
     "next": "12.3.1",
     "next-auth": "^4.14.0",

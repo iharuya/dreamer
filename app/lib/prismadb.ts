@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client"
-
+/* eslint-disable no-unused-vars, no-undef */
 declare global {
   var prisma: PrismaClient | undefined
 }

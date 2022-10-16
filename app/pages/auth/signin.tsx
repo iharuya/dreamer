@@ -10,7 +10,7 @@ const SignIn: NextPage = () => {
     const res = await signIn("credentials", {
       email: userInfo.email,
       password: userInfo.password,
-      redirect: false
+      redirect: false,
     })
     console.log(res)
   }

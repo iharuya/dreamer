@@ -45,9 +45,10 @@ const client = createClient({
       chains,
       options: {
         name: (detectedName) =>
-          `埋め込み (${typeof detectedName === "string"
-            ? detectedName
-            : detectedName.join(", ")
+          `埋め込み (${
+            typeof detectedName === "string"
+              ? detectedName
+              : detectedName.join(", ")
           })`,
       },
     }),
@@ -56,8 +57,7 @@ const client = createClient({
   webSocketProvider,
 })
 
-
-const App = ({ Component, pageProps }: AppProps<{session: Session}>) => {
+const App = ({ Component, pageProps }: AppProps<{ session: Session }>) => {
   return (
     <>
       <Head>
