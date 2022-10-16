@@ -1,21 +1,15 @@
 import NextAuth, { NextAuthOptions } from "next-auth"
-import GithubProvider from "next-auth/providers/github"
 import CredentialsProvider from "next-auth/providers/credentials"
 import type { NextApiRequest, NextApiResponse } from "next"
 import { getCsrfToken } from "next-auth/react"
 import { SiweMessage } from "siwe"
 
-import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import prisma from "@/lib/prismadb"
 
 const auth = async (req: NextApiRequest, res: NextApiResponse) => {
   const authOptions: NextAuthOptions = {
-    adapter: PrismaAdapter(prisma),
+    session: { strategy: "jwt" },
     providers: [
-      GithubProvider({
-        clientId: process.env.GITHUB_ID as string,
-        clientSecret: process.env.GITHUB_SECRET as string,
-      }),
       CredentialsProvider({
         name: "Ethereum",
         credentials: {
@@ -42,8 +36,24 @@ const auth = async (req: NextApiRequest, res: NextApiResponse) => {
               signature: credentials.signature,
             })
             if (!result.success) return null
+
+            let user = await prisma.user.findUnique({
+              where: {
+                address: message.address,
+              },
+            })
+            if (!user) {
+              user = await prisma.user.create({
+                data: {
+                  address: message.address,
+                },
+              })
+            }
+
             return {
-              id: message.address,
+              id: user.id,
+              address: user.address,
+              name: user.name
             }
           } catch (e) {
             console.error(e)
@@ -54,20 +64,15 @@ const auth = async (req: NextApiRequest, res: NextApiResponse) => {
     ],
 
     callbacks: {
-      // async session({ session, token, user }) {
-      //   session.address = token.sub
-      //   return session
-      // },
+      async session({session, token, user}) {
+        console.log(session)
+        console.log(token)
+        console.log(user)
+        return session
+      }
     },
 
     secret: process.env.NEXTAUTH_SECRET,
-  }
-
-  // Hide Sign-In with Ethereum from default sign page
-  const isDefaultSigninPage =
-    req.method === "GET" && req.query.nextauth?.includes("signin")
-  if (isDefaultSigninPage) {
-    authOptions.providers.pop()
   }
 
   const ret = await NextAuth(req, res, authOptions)

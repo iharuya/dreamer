@@ -5,7 +5,7 @@ import { SiweMessage } from "siwe"
 
 const Page: NextPage = () => {
   const { data: session, status } = useSession()
-  const { address: connectedAddress } = useAccount()
+  const { address: connectedAddress, isConnected } = useAccount()
   const { chain: connectedChain } = useNetwork()
   const { signMessageAsync } = useSignMessage()
 
@@ -17,7 +17,7 @@ const Page: NextPage = () => {
       const message = new SiweMessage({
         domain: window.location.host,
         address: connectedAddress,
-        statement: "ウォレットでログインします",
+        statement: "ウォレットでサインインします",
         uri: window.location.origin,
         version: "1",
         chainId: connectedChain?.id,
@@ -30,7 +30,6 @@ const Page: NextPage = () => {
       signIn("credentials", {
         message: JSON.stringify(message),
         redirect: false,
-        callbackUrl: "/protected",
         signature,
       })
     } catch (error) {
@@ -49,28 +48,30 @@ const Page: NextPage = () => {
             <pre>
               <code>{JSON.stringify(session, null, 2)}</code>
             </pre>
-            <button onClick={() => signOut()} className="btn btn-outline">
-              ログアウト
+            <button
+              onClick={() => signOut({ redirect: false })}
+              className="btn btn-outline"
+            >
+              サインアウト
             </button>
           </>
         ) : (
           <>
-            <button onClick={() => signIn()} className="btn">
-              普通にログイン
-            </button>
+            {isConnected ? (
+              <button
+                onClick={(e) => {
+                  e.preventDefault()
+                  handleLogin()
+                }}
+                className="btn"
+              >
+                ウォレットでサインイン
+              </button>
+            ) : (
+              <p>ウォレットを接続してください</p>
+            )}
           </>
         )}
-      </div>
-      <div className="my-3">
-        <button
-          onClick={(e) => {
-            e.preventDefault()
-            handleLogin()
-          }}
-          className="btn"
-        >
-          ウォレットでログイン
-        </button>
       </div>
     </>
   )
