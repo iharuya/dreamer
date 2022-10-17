@@ -1,5 +1,5 @@
 import { SiweMessage } from "siwe"
-import { useAccount, useSignMessage } from "wagmi"
+import { useAccount, useSignMessage, useDisconnect } from "wagmi"
 import { signIn, signOut, getCsrfToken } from "next-auth/react"
 import { FC, ReactNode, useEffect, useState } from "react"
 import Header from "./Header"
@@ -8,6 +8,7 @@ import clsx from "clsx"
 
 const Component: FC<{ children: ReactNode }> = ({ children }) => {
   const { address: connectedAddress, isConnected } = useAccount()
+  const { disconnect } = useDisconnect()
   const { signMessageAsync } = useSignMessage()
   // previous authenticated address or undefined
   const [previousAddress, setPreviousAddress] = useState<string | undefined>()
@@ -118,6 +119,7 @@ const Component: FC<{ children: ReactNode }> = ({ children }) => {
               サインインにはウォレットで署名する必要があります
             </p>
             <div className="modal-action">
+              <button className="btn " onClick={() => disconnect()}>キャンセル</button>
               <button className="btn btn-primary" onClick={handleSignin}>
                 サインイン
               </button>
