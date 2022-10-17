@@ -8,12 +8,4 @@ declare module "next-auth" {
       name?: string
     }
   }
-  
-  interface User {
-    id: string
-    address: string
-    name?: string
-  }
 }
-
-

@@ -52,8 +52,6 @@ const auth = async (req: NextApiRequest, res: NextApiResponse) => {
 
             return {
               id: user.id,
-              address: user.address,
-              name: user.name
             }
           } catch (e) {
             console.error(e)
@@ -64,12 +62,20 @@ const auth = async (req: NextApiRequest, res: NextApiResponse) => {
     ],
 
     callbacks: {
-      async session({session, token, user}) {
-        console.log(session)
-        console.log(token)
-        console.log(user)
+      async session({ session, token }) {
+        const user = await prisma.user.findUnique({
+          where: {
+            id: token.sub,
+          },
+        })
+        if (!user) return session
+        session.user = {
+          id: user.id,
+          address: user.address,
+          name: user.name || undefined,
+        }
         return session
-      }
+      },
     },
 
     secret: process.env.NEXTAUTH_SECRET,
