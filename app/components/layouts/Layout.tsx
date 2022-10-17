@@ -109,7 +109,7 @@ const Component: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <div className="min-h-screen">
       <Header />
-      <main className="bg-white">
+      <main>
         <div className="mx-auto max-w-7xl px-4">{children}</div>
         <div className={clsx("modal", signinModal && "modal-open")}>
           <div className="modal-box">
@@ -118,7 +118,7 @@ const Component: FC<{ children: ReactNode }> = ({ children }) => {
               サインインにはウォレットで署名する必要があります
             </p>
             <div className="modal-action">
-              <button className="btn" onClick={handleSignin}>
+              <button className="btn btn-primary" onClick={handleSignin}>
                 サインイン
               </button>
             </div>

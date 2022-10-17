@@ -3,7 +3,6 @@ import Head from "next/head"
 import Layout from "@/components/layouts/Layout"
 import "@/styles/globals.css"
 import type { AppProps } from "next/app"
-import colors from "tailwindcss/colors"
 import { WagmiConfig, createClient, configureChains, chain } from "wagmi"
 import { alchemyProvider } from "wagmi/providers/alchemy"
 import { publicProvider } from "wagmi/providers/public"
@@ -68,10 +67,9 @@ const App = ({ Component, pageProps }: AppProps<{ session: Session }>) => {
       <WagmiConfig client={client}>
         <ConnectKitProvider
           customTheme={{
-            "--ck-connectbutton-color": "#ffffff",
-            "--ck-connectbutton-background": colors.pink[500],
-            "--ck-connectbutton-hover-color": "#ffffff",
-            "--ck-connectbutton-hover-background": colors.pink[600],
+            "--ck-connectbutton-color": "#4d002b",
+            "--ck-connectbutton-background": "#ff79c6",
+            "--ck-connectbutton-hover-background": "#FF2EA4",
             "--ck-border-radius": 8,
           }}
         >
