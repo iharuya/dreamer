@@ -2,6 +2,8 @@ import { useSession } from "next-auth/react"
 import { isAddress } from "ethers/lib/utils"
 import type { GetServerSideProps, NextPage } from "next"
 import { RESTError } from "@/lib/error"
+import axios from "axios"
+import { useState } from "react"
 
 const apiBase = "http://localhost:3000"
 
@@ -42,13 +44,41 @@ const Page: NextPage<{ account: any }> = ({ account }) => {
   const isMe =
     status === "authenticated" && account.address === session?.address
 
+  const [name, setName] = useState<string>(account.name || "")
+
+  const update = async () => {
+    axios
+      .patch(`/api/accounts/${account.address}`, { name })
+      .then((res) => {
+        console.log(res)
+      })
+      .catch((e) => {
+        console.error(e)
+      })
+  }
   return (
     <>
+      <p>account info</p>
       <pre>
         <code>{JSON.stringify(account, null, 2)}</code>
       </pre>
 
-      {isMe && <p>I have a control in this page</p>}
+      {isMe && (
+        <div className="form-control">
+          <div className="input-group">
+            <input
+              type="text"
+              placeholder="名前を入力"
+              className="input input-bordered"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+            <button className="btn" onClick={update}>
+              送信
+            </button>
+          </div>
+        </div>
+      )}
     </>
   )
 }

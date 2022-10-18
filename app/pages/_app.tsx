@@ -78,13 +78,16 @@ const App = ({ Component, pageProps }: AppProps<{ session: Session }>) => {
           <SessionProvider session={pageProps.session}>
             <SWRConfig
               value={{
-                fetcher: async (url: string): Promise<any> => {
-                  const res = await fetch(url)
-                  if (!res.ok) {
-                    console.log("hero")
-                    const message = (await res.json()).message
-                    throw new RESTError(res.status, message)
-                  }
+                fetcher: async (
+                  url: string,
+                  method?: string,
+                  body?: string
+                ): Promise<any> => {
+                  const res = await fetch(url, {
+                    method: method || "GET",
+                    ...(body && { body: body }),
+                  })
+
                   return res.json()
                 },
               }}
