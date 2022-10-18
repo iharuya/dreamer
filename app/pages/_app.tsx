@@ -12,6 +12,8 @@ import { MetaMaskConnector } from "wagmi/connectors/metaMask"
 import { ConnectKitProvider } from "connectkit"
 import { SessionProvider } from "next-auth/react"
 import type { Session } from "next-auth"
+import { SWRConfig } from "swr"
+import { RESTError } from "@/lib/error"
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 
@@ -74,9 +76,23 @@ const App = ({ Component, pageProps }: AppProps<{ session: Session }>) => {
           }}
         >
           <SessionProvider session={pageProps.session}>
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
+            <SWRConfig
+              value={{
+                fetcher: async (url: string): Promise<any> => {
+                  const res = await fetch(url)
+                  if (!res.ok) {
+                    console.log("hero")
+                    const message = (await res.json()).message
+                    throw new RESTError(res.status, message)
+                  }
+                  return res.json()
+                },
+              }}
+            >
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
+            </SWRConfig>
           </SessionProvider>
         </ConnectKitProvider>
       </WagmiConfig>

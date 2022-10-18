@@ -119,7 +119,9 @@ const Component: FC<{ children: ReactNode }> = ({ children }) => {
               サインインにはウォレットで署名する必要があります
             </p>
             <div className="modal-action">
-              <button className="btn " onClick={() => disconnect()}>キャンセル</button>
+              <button className="btn " onClick={() => disconnect()}>
+                キャンセル
+              </button>
               <button className="btn btn-primary" onClick={handleSignin}>
                 サインイン
               </button>

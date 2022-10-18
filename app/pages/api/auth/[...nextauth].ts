@@ -3,7 +3,6 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import type { NextApiRequest, NextApiResponse } from "next"
 import { getCsrfToken } from "next-auth/react"
 import { SiweMessage } from "siwe"
-
 import prisma from "@/lib/prismadb"
 
 const auth = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -37,21 +36,27 @@ const auth = async (req: NextApiRequest, res: NextApiResponse) => {
             })
             if (!result.success) return null
 
-            let user = await prisma.user.findUnique({
-              where: {
-                address: message.address,
-              },
+            let account = await prisma.account.findUnique({
+              where: { address: message.address },
             })
-            if (!user) {
-              user = await prisma.user.create({
+
+            if (!account) {
+              account = await prisma.account.create({
                 data: {
                   address: message.address,
+                  first_signed_at: new Date(),
                 },
+              })
+            } else if (!account.first_signed_at) {
+              // record has been created by someone else but never signed in
+              account = await prisma.account.update({
+                where: { address: message.address },
+                data: { first_signed_at: new Date() },
               })
             }
 
             return {
-              id: user.id,
+              id: account.address,
             }
           } catch (e) {
             console.error(e)
@@ -63,17 +68,7 @@ const auth = async (req: NextApiRequest, res: NextApiResponse) => {
 
     callbacks: {
       async session({ session, token }) {
-        const user = await prisma.user.findUnique({
-          where: {
-            id: token.sub,
-          },
-        })
-        if (!user) return session
-        session.user = {
-          id: user.id,
-          address: user.address,
-          name: user.name || undefined,
-        }
+        session.address = token.sub
         return session
       },
     },
@@ -81,8 +76,7 @@ const auth = async (req: NextApiRequest, res: NextApiResponse) => {
     secret: process.env.NEXTAUTH_SECRET,
   }
 
-  const ret = await NextAuth(req, res, authOptions)
-  return ret
+  return await NextAuth(req, res, authOptions)
 }
 
 export default auth

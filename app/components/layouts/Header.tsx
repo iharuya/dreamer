@@ -19,7 +19,7 @@ const Component: FC = () => {
             </div>
             <nav className="items-center justify-end flex flex-1 space-x-4">
               {isConnected && (
-                <Link href={`/account/${connectedAddress}`}>
+                <Link href={`/accounts/${connectedAddress}`}>
                   <a className="font-medium">マイアカウント</a>
                 </Link>
               )}
