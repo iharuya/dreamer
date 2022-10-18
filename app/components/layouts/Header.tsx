@@ -9,7 +9,7 @@ const Component: FC = () => {
 
   return (
     <>
-      <header className="fixed w-full border-b-2 border-base-300">
+      <header className="fixed w-full">
         <div className="mx-auto max-w-7xl px-4">
           <div className="flex items-center py-2 justify-start space-x-10">
             <div className="flex flex-1">

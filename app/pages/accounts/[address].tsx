@@ -2,8 +2,11 @@ import { useSession } from "next-auth/react"
 import { isAddress } from "ethers/lib/utils"
 import type { GetServerSideProps, NextPage } from "next"
 import { RESTError } from "@/lib/error"
-import axios from "axios"
+import axios, { AxiosResponse } from "axios"
 import { useState } from "react"
+import Avatar from "boring-avatars"
+import { toast } from "react-toastify"
+import clsx from "clsx"
 
 const apiBase = "http://localhost:3000"
 
@@ -35,37 +38,77 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   return {
-    props: { account },
+    props: { initialAccount: account },
   }
 }
 
-const Page: NextPage<{ account: any }> = ({ account }) => {
+interface Account {
+  id: string
+  address: string
+  name?: string
+  created_at: string
+  updated_at: string
+  first_signed_at: string
+}
+const Page: NextPage<{ initialAccount: Account }> = ({ initialAccount }) => {
   const { data: session, status } = useSession()
+  const [account, setAccount] = useState<Account>(initialAccount)
   const isMe =
     status === "authenticated" && account.address === session?.address
-
-  const [name, setName] = useState<string>(account.name || "")
+  const [configModal, setConfigModal] = useState<boolean>(false)
+  const [name, setName] = useState<string>(initialAccount.name || "")
 
   const update = async () => {
     axios
       .patch(`/api/accounts/${account.address}`, { name })
-      .then((res) => {
-        console.log(res)
+      .then((res: AxiosResponse<Account>) => {
+        setAccount(res.data)
+        setConfigModal(false)
       })
       .catch((e) => {
         console.error(e)
+        toast.error("更新に失敗しました")
       })
   }
+
   return (
     <>
-      <p>account info</p>
-      <pre>
-        <code>{JSON.stringify(account, null, 2)}</code>
-      </pre>
+      <div className="max-w-5xl mx-auto py-6 flex items-center flex-wrap space-y-4">
+        <div>
+          <Avatar
+            size={120}
+            name={account.address}
+            variant="beam"
+            colors={["#FEE9A6", "#FEC0AB", "#FA5894", "#660860", "#9380B7"]}
+          />
+        </div>
+        <div className="px-4 flex-grow">
+          <div className="flex">
+            <h1 className="text-4xl">{account.name || "ななしさん"}</h1>
+            {isMe && (
+              <button
+                className="btn btn-outline ml-auto"
+                onClick={() => setConfigModal(true)}
+              >
+                編集
+              </button>
+            )}
+          </div>
+          <h2 className="text-gray-600">{account.address}</h2>
+          <p className="text-sm text-gray-600" suppressHydrationWarning>
+            {account.first_signed_at
+              ? `${new Date(
+                account.first_signed_at
+              ).toLocaleDateString()} にはじめました`
+              : "まだこのアプリを使っていません"}
+          </p>
+        </div>
+      </div>
 
-      {isMe && (
-        <div className="form-control">
-          <div className="input-group">
+      <div className={clsx("modal", configModal && "modal-open")}>
+        <div className="modal-box">
+          <h3 className="font-bold text-2xl mb-4">アカウント情報</h3>
+          <div className="form-control">
             <input
               type="text"
               placeholder="名前を入力"
@@ -73,12 +116,17 @@ const Page: NextPage<{ account: any }> = ({ account }) => {
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
-            <button className="btn" onClick={update}>
-              送信
+          </div>
+          <div className="modal-action">
+            <button className="btn" onClick={() => setConfigModal(false)}>
+              キャンセル
+            </button>
+            <button className="btn btn-primary" onClick={update}>
+              保存
             </button>
           </div>
         </div>
-      )}
+      </div>
     </>
   )
 }
