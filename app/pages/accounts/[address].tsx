@@ -3,7 +3,7 @@ import { isAddress } from "ethers/lib/utils"
 import type { GetServerSideProps, NextPage } from "next"
 import { RESTError } from "@/lib/error"
 import axios, { AxiosResponse } from "axios"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Avatar from "boring-avatars"
 import { toast } from "react-toastify"
 import clsx from "clsx"
@@ -58,6 +58,11 @@ const Page: NextPage<{ initialAccount: Account }> = ({ initialAccount }) => {
   const [configModal, setConfigModal] = useState<boolean>(false)
   const [name, setName] = useState<string>(initialAccount.name || "")
 
+  useEffect(() => {
+    setAccount(initialAccount)
+    setName(initialAccount.name || "")
+  }, [initialAccount])
+
   const update = async () => {
     axios
       .patch(`/api/accounts/${account.address}`, { name })
@@ -98,8 +103,8 @@ const Page: NextPage<{ initialAccount: Account }> = ({ initialAccount }) => {
           <p className="text-sm text-gray-600" suppressHydrationWarning>
             {account.first_signed_at
               ? `${new Date(
-                account.first_signed_at
-              ).toLocaleDateString()} にはじめました`
+                  account.first_signed_at
+                ).toLocaleDateString()} にはじめました`
               : "まだこのアプリを使っていません"}
           </p>
         </div>
