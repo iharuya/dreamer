@@ -108,9 +108,9 @@ const Component: FC<{ children: ReactNode }> = ({ children }) => {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-hidden">
       <Header />
-      <main>
+      <main style={{ height: "1000px" }}>
         <div className="w-full px-4">{children}</div>
         <div className={clsx("modal", signinModal && "modal-open")}>
           <div className="modal-box">

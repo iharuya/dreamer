@@ -5,6 +5,7 @@ import { RESTError } from "@/lib/error"
 import axios, { AxiosResponse } from "axios"
 import { useEffect, useState } from "react"
 import Avatar from "boring-avatars"
+import { AVATAR_COLORS } from "@/constants/config"
 import { toast } from "react-toastify"
 import clsx from "clsx"
 
@@ -78,17 +79,17 @@ const Page: NextPage<{ initialAccount: Account }> = ({ initialAccount }) => {
 
   return (
     <>
-      <div className="max-w-5xl mx-auto py-6 flex items-center flex-wrap space-y-4">
+      <div className="max-w-5xl mx-auto py-6 flex flex-col space-y-4 md:flex-row md:items-center md:space-x-4 md:space-y-0">
         <div>
           <Avatar
             size={120}
             name={account.address}
             variant="beam"
-            colors={["#FEE9A6", "#FEC0AB", "#FA5894", "#660860", "#9380B7"]}
+            colors={AVATAR_COLORS}
           />
         </div>
-        <div className="px-4 flex-grow">
-          <div className="flex">
+        <div className="w-full">
+          <div className="flex mb-2 items-center">
             <h1 className="text-4xl">{account.name || "ななしさん"}</h1>
             {isMe && (
               <button
@@ -99,7 +100,7 @@ const Page: NextPage<{ initialAccount: Account }> = ({ initialAccount }) => {
               </button>
             )}
           </div>
-          <h2 className="text-gray-600">{account.address}</h2>
+          <h2 className="text-gray-600 truncate">{account.address}</h2>
           <p className="text-sm text-gray-600" suppressHydrationWarning>
             {account.first_signed_at
               ? `${new Date(

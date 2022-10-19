@@ -13,7 +13,6 @@ import { ConnectKitProvider } from "connectkit"
 import { SessionProvider } from "next-auth/react"
 import type { Session } from "next-auth"
 import { SWRConfig } from "swr"
-import { RESTError } from "@/lib/error"
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 
@@ -67,14 +66,7 @@ const App = ({ Component, pageProps }: AppProps<{ session: Session }>) => {
       </Head>
       <ToastContainer position="bottom-right" draggable />
       <WagmiConfig client={client}>
-        <ConnectKitProvider
-          customTheme={{
-            "--ck-connectbutton-color": "#4d002b",
-            "--ck-connectbutton-background": "#ff79c6",
-            "--ck-connectbutton-hover-background": "#FF2EA4",
-            "--ck-border-radius": 8,
-          }}
-        >
+        <ConnectKitProvider>
           <SessionProvider session={pageProps.session}>
             <SWRConfig
               value={{

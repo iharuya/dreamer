@@ -1,37 +1,76 @@
 import Link from "next/link"
-import { useAccount } from "wagmi"
-import { ConnectKitButton } from "connectkit"
-import { APP_NAME } from "@/constants/config"
+import { APP_NAME, AVATAR_COLORS } from "@/constants/config"
 import type { FC } from "react"
+import { ConnectKitButton } from "connectkit"
+import Avatar from "boring-avatars"
+import { useNetwork } from "wagmi"
 
 const Component: FC = () => {
-  const { address: connectedAddress, isConnected } = useAccount()
+  const { chain } = useNetwork()
 
   return (
     <>
-      <header className="fixed w-full">
+      <header className="w-full fixed bg-base-100">
         <div className="mx-auto max-w-7xl px-4">
-          <div className="flex items-center py-2 justify-start space-x-10">
-            <div className="flex flex-1">
+          <div className="flex py-2 items-center space-x-4">
+            <div className="flex">
               <Link href="/">
-                <a className="text-2xl font-bold text-primary">{APP_NAME}</a>
+                <a className="text-2xl font-bold text-primary whitespace-nowrap">
+                  {APP_NAME}
+                </a>
               </Link>
             </div>
-            <nav className="items-center justify-end flex flex-1 space-x-4">
-              {isConnected && (
-                <Link href={`/accounts/${connectedAddress}`}>
-                  <a className="font-medium">マイアカウント</a>
-                </Link>
-              )}
-              <ConnectKitButton
-                label="ウォレットでログイン"
-                showBalance={true}
-              />
-            </nav>
+            <div className="w-full items-center justify-end flex space-x-4">
+              <ConnectKitButton.Custom>
+                {({ isConnected, show, address, ensName }) => {
+                  return (
+                    <div className="flex items-center">
+                      {isConnected ? (
+                        <div className="dropdown dropdown-end">
+                          <label tabIndex={0}>
+                            <Avatar
+                              name={address}
+                              variant="beam"
+                              colors={AVATAR_COLORS}
+                            />
+                          </label>
+                          <div
+                            tabIndex={0}
+                            className="dropdown-content shadow w-64 rounded-box bg-base-100"
+                          >
+                            <div className="flex flex-col text-start p-4">
+                              <span>{chain?.unsupported ? "チェーンを変更してください" : `${chain?.name}に接続中`}</span>
+                              <h3 className="text-sm truncate">
+                                {ensName || address}
+                              </h3>
+                            </div>
+                            <hr className="bg-base-200" />
+                            <ul className="menu menu-compact">
+                              <li>
+                                <Link href={`/accounts/${address}`}>
+                                  アカウント
+                                </Link>
+                              </li>
+                              <li>
+                                <button onClick={show}>ウォレット設定</button>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      ) : (
+                        <button onClick={show} className="btn btn-primary">
+                          接続
+                        </button>
+                      )}
+                    </div>
+                  )
+                }}
+              </ConnectKitButton.Custom>
+            </div>
           </div>
         </div>
       </header>
-      <div className="h-20"></div>
+      <div style={{ height: "64px" }}></div>
     </>
   )
 }
