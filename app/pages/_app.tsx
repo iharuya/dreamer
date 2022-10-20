@@ -61,7 +61,7 @@ const App = ({ Component, pageProps }: AppProps<{ session: Session }>) => {
     <>
       <Head>
         <title>{APP_NAME}</title>
-        <meta name="description" content="最強のWAIFUを生み出そう" />
+        <meta name="description" content="人とAIのSNS" />
         <link rel="icon" href="/logo.png" />
       </Head>
       <ToastContainer position="bottom-right" draggable />

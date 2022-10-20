@@ -1,4 +1,4 @@
-import { network, ethers } from "hardhat"
+import { ethers } from "hardhat"
 import { setup, deployContract } from "./utils"
 import type { Prompts } from "../typechain-types/contracts/Prompts"
 

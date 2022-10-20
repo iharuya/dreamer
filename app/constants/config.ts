@@ -1,4 +1,4 @@
-export const APP_NAME = "仮想WAIFU"
+export const APP_NAME = "Dreamer"
 export const AVATAR_COLORS = [
   "#FEE9A6",
   "#FEC0AB",
