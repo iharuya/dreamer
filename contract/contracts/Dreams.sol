@@ -4,16 +4,13 @@ pragma solidity ^0.8.17;
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
-import "./IPrompts.sol";
 
-contract Votes is ERC1155, Ownable, ERC1155Supply {
-    address public immutable PROMPTS;
+contract Dreams is ERC1155, Ownable, ERC1155Supply {
     uint256 public immutable ALPHA;
     uint256 public immutable BETA;
     uint256 public immutable DELTA;
 
     constructor(
-        address prompts,
         uint256 alpha,
         uint256 beta,
         uint256 delta,
@@ -22,35 +19,33 @@ contract Votes is ERC1155, Ownable, ERC1155Supply {
         ALPHA = alpha;
         BETA = beta;
         DELTA = delta;
-        PROMPTS = prompts;
     }
 
     function setURI(string memory uri) external onlyOwner {
         _setURI(uri);
     }
 
-    function vote(uint256 tokenId, uint256 amount) external payable {
-        require(msg.value == voteCost(tokenId, amount), "Wrong price");
-        require(tokenId < IPrompts(PROMPTS).nextTokenId(), "No such tokenId");
+    function mint(uint256 tokenId, uint256 amount) external payable {
+        require(msg.value == mintValue(tokenId, amount), "wrong price");
         _mint(msg.sender, tokenId, amount, "");
     }
 
-    function unvote(
+    function burn(
         address account,
         uint256 tokenId,
         uint256 amount
     ) external virtual {
         require(
             account == msg.sender || isApprovedForAll(account, msg.sender),
-            "Caller is not token owner nor approved"
+            "caller is not token owner nor approved"
         );
-        uint256 payback = unvotePayback(tokenId, amount);
+        uint256 payback = burnValue(tokenId, amount);
         _burn(account, tokenId, amount);
         (bool success, ) = payable(account).call{value: payback}("");
-        require(success, "Failed to send value");
+        require(success, "failed to send value");
     }
 
-    function voteCost(uint256 tokenId, uint256 amount)
+    function mintValue(uint256 tokenId, uint256 amount)
         public
         view
         returns (uint256)
@@ -60,7 +55,7 @@ contract Votes is ERC1155, Ownable, ERC1155Supply {
         return ((b - a + 1) * (2 * (ALPHA + DELTA) + BETA * (a + b - 2))) / 2;
     }
 
-    function unvotePayback(uint256 tokenId, uint256 amount)
+    function burnValue(uint256 tokenId, uint256 amount)
         public
         view
         returns (uint256)
@@ -73,7 +68,7 @@ contract Votes is ERC1155, Ownable, ERC1155Supply {
     // Collect revenue from the spread. Call this with caution.
     function withdraw(uint256 amount) external onlyOwner {
         (bool sent, ) = msg.sender.call{value: amount}("");
-        require(sent, "Failed to send value");
+        require(sent, "failed to send value");
     }
 
     // Patch supply features
