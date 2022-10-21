@@ -12,7 +12,9 @@ contract Dreams is ERC1155, Ownable, ERC1155Supply {
     uint256 public immutable DELTA;
     address public immutable SIGNER;
 
-    mapping(address => uint256) nonces;
+    mapping(uint256 => bool) public requestIds;
+
+    event Minted(address indexed to, uint256 indexed tokenId, uint256 indexed requestId);
 
     constructor(
         uint256 alpha,
@@ -32,29 +34,34 @@ contract Dreams is ERC1155, Ownable, ERC1155Supply {
     }
 
     function mint(
+        uint256 requestId,
         uint256 tokenId,
-        uint256 amount,
+        uint256 expires,
         bytes memory signature
     ) external payable {
-        require(msg.value == mintValue(tokenId, amount), "wrong price");
-        bytes32 messageHash = keccak256(abi.encodePacked(msg.sender, tokenId, amount, nonces[msg.sender]));
+        require(!requestIds[requestId], "request has already been processed");
+        bytes32 messageHash = keccak256(abi.encodePacked(requestId, msg.sender, tokenId, expires));
         bytes32 ethSignedMessageHash = ECDSA.toEthSignedMessageHash(messageHash);
-        require(ECDSA.recover(ethSignedMessageHash, signature) == SIGNER, "not allowed");
-        _mint(msg.sender, tokenId, amount, "");
+        require(ECDSA.recover(ethSignedMessageHash, signature) == SIGNER, "forbidden");
+        require(block.number <= expires, "signature expired");
+        require(msg.value == mintValue(tokenId, 1), "wrong price sent"); // should this be hard coded?
+        requestIds[requestId] == true;
+        _mint(msg.sender, tokenId, 1, "");
+        emit Minted(msg.sender, tokenId, requestId);
     }
 
     function burn(
         address account,
         uint256 tokenId,
         uint256 amount
-    ) external {
+    ) external virtual {
         require(
             account == msg.sender || isApprovedForAll(account, msg.sender),
             "caller is not token owner nor approved"
         );
         uint256 payback = burnValue(tokenId, amount);
         _burn(account, tokenId, amount);
-        (bool success, ) = payable(account).call{value: payback}("");
+        (bool success, ) = payable(msg.sender).call{value: payback}(""); // The receiver could be an operator.
         require(success, "failed to send value");
     }
 

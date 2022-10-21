@@ -14,26 +14,23 @@ async function main() {
   console.log(`Signer Address: ${signer.address}`)
 
   const sender = (await ethers.getSigners())[0]
-  const signature = await generateSignatureForMint(
-    signer,
-    sender.address,
-    0,
-    10,
-    0
-  )
+  const signature = await generateSignatureForMint(signer, [
+    {name: "requestId", type: "uint256", value: 12345},
+    {name: "sender", type: "address", value: sender.address},
+    {name: "tokenId", type: "uint256", value: 0},
+    {name: "expires", type: "uint256", value: 10000000},
+  ])
   console.log(`Signature: ${signature}`)
 }
 
+type CommonSolidityType = "uint256" | "string" | "address" | "bytes" | "bytes32"
 async function generateSignatureForMint(
   signer: Wallet,
-  sender: string,
-  tokenId: number,
-  amount: number,
-  nonce: number
+  inputs: {name: string, type: CommonSolidityType, value: any}[]
 ) {
   const messageHash = ethers.utils.solidityKeccak256(
-    ["address", "uint256", "uint256", "uint256"],
-    [sender, tokenId, amount, nonce]
+    inputs.map((input) => input.type),
+    inputs.map((input) => input.value),
   )
   const signature = await signer.signMessage(ethers.utils.arrayify(messageHash))
   return signature
