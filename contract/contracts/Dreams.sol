@@ -4,29 +4,42 @@ pragma solidity ^0.8.17;
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 contract Dreams is ERC1155, Ownable, ERC1155Supply {
     uint256 public immutable ALPHA;
     uint256 public immutable BETA;
     uint256 public immutable DELTA;
+    address public immutable SIGNER;
+
+    mapping(address => uint256) nonces;
 
     constructor(
         uint256 alpha,
         uint256 beta,
         uint256 delta,
+        address signer,
         string memory uri
     ) ERC1155(uri) {
         ALPHA = alpha;
         BETA = beta;
         DELTA = delta;
+        SIGNER = signer;
     }
 
     function setURI(string memory uri) external onlyOwner {
         _setURI(uri);
     }
 
-    function mint(uint256 tokenId, uint256 amount) external payable {
+    function mint(
+        uint256 tokenId,
+        uint256 amount,
+        bytes memory signature
+    ) external payable {
         require(msg.value == mintValue(tokenId, amount), "wrong price");
+        bytes32 messageHash = keccak256(abi.encodePacked(msg.sender, tokenId, amount, nonces[msg.sender]));
+        bytes32 ethSignedMessageHash = ECDSA.toEthSignedMessageHash(messageHash);
+        require(ECDSA.recover(ethSignedMessageHash, signature) == SIGNER, "not allowed");
         _mint(msg.sender, tokenId, amount, "");
     }
 
@@ -34,7 +47,7 @@ contract Dreams is ERC1155, Ownable, ERC1155Supply {
         address account,
         uint256 tokenId,
         uint256 amount
-    ) external virtual {
+    ) external {
         require(
             account == msg.sender || isApprovedForAll(account, msg.sender),
             "caller is not token owner nor approved"
@@ -45,21 +58,13 @@ contract Dreams is ERC1155, Ownable, ERC1155Supply {
         require(success, "failed to send value");
     }
 
-    function mintValue(uint256 tokenId, uint256 amount)
-        public
-        view
-        returns (uint256)
-    {
+    function mintValue(uint256 tokenId, uint256 amount) public view returns (uint256) {
         uint256 a = totalSupply(tokenId) + 1;
         uint256 b = a + amount - 1;
         return ((b - a + 1) * (2 * (ALPHA + DELTA) + BETA * (a + b - 2))) / 2;
     }
 
-    function burnValue(uint256 tokenId, uint256 amount)
-        public
-        view
-        returns (uint256)
-    {
+    function burnValue(uint256 tokenId, uint256 amount) public view returns (uint256) {
         uint256 b = totalSupply(tokenId);
         uint256 a = b + 1 - amount;
         return ((b - a + 1) * (2 * ALPHA + BETA * (a + b - 2))) / 2;

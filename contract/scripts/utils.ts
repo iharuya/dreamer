@@ -42,10 +42,10 @@ export async function deployContract(
 
 // Only for the hardhat localhost network
 export async function sendValues(addresses: string[], eth: string) {
-  let sender = new ethers.Wallet(
-    "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+  const sender = new ethers.Wallet(
+    "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
+    ethers.provider
   )
-  sender = sender.connect(ethers.provider)
   const sendAmount = ethers.utils.parseEther(eth)
   for (const address of addresses) {
     const tx = { to: address, value: sendAmount }
