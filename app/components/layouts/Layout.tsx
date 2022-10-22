@@ -5,6 +5,7 @@ import { FC, ReactNode, useEffect, useState } from "react"
 import Header from "./Header"
 import { toast } from "react-toastify"
 import clsx from "clsx"
+import axios, { AxiosError } from "axios"
 
 const Component: FC<{ children: ReactNode }> = ({ children }) => {
   const { address: connectedAddress, isConnected } = useAccount()
@@ -32,8 +33,7 @@ const Component: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     ;(async () => {
       if (isConnected && typeof previousAddress === "undefined") {
-        console.log("1")
-        await handleSignin()
+        await handleSignin(connectedAddress)
         return
       }
       if (!isConnected) {
@@ -56,17 +56,27 @@ const Component: FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, [isConnected])
 
-  const handleSignin = async () => {
+  const handleSignin = async (address: string | undefined) => {
+    if (typeof address === "undefined") return
     const toastId = toast.info("ウォレットで署名してください", {
       autoClose: false,
     })
     try {
+      const accountExists = await axios
+        .head(`/api/accounts/${address}`)
+        .then(() => true)
+        .catch((err: AxiosError | Error) => {
+          if (axios.isAxiosError(err) && err.response?.status === 404) {
+            return false
+          }
+          throw new Error(err.message)
+        })
       const now = new Date()
       const expiration = new Date()
       expiration.setHours(now.getHours() + 1)
       const message = new SiweMessage({
         domain: window.location.host,
-        address: connectedAddress,
+        address,
         statement: "ウォレットでサインインします",
         uri: window.location.origin,
         version: "1",
@@ -77,20 +87,24 @@ const Component: FC<{ children: ReactNode }> = ({ children }) => {
       })
       const humanMessage = message.prepareMessage()
       const signature = await signMessageAsync({ message: humanMessage })
-      signIn("credentials", {
+      await signIn("credentials", {
         message: JSON.stringify(message),
         redirect: false,
         signature,
       })
-      setPreviousAddress(connectedAddress)
-      setSigninModal(false)
+      if (!accountExists) {
+        toast.update(toastId, { render: "アカウントを新規作成中..." })
+        await createAccount(address)
+      }
       toast.update(toastId, {
         render: "サインインしました",
         type: toast.TYPE.SUCCESS,
         autoClose: 3000,
       })
-    } catch (error) {
-      console.error(error)
+      setPreviousAddress(connectedAddress)
+      setSigninModal(false)
+    } catch (err) {
+      console.error(err)
       // setPreviousAddress(undefined) ?
       setSigninModal(true)
       toast.update(toastId, {
@@ -105,6 +119,12 @@ const Component: FC<{ children: ReactNode }> = ({ children }) => {
     signOut({ redirect: false })
     setPreviousAddress(undefined)
     toast.info("サインアウトしました")
+  }
+
+  const createAccount = async (address: string) => {
+    return await axios
+      .post(`/api/accounts`, { address })
+      .then((res) => res.data)
   }
 
   return (
@@ -122,7 +142,10 @@ const Component: FC<{ children: ReactNode }> = ({ children }) => {
               <button className="btn" onClick={() => disconnect()}>
                 キャンセル
               </button>
-              <button className="btn btn-primary" onClick={handleSignin}>
+              <button
+                className="btn btn-primary"
+                onClick={() => handleSignin(connectedAddress)}
+              >
                 サインイン
               </button>
             </div>

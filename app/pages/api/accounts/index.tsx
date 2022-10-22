@@ -1,19 +1,22 @@
 import type { NextApiRequest, NextApiResponse } from "next"
 import prisma from "@/lib/prismadb"
-import { isAddress } from "ethers/lib/utils"
+import { getToken } from "next-auth/jwt"
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
-    // 誰でもアカウントのレコードは作成できる
-    const address = JSON.parse(req.body).address
-    if (!(typeof address === "string" && isAddress(address))) {
-      return res.status(400).json({ message: "invalid address" })
+    // create a new account
+    const token = await getToken({ req })
+    const address = (req.body.address as string) || undefined
+    if (!token || token.sub !== address) {
+      return res.status(401).json({ message: "unauthorized" })
     }
+
     let account = await prisma.account.findUnique({
       where: { address },
     })
-    if (account)
+    if (account) {
       return res.status(400).json({ message: "account already exists" })
+    }
     account = await prisma.account.create({
       data: {
         address,

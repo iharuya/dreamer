@@ -21,15 +21,14 @@ if (process.env.NODE_ENV == "development") {
   appChains.reverse()
 }
 const appProviders = [
-  alchemyProvider({ priority: 0 }),
+  alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_APIKEY_MUMBAI }),
   jsonRpcProvider({
     rpc: (currentChain) => {
       if (currentChain.id !== chain.hardhat.id) return null
       return { http: "http://localhost:8546" }
     },
-    priority: 1,
   }),
-  publicProvider({ priority: 2 }),
+  publicProvider(),
 ]
 const { chains, provider, webSocketProvider } = configureChains(
   appChains,

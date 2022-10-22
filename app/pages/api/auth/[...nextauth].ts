@@ -3,7 +3,6 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import type { NextApiRequest, NextApiResponse } from "next"
 import { getCsrfToken } from "next-auth/react"
 import { SiweMessage } from "siwe"
-import prisma from "@/lib/prismadb"
 
 const auth = async (req: NextApiRequest, res: NextApiResponse) => {
   const authOptions: NextAuthOptions = {
@@ -36,27 +35,8 @@ const auth = async (req: NextApiRequest, res: NextApiResponse) => {
             })
             if (!result.success) return null
 
-            let account = await prisma.account.findUnique({
-              where: { address: message.address },
-            })
-
-            if (!account) {
-              account = await prisma.account.create({
-                data: {
-                  address: message.address,
-                  first_signed_at: new Date(),
-                },
-              })
-            } else if (!account.first_signed_at) {
-              // record has been created by someone else but never signed in
-              account = await prisma.account.update({
-                where: { address: message.address },
-                data: { first_signed_at: new Date() },
-              })
-            }
-
             return {
-              id: account.address,
+              id: result.data.address,
             }
           } catch (e) {
             console.error(e)

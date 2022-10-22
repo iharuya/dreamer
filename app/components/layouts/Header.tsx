@@ -39,7 +39,11 @@ const Component: FC = () => {
                             className="dropdown-content shadow w-64 rounded-box bg-base-100"
                           >
                             <div className="flex flex-col text-start p-4">
-                              <span>{chain?.unsupported ? "チェーンを変更してください" : `${chain?.name}に接続中`}</span>
+                              <span>
+                                {chain?.unsupported
+                                  ? "チェーンを変更してください"
+                                  : `${chain?.name}に接続中`}
+                              </span>
                               <h3 className="text-sm truncate">
                                 {ensName || address}
                               </h3>

@@ -1,15 +1,14 @@
 import { useSession } from "next-auth/react"
 import { isAddress } from "ethers/lib/utils"
 import type { GetServerSideProps, NextPage } from "next"
-import { RESTError } from "@/lib/error"
 import axios, { AxiosResponse } from "axios"
+import prisma from "@/lib/prismadb"
 import { useEffect, useState } from "react"
 import Avatar from "boring-avatars"
 import { AVATAR_COLORS } from "@/constants/config"
 import { toast } from "react-toastify"
 import clsx from "clsx"
-
-const apiBase = "http://localhost:3000"
+import type { Account } from "@prisma/client"
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   // Ethereumのアドレスでない場合は404を返す
@@ -19,38 +18,19 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       notFound: true,
     }
   }
-
-  let account
-  let accountRes = await fetch(`${apiBase}/api/accounts/${queryAddress}`)
-  if (accountRes.ok) {
-    account = await accountRes.json()
-  } else if (accountRes.status !== 404) {
-    throw new RESTError(accountRes.status, "unknown error")
-  } else {
-    // if 404 then create new account
-    accountRes = await fetch(`${apiBase}/api/accounts`, {
-      method: "POST",
-      body: JSON.stringify({ address: queryAddress }),
-    })
-    account = await accountRes.json()
-    if (!accountRes.ok) {
-      throw new RESTError(accountRes.status, account.message)
+  // Nextjsのapiを叩くのはフロントからのみで、ここでは直接DBを操作する
+  const account = await prisma.account.findUnique({
+    where: { address: queryAddress },
+  })
+  if (!account)
+    return {
+      notFound: true,
     }
-  }
-
   return {
-    props: { initialAccount: account },
+    props: { initialAccount: JSON.parse(JSON.stringify(account)) },
   }
 }
 
-interface Account {
-  id: string
-  address: string
-  name?: string
-  created_at: string
-  updated_at: string
-  first_signed_at: string
-}
 const Page: NextPage<{ initialAccount: Account }> = ({ initialAccount }) => {
   const { data: session, status } = useSession()
   const [account, setAccount] = useState<Account>(initialAccount)
@@ -102,11 +82,9 @@ const Page: NextPage<{ initialAccount: Account }> = ({ initialAccount }) => {
           </div>
           <h2 className="text-gray-600 truncate">{account.address}</h2>
           <p className="text-sm text-gray-600" suppressHydrationWarning>
-            {account.first_signed_at
-              ? `${new Date(
-                  account.first_signed_at
-                ).toLocaleDateString()} にはじめました`
-              : "まだこのアプリを使っていません"}
+            {`${new Date(
+              account.created_at
+            ).toLocaleDateString()} にはじめました`}
           </p>
         </div>
       </div>
