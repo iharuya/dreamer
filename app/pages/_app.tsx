@@ -71,7 +71,7 @@ const App = ({ Component, pageProps }: AppProps<{ session: Session }>) => {
       <WagmiConfig client={client}>
         <ConnectKitProvider>
           <SessionProvider session={pageProps.session}>
-            <SWRConfig value={{ refreshInterval: 10000 }}>
+            <SWRConfig>
               <Layout>
                 <Component {...pageProps} />
               </Layout>

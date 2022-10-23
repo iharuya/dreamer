@@ -1,54 +1,53 @@
 import { useSession } from "next-auth/react"
-import { isAddress } from "ethers/lib/utils"
-import type { GetServerSideProps, NextPage } from "next"
-import axios, { AxiosResponse } from "axios"
-import prisma from "@/lib/prisma"
-import { useEffect, useState } from "react"
+import type { NextPage } from "next"
+import axios, { AxiosError, AxiosResponse } from "axios"
+import { useState } from "react"
 import Avatar from "boring-avatars"
 import { AVATAR_COLORS } from "@/constants/config"
 import { toast } from "react-toastify"
 import clsx from "clsx"
 import type { Account } from "@prisma/client"
+import useSWR, { useSWRConfig } from "swr"
+import { useRouter } from "next/router"
+import Error from "next/error"
+import { LScale } from "@/components/common/Loading"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { patchSchema, PatchSchema } from "schema/account"
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  // Ethereumのアドレスでない場合は404を返す
-  const queryAddress = context.query.address as string
-  if (!isAddress(queryAddress)) {
-    return {
-      notFound: true,
-    }
-  }
-  // Nextjsのapiを叩くのはフロントからのみで、ここでは直接DBを操作する
-  const account = await prisma.account.findUnique({
-    where: { address: queryAddress },
-  })
-  if (!account)
-    return {
-      notFound: true,
-    }
-  return {
-    props: { initialAccount: JSON.parse(JSON.stringify(account)) },
-  }
-}
+const fetcher = (url: string) => axios.get(url).then((res) => res.data)
 
-const Page: NextPage<{ initialAccount: Account }> = ({ initialAccount }) => {
-  const { data: session, status } = useSession()
-  const [account, setAccount] = useState<Account>(initialAccount)
-  const isMe =
-    status === "authenticated" && account.address === session?.address
+const Page: NextPage = () => {
+  const router = useRouter()
+  const queryAddress = router.query.address as string // for sure?
+  const { data: session } = useSession()
+  const { mutate } = useSWRConfig()
+  const { data: account, error: accountError } = useSWR<Account, AxiosError>(
+    `/api/accounts/${queryAddress}`,
+    fetcher
+  )
   const [configModal, setConfigModal] = useState<boolean>(false)
-  const [name, setName] = useState<string>(initialAccount.name || "")
+  const {
+    register,
+    handleSubmit,
+    formState: { errors: formErrors },
+  } = useForm<PatchSchema>({
+    resolver: zodResolver(patchSchema),
+  })
 
-  useEffect(() => {
-    setAccount(initialAccount)
-    setName(initialAccount.name || "")
-  }, [initialAccount])
+  if (!account && !accountError) return <LScale message="Loading account..." />
+  if (!account) {
+    console.error(accountError)
+    return <Error statusCode={accountError?.response?.status || 500} />
+  }
+  const isMe = account.address === session?.address
 
-  const update = async () => {
+  const updateAccount = async (data: PatchSchema) => {
     axios
-      .patch(`/api/accounts/${account.address}`, { name })
+      .patch(`/api/accounts/${account.address}`, data)
       .then((res: AxiosResponse<Account>) => {
-        setAccount(res.data)
+        toast.info("アカウントを更新しました")
+        mutate(`/api/accounts/${account.address}`)
         setConfigModal(false)
       })
       .catch((e) => {
@@ -91,24 +90,43 @@ const Page: NextPage<{ initialAccount: Account }> = ({ initialAccount }) => {
 
       <div className={clsx("modal", configModal && "modal-open")}>
         <div className="modal-box">
-          <h3 className="font-bold text-2xl mb-4">アカウント情報</h3>
-          <div className="form-control">
-            <input
-              type="text"
-              placeholder="名前を入力"
-              className="input input-bordered"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </div>
-          <div className="modal-action">
-            <button className="btn" onClick={() => setConfigModal(false)}>
-              キャンセル
-            </button>
-            <button className="btn btn-primary" onClick={update}>
-              保存
-            </button>
-          </div>
+          <h3 className="font-bold text-2xl mb-4">アカウント設定</h3>
+          <form onSubmit={handleSubmit(updateAccount)}>
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">名前</span>
+              </label>
+              <input
+                type="text"
+                placeholder="名前を入力"
+                className={clsx(
+                  "input input-bordered",
+                  formErrors.name?.message && "input-error"
+                )}
+                defaultValue={account.name || ""}
+                {...register("name")}
+              />
+              {formErrors.name?.message && (
+                <label className="label">
+                  <span className="label-text text-error">
+                    {formErrors.name?.message}
+                  </span>
+                </label>
+              )}
+            </div>
+            <div className="modal-action">
+              <button
+                type="button"
+                className="btn"
+                onClick={() => setConfigModal(false)}
+              >
+                キャンセル
+              </button>
+              <button type="submit" className="btn btn-primary">
+                保存
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </>

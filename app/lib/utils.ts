@@ -1,3 +1,11 @@
+export const sleep = async (ms: number): Promise<void> => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve()
+    }, ms)
+  })
+}
+
 // 360, 100, 50 -> #ff0000
 export const hslToHex = (h: number, s: number, l: number): string => {
   l /= 100

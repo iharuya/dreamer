@@ -3,6 +3,8 @@ import { getToken } from "next-auth/jwt"
 import { NextApiHandler } from "next"
 import { z } from "zod"
 import { withZod, zodAddress } from "@/lib/zod"
+import { patchSchema } from "schema/account"
+import { sleep } from "@/lib/utils"
 
 const handleGet = withZod(
   z.object({
@@ -23,7 +25,7 @@ const handleGet = withZod(
 const handlePatch = withZod(
   z.object({
     query: z.object({ address: zodAddress }),
-    body: z.object({ name: z.string().max(20) }), // can be empty ""
+    body: patchSchema,
   }),
   async (req, res) => {
     const address = req.query.address
@@ -58,6 +60,8 @@ const handler: NextApiHandler = async (req, res) => {
     case "HEAD":
       return handleHead(req, res)
     case "GET":
+      console.log("get called")
+      await sleep(3000)
       return handleGet(req, res)
     case "PATCH":
       return handlePatch(req, res)
