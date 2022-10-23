@@ -1,37 +1,75 @@
-import type { NextApiRequest, NextApiResponse } from "next"
 import prisma from "@/lib/prismadb"
 import { getToken } from "next-auth/jwt"
+import { NextApiHandler } from "next"
+import { z } from "zod"
+import { withZod } from "@/lib/withZod";
+import { getAddress, isAddress } from "ethers/lib/utils";
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const address = (req.query.address as string) || undefined // need a serializer...
-  if (req.method === "HEAD") {
-    const account = await prisma.account.findUnique({
-      where: { address },
-      select: { address: true },
+const zodAddress = z.string().refine((val) => {
+  const low = val.toLowerCase()
+  return isAddress(low) && getAddress(low) === val
+}, "Invalid ethereum address")
+
+const handleGet = withZod(
+  z.object({
+    query: z.object({
+      address: zodAddress
     })
-    if (account) res.status(200).end()
-    res.status(404).end()
-  } else if (req.method === "GET") {
+  }),
+  async (req, res) => {
+    const address = req.query.address
     const account = await prisma.account.findUnique({
       where: { address },
     })
     if (!account) return res.status(404).json({ message: "account not found" })
-    return res.status(200).json(account)
-  } else if (req.method === "PATCH") {
+    return res.status(200).json(account);
+  }
+);
+
+const handlePatch = withZod(
+  z.object({
+    query: z.object({ address: zodAddress }),
+    body: z.object({ name: z.string().max(20) }) // can be empty ""
+  }),
+  async (req, res) => {
+    const address = req.query.address
     const token = await getToken({ req })
     if (!token || token.sub !== address) {
-      // need to implement a middleware...
       return res.status(401).json({ message: "unauthorized" })
     }
-    // need to implement a serializer and validation...
-    const newName = (req.body.name as string) || undefined
     const updatedAccount = await prisma.account.update({
       where: { address },
-      data: { name: newName },
+      data: { name: req.body.name },
     })
     return res.status(200).json(updatedAccount)
-  } else {
-    return res.status(405).json({ message: "method not allowed" })
+  }
+)
+
+const handleHead = withZod(
+  z.object({
+    query: z.object({ address: zodAddress })
+  }),
+  async (req, res) => {
+    const address = req.query.address
+    const account = await prisma.account.findUnique({
+      where: { address },
+    })
+    if (account) return res.status(200).end()
+    return res.status(404).end()
+  }
+);
+
+
+const handler: NextApiHandler = async (req, res) => {
+  switch (req.method) {
+    case "HEAD":
+      return handleHead(req, res)
+    case "GET":
+      return handleGet(req, res)
+    case "PATCH":
+      return handlePatch(req, res)
+    default:
+      return res.status(405).json({ message: "method not allowed" })
   }
 }
 
