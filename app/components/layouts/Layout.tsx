@@ -16,7 +16,7 @@ const Component: FC<{ children: ReactNode }> = ({ children }) => {
   const [signinModal, setSigninModal] = useState<boolean>(false)
 
   /*
-  接続状態
+  接続状態管理（仮）
   - ウォレット接続
     - セッション接続（authenticated）
     - unauthenticated

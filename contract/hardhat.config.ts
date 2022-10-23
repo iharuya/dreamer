@@ -17,7 +17,7 @@ const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
   networks: {
     localhost: {
-      url: `http://localhost/${process.env.PORT || "8545"}`,
+      url: `http://localhost:${process.env.PORT || "8545"}`,
       accounts: {
         mnemonic: process.env.DEV_MNEMONIC || "",
       },

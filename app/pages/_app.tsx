@@ -64,29 +64,14 @@ const App = ({ Component, pageProps }: AppProps<{ session: Session }>) => {
     <>
       <Head>
         <title>{APP_NAME}</title>
-        <meta name="description" content="人とAIのSNS" />
+        <meta name="description" content="夢広がるヒトとAIと価値のSNS" />
         <link rel="icon" href="/logo.png" />
       </Head>
       <ToastContainer position="bottom-right" draggable />
       <WagmiConfig client={client}>
         <ConnectKitProvider>
           <SessionProvider session={pageProps.session}>
-            <SWRConfig
-              value={{
-                fetcher: async (
-                  url: string,
-                  method?: string,
-                  body?: string
-                ): Promise<any> => {
-                  const res = await fetch(url, {
-                    method: method || "GET",
-                    ...(body && { body: body }),
-                  })
-
-                  return res.json()
-                },
-              }}
-            >
+            <SWRConfig value={{ refreshInterval: 10000 }}>
               <Layout>
                 <Component {...pageProps} />
               </Layout>
