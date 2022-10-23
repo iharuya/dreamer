@@ -2,7 +2,7 @@
   "name": "contract",
   "license": "MIT",
   "scripts": {
-    "dev": "hardhat node --port 8546",
+    "dev": "dotenv -- bash -c 'hardhat node --port $PORT'",
     "compile": "hardhat compile",
     "test": "hardhat test",
     "execute": "hardhat run",
@@ -27,6 +27,7 @@
     "@types/node": ">=12.0.0",
     "chai": "^4.2.0",
     "dotenv": "^16.0.2",
+    "dotenv-cli": "^6.0.0",
     "ethers": "^5.4.7",
     "hardhat": "^2.11.2",
     "hardhat-gas-reporter": "^1.0.8",

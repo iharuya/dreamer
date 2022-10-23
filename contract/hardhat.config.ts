@@ -17,13 +17,7 @@ const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
   networks: {
     localhost: {
-      url: "http://127.0.0.1:8546",
-      accounts: {
-        mnemonic: process.env.DEV_MNEMONIC || "",
-      },
-    },
-    goerli: {
-      url: process.env.GOERLI_RPC_URL || "",
+      url: `http://localhost/${process.env.PORT || "8545"}`,
       accounts: {
         mnemonic: process.env.DEV_MNEMONIC || "",
       },
@@ -37,7 +31,6 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: {
-      goerli: process.env.ETHERSCAN_APIKEY || "",
       polygonMumbai: process.env.POLYGONSCAN_APIKEY || "",
     },
   },

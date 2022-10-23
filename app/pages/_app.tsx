@@ -25,7 +25,11 @@ const appProviders = [
   jsonRpcProvider({
     rpc: (currentChain) => {
       if (currentChain.id !== chain.hardhat.id) return null
-      return { http: "http://localhost:8546" }
+      return {
+        http: `http://localhost:${
+          process.env.NEXT_PUBLIC_HARDHAT_PORT || "8545"
+        }`,
+      }
     },
   }),
   publicProvider(),
