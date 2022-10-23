@@ -2,19 +2,13 @@ import prisma from "@/lib/prismadb"
 import { getToken } from "next-auth/jwt"
 import { NextApiHandler } from "next"
 import { z } from "zod"
-import { withZod } from "@/lib/withZod";
-import { getAddress, isAddress } from "ethers/lib/utils";
-
-const zodAddress = z.string().refine((val) => {
-  const low = val.toLowerCase()
-  return isAddress(low) && getAddress(low) === val
-}, "Invalid ethereum address")
+import { withZod, zodAddress } from "@/lib/zod"
 
 const handleGet = withZod(
   z.object({
     query: z.object({
-      address: zodAddress
-    })
+      address: zodAddress,
+    }),
   }),
   async (req, res) => {
     const address = req.query.address
@@ -22,14 +16,14 @@ const handleGet = withZod(
       where: { address },
     })
     if (!account) return res.status(404).json({ message: "account not found" })
-    return res.status(200).json(account);
+    return res.status(200).json(account)
   }
-);
+)
 
 const handlePatch = withZod(
   z.object({
     query: z.object({ address: zodAddress }),
-    body: z.object({ name: z.string().max(20) }) // can be empty ""
+    body: z.object({ name: z.string().max(20) }), // can be empty ""
   }),
   async (req, res) => {
     const address = req.query.address
@@ -47,7 +41,7 @@ const handlePatch = withZod(
 
 const handleHead = withZod(
   z.object({
-    query: z.object({ address: zodAddress })
+    query: z.object({ address: zodAddress }),
   }),
   async (req, res) => {
     const address = req.query.address
@@ -57,8 +51,7 @@ const handleHead = withZod(
     if (account) return res.status(200).end()
     return res.status(404).end()
   }
-);
-
+)
 
 const handler: NextApiHandler = async (req, res) => {
   switch (req.method) {

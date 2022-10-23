@@ -1,12 +1,23 @@
-import type { NextApiRequest, NextApiResponse } from "next"
 import prisma from "@/lib/prismadb"
+import { NextApiHandler } from "next"
 import { getToken } from "next-auth/jwt"
+import { z } from "zod"
+import { withZod, zodAddress } from "@/lib/zod"
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === "POST") {
-    // create a new account
+const handleGet = withZod(z.object({}), async (req, res) => {
+  const accounts = await prisma.account.findMany()
+  return res.status(200).json(accounts)
+})
+
+const handlePost = withZod(
+  z.object({
+    body: z.object({
+      address: zodAddress,
+    }),
+  }),
+  async (req, res) => {
     const token = await getToken({ req })
-    const address = (req.body.address as string) || undefined
+    const address = req.body.address
     if (!token || token.sub !== address) {
       return res.status(401).json({ message: "unauthorized" })
     }
@@ -22,12 +33,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         address,
       },
     })
-    return res.status(200).json(account)
-  } else if (req.method === "GET") {
-    const accounts = await prisma.account.findMany()
-    return res.status(200).json(accounts)
-  } else {
-    return res.status(405).json({ message: "method not allowed" })
+    return res.status(201).json(account)
+  }
+)
+
+const handler: NextApiHandler = async (req, res) => {
+  switch (req.method) {
+    case "GET":
+      return handleGet(req, res)
+    case "POST":
+      return handlePost(req, res)
+    default:
+      return res.status(405).json({ message: "method not allowed" })
   }
 }
 
