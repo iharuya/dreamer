@@ -1,4 +1,4 @@
-import prisma from "@/lib/prismadb"
+import prisma from "@/lib/prisma"
 import { getToken } from "next-auth/jwt"
 import { NextApiHandler } from "next"
 import { z } from "zod"
