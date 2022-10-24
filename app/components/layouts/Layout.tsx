@@ -130,8 +130,8 @@ const Component: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <div className="min-h-screen overflow-hidden">
       <Header />
-      <main style={{ height: "1000px" }}>
-        <div className="w-full px-4">{children}</div>
+      <main style={{ minHeight: "1000px" }}>
+        <div className="max-w-5xl mx-auto">{children}</div>
         <div className={clsx("modal", signinModal && "modal-open")}>
           <div className="modal-box">
             <h3 className="font-bold text-lg">サインインしてください</h3>

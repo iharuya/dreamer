@@ -21,6 +21,7 @@ const Component: FC = () => {
               </Link>
             </div>
             <div className="w-full items-center justify-end flex space-x-4">
+              <Link href="/stats">Stats</Link>
               <ConnectKitButton.Custom>
                 {({ isConnected, show, address, ensName }) => {
                   return (
