@@ -15,6 +15,7 @@ import type { Session } from "next-auth"
 import { SWRConfig } from "swr"
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
+import axios from "axios"
 
 const appChains = [chain.polygonMumbai, chain.hardhat]
 if (process.env.NODE_ENV == "development") {
@@ -71,7 +72,12 @@ const App = ({ Component, pageProps }: AppProps<{ session: Session }>) => {
       <WagmiConfig client={client}>
         <ConnectKitProvider>
           <SessionProvider session={pageProps.session}>
-            <SWRConfig>
+            <SWRConfig
+              value={{
+                fetcher: (url: string) =>
+                  axios.get(url).then((res) => res.data),
+              }}
+            >
               <Layout>
                 <Component {...pageProps} />
               </Layout>
