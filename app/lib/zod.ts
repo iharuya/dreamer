@@ -24,7 +24,7 @@ export function withZod<T extends ZodSchema>(
   }
 }
 
-export const zodAddress = z.string().refine((val) => {
+export const ethAddress = z.string().refine((val) => {
   const low = val.toLowerCase()
   return isAddress(low) && getAddress(low) === val
 }, "Invalid ethereum address")

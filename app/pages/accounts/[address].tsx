@@ -13,7 +13,10 @@ import Error from "next/error"
 import { LScale } from "@/components/common/Loading"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { patchSchema, PatchSchema } from "schema/account"
+import { patch as patchSchema } from "schema/accounts"
+import { z } from "zod"
+const schema = patchSchema.shape.body
+type Schema = z.infer<typeof schema>
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data)
 
@@ -31,8 +34,8 @@ const Page: NextPage = () => {
     register,
     handleSubmit,
     formState: { errors: formErrors },
-  } = useForm<PatchSchema>({
-    resolver: zodResolver(patchSchema),
+  } = useForm<Schema>({
+    resolver: zodResolver(schema),
   })
 
   if (!account && !accountError) return <LScale message="Loading account..." />
@@ -42,12 +45,12 @@ const Page: NextPage = () => {
   }
   const isMe = account.address === session?.address
 
-  const updateAccount = async (data: PatchSchema) => {
+  const updateAccount = async (data: Schema) => {
     axios
       .patch(`/api/accounts/${account.address}`, data)
-      .then((res: AxiosResponse<Account>) => {
-        toast.info("アカウントを更新しました")
+      .then(() => {
         mutate(`/api/accounts/${account.address}`)
+        toast.info("アカウントを更新しました")
         setConfigModal(false)
       })
       .catch((e) => {
