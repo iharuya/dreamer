@@ -15,8 +15,8 @@ model Account {
   name          String?
   dreams        Dream[]
   dreamRequests DreamRequest[]
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @default(now()) @updatedAt
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @default(now()) @updatedAt
 }
 
 enum DreamStatus {
@@ -35,15 +35,15 @@ model Dream {
   request        DreamRequest?
   dreamer        Account       @relation(fields: [dreamerAddress], references: [address])
   dreamerAddress String        @unique
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @default(now()) @updatedAt
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @default(now()) @updatedAt
 }
 
 model Image {
-  id         Int      @id @default(autoincrement())
-  url        String
-  dream      Dream    @relation(fields: [dreamId], references: [id])
-  dreamId    Int      @unique
+  id        Int      @id @default(autoincrement())
+  url       String
+  dream     Dream    @relation(fields: [dreamId], references: [id])
+  dreamId   Int      @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 }
@@ -60,10 +60,10 @@ model DreamRequest {
   sender        Account            @relation(fields: [senderAddress], references: [address])
   senderAddress String             @unique
   tokenId       Int
-  expires       Int // block number
+  expiresAt     Int // block number
   status        DreamRequestStatus @default(PENDING)
   dream         Dream?             @relation(fields: [dreamId], references: [id])
   dreamId       Int?               @unique
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @default(now()) @updatedAt
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @default(now()) @updatedAt
 }

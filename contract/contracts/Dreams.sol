@@ -36,14 +36,14 @@ contract Dreams is ERC1155, Ownable, ERC1155Supply {
     function mint(
         uint256 requestId,
         uint256 tokenId,
-        uint256 expires,
+        uint256 expiresAt,
         bytes memory signature
     ) external payable {
         require(!requestIds[requestId], "request has already been processed");
-        bytes32 messageHash = keccak256(abi.encodePacked(requestId, msg.sender, tokenId, expires));
+        bytes32 messageHash = keccak256(abi.encodePacked(requestId, msg.sender, tokenId, expiresAt));
         bytes32 ethSignedMessageHash = ECDSA.toEthSignedMessageHash(messageHash);
         require(ECDSA.recover(ethSignedMessageHash, signature) == SIGNER, "forbidden");
-        require(block.number <= expires, "signature expired");
+        require(block.number <= expiresAt, "signature expired");
         require(msg.value == mintValue(tokenId, 1), "wrong price sent"); // should this be hard coded?
         requestIds[requestId] == true;
         _mint(msg.sender, tokenId, 1, "");
