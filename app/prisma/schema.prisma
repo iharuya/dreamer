@@ -15,8 +15,8 @@ model Account {
   name          String?
   dreams        Dream[]
   dreamRequests DreamRequest[]
-  created_at    DateTime       @default(now())
-  updated_at    DateTime       @default(now()) @updatedAt
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @default(now()) @updatedAt
 }
 
 enum DreamStatus {
@@ -35,8 +35,8 @@ model Dream {
   request        DreamRequest?
   dreamer        Account       @relation(fields: [dreamerAddress], references: [address])
   dreamerAddress String        @unique
-  created_at     DateTime      @default(now())
-  updated_at     DateTime      @default(now()) @updatedAt
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @default(now()) @updatedAt
 }
 
 model Image {
@@ -44,8 +44,8 @@ model Image {
   url        String
   dream      Dream    @relation(fields: [dreamId], references: [id])
   dreamId    Int      @unique
-  created_at DateTime @default(now())
-  updated_at DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 enum DreamRequestStatus {
@@ -64,6 +64,6 @@ model DreamRequest {
   status        DreamRequestStatus @default(PENDING)
   dream         Dream?             @relation(fields: [dreamId], references: [id])
   dreamId       Int?               @unique
-  created_at    DateTime           @default(now())
-  updated_at    DateTime           @default(now()) @updatedAt
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @default(now()) @updatedAt
 }

@@ -1,7 +1,7 @@
 import { APP_NAME } from "@/constants/config"
 import Head from "next/head"
-import Layout from "@/components/layouts/Layout"
 import "@/styles/globals.css"
+import Layout from "@/components/layouts/Layout"
 import type { AppProps } from "next/app"
 import { WagmiConfig, createClient, configureChains, chain } from "wagmi"
 import { alchemyProvider } from "wagmi/providers/alchemy"
