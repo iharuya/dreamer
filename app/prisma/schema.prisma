@@ -6,13 +6,64 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model Account {
-  address         String    @unique
-  name            String?
-  created_at      DateTime  @default(now())
-  updated_at      DateTime  @default(now()) @updatedAt
+  address       String         @id @unique
+  name          String?
+  dreams        Dream[]
+  dreamRequests DreamRequest[]
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @default(now()) @updatedAt
+}
+
+enum DreamStatus {
+  PUBLISHED
+  PENDING // request is pending or processing
+  DRAFT
+}
+
+model Dream {
+  id             Int           @id @default(autoincrement())
+  body           String
+  prompt         String
+  status         DreamStatus   @default(DRAFT)
+  nswf           Boolean       @default(false)
+  image          Image?
+  request        DreamRequest?
+  dreamer        Account       @relation(fields: [dreamerAddress], references: [address])
+  dreamerAddress String        @unique
+  created_at     DateTime      @default(now())
+  updated_at     DateTime      @default(now()) @updatedAt
+}
+
+model Image {
+  id         Int      @id @default(autoincrement())
+  url        String
+  dream      Dream    @relation(fields: [dreamId], references: [id])
+  dreamId    Int      @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+enum DreamRequestStatus {
+  EXPIRED
+  COMPLETED
+  PROCESSING
+  PENDING
+}
+
+model DreamRequest {
+  id            Int                @id @default(autoincrement())
+  sender        Account            @relation(fields: [senderAddress], references: [address])
+  senderAddress String             @unique
+  tokenId       Int
+  expires       Int // block number
+  status        DreamRequestStatus @default(PENDING)
+  dream         Dream?             @relation(fields: [dreamId], references: [id])
+  dreamId       Int?               @unique
+  created_at    DateTime           @default(now())
+  updated_at    DateTime           @default(now()) @updatedAt
 }
