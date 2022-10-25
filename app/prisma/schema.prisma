@@ -35,6 +35,10 @@ model Dream {
   request        DreamRequest?
   dreamer        Account       @relation(fields: [dreamerAddress], references: [address])
   dreamerAddress String        @unique
+  parent         Dream?        @relation("ParentChildren", fields: [parentId], references: [id])
+  parentId       Int?
+  children       Dream[]       @relation("ParentChildren")
+  generation     Int // The first one will be 0
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @default(now()) @updatedAt
 }
