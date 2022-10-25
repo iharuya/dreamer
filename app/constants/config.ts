@@ -6,3 +6,5 @@ export const AVATAR_COLORS = [
   "#660860",
   "#9380B7",
 ]
+
+export const EXPIRATION_BLOCKS = 10000000

@@ -15,7 +15,7 @@ async function main() {
 
   const sender = (await ethers.getSigners())[0]
   const signature = await generateSignatureForMint(signer, [
-    { name: "requestId", type: "uint256", value: 12345 },
+    { name: "ticketId", type: "uint256", value: 12345 },
     { name: "sender", type: "address", value: sender.address },
     { name: "tokenId", type: "uint256", value: 0 },
     { name: "expires", type: "uint256", value: 10000000 },

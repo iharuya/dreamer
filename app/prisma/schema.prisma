@@ -11,36 +11,38 @@ datasource db {
 }
 
 model Account {
-  address       String         @id @unique
-  name          String?
-  dreams        Dream[]
-  dreamRequests DreamRequest[]
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @default(now()) @updatedAt
+  address      String        @id
+  name         String?
+  dreams       Dream[]
+  DreamTickets DreamTicket[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @default(now()) @updatedAt
 }
 
 enum DreamStatus {
   PUBLISHED
-  PENDING // request is pending or processing
+  BANNED // when nsfw
+  PENDING
   DRAFT
 }
 
 model Dream {
-  id             Int           @id @default(autoincrement())
+  id             Int          @id @default(autoincrement())
   body           String
   prompt         String
-  status         DreamStatus   @default(DRAFT)
-  nswf           Boolean       @default(false)
+  status         DreamStatus  @default(DRAFT)
   image          Image?
-  request        DreamRequest?
-  dreamer        Account       @relation(fields: [dreamerAddress], references: [address])
-  dreamerAddress String        @unique
-  parent         Dream?        @relation("ParentChildren", fields: [parentId], references: [id])
+  dreamer        Account      @relation(fields: [dreamerAddress], references: [address])
+  dreamerAddress String       @unique
+  ticket         DreamTicket? 
+  token          DreamToken?  @relation(fields: [tokenId], references: [id])
+  tokenId        Int?
+  parent         Dream?       @relation("ParentChildren", fields: [parentId], references: [id])
   parentId       Int?
-  children       Dream[]       @relation("ParentChildren")
+  children       Dream[]      @relation("ParentChildren")
   generation     Int // The first one will be 0
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @default(now()) @updatedAt
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @default(now()) @updatedAt
 }
 
 model Image {
@@ -52,22 +54,29 @@ model Image {
   updatedAt DateTime @default(now()) @updatedAt
 }
 
-enum DreamRequestStatus {
-  EXPIRED
+model DreamToken {
+  id        Int      @id @default(autoincrement()) // ERC1155 tokenId
+  dreams    Dream[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+enum DreamTicketStatus {
   COMPLETED
   PROCESSING
   PENDING
 }
 
-model DreamRequest {
-  id            Int                @id @default(autoincrement())
-  sender        Account            @relation(fields: [senderAddress], references: [address])
-  senderAddress String             @unique
+model DreamTicket {
+  id            Int               @id @default(autoincrement())
   tokenId       Int
   expiresAt     Int // block number
-  status        DreamRequestStatus @default(PENDING)
-  dream         Dream?             @relation(fields: [dreamId], references: [id])
-  dreamId       Int?               @unique
-  createdAt     DateTime           @default(now())
-  updatedAt     DateTime           @default(now()) @updatedAt
+  status        DreamTicketStatus @default(PENDING)
+  sender        Account           @relation(fields: [senderAddress], references: [address])
+  senderAddress String            @unique
+  signature     String
+  dream         Dream             @relation(fields: [dreamId], references: [id])
+  dreamId       Int               @unique
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @default(now()) @updatedAt
 }

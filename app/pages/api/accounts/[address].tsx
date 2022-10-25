@@ -9,7 +9,7 @@ const handleGet = withZod(getOne, async (req, res) => {
   const account = await prisma.account.findUnique({
     where: { address },
   })
-  if (!account) return res.status(404).json({ message: "account not found" })
+  if (!account) return res.status(404).json({ message: "Account not found" })
   return res.status(200).json(account)
 })
 
@@ -17,8 +17,9 @@ const handlePatch = withZod(patch, async (req, res) => {
   const address = req.query.address
   const token = await getToken({ req })
   if (!token || token.sub !== address) {
-    return res.status(401).json({ message: "unauthorized" })
+    return res.status(401).json({ message: "Unauthorized" })
   }
+  // Assume the account exists...
   const updatedAccount = await prisma.account.update({
     where: { address },
     data: { name: req.body.name },
@@ -44,7 +45,7 @@ const handler: NextApiHandler = async (req, res) => {
     case "PATCH":
       return handlePatch(req, res)
     default:
-      return res.status(405).json({ message: "method not allowed" })
+      return res.status(405).json({ message: "Method not allowed" })
   }
 }
 

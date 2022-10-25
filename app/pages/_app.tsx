@@ -27,8 +27,9 @@ const appProviders = [
     rpc: (currentChain) => {
       if (currentChain.id !== chain.hardhat.id) return null
       return {
-        http: `http://localhost:${process.env.NEXT_PUBLIC_HARDHAT_PORT || "8545"
-          }`,
+        http: `http://localhost:${
+          process.env.NEXT_PUBLIC_HARDHAT_PORT || "8545"
+        }`,
       }
     },
   }),
@@ -47,9 +48,10 @@ const client = createClient({
       chains,
       options: {
         name: (detectedName) =>
-          `埋め込み (${typeof detectedName === "string"
-            ? detectedName
-            : detectedName.join(", ")
+          `埋め込み (${
+            typeof detectedName === "string"
+              ? detectedName
+              : detectedName.join(", ")
           })`,
       },
     }),

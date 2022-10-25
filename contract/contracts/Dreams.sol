@@ -12,9 +12,9 @@ contract Dreams is ERC1155, Ownable, ERC1155Supply {
     uint256 public immutable DELTA;
     address public immutable SIGNER;
 
-    mapping(uint256 => bool) public requestIds;
+    mapping(uint256 => bool) public ticketIds;
 
-    event Minted(address indexed to, uint256 indexed tokenId, uint256 indexed requestId);
+    event Minted(address indexed to, uint256 indexed tokenId, uint256 indexed ticketId);
 
     constructor(
         uint256 alpha,
@@ -34,20 +34,20 @@ contract Dreams is ERC1155, Ownable, ERC1155Supply {
     }
 
     function mint(
-        uint256 requestId,
+        uint256 ticketId,
         uint256 tokenId,
         uint256 expiresAt,
         bytes memory signature
     ) external payable {
-        require(!requestIds[requestId], "request has already been processed");
-        bytes32 messageHash = keccak256(abi.encodePacked(requestId, msg.sender, tokenId, expiresAt));
+        require(!ticketIds[ticketId], "Ticket has already been used");
+        bytes32 messageHash = keccak256(abi.encodePacked(ticketId, msg.sender, tokenId, expiresAt));
         bytes32 ethSignedMessageHash = ECDSA.toEthSignedMessageHash(messageHash);
-        require(ECDSA.recover(ethSignedMessageHash, signature) == SIGNER, "forbidden");
-        require(block.number <= expiresAt, "signature expired");
-        require(msg.value == mintValue(tokenId, 1), "wrong price sent"); // should this be hard coded?
-        requestIds[requestId] == true;
+        require(ECDSA.recover(ethSignedMessageHash, signature) == SIGNER, "Forbidden");
+        require(block.number <= expiresAt, "Signature expired");
+        require(msg.value == mintValue(tokenId, 1), "Wrong price sent"); // should this be hard coded?
+        ticketIds[ticketId] == true;
         _mint(msg.sender, tokenId, 1, "");
-        emit Minted(msg.sender, tokenId, requestId);
+        emit Minted(msg.sender, tokenId, ticketId);
     }
 
     function burn(
