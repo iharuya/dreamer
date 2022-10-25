@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { APP_NAME } from "@/constants/config"
-import type { FC } from "react"
+import { FC } from "react"
 import { ConnectKitButton } from "connectkit"
 import HeaderMenu from "./HeaderMenu"
 

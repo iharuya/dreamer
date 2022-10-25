@@ -6,7 +6,7 @@ import { patch as patchSchema } from "@/schema/accounts"
 import { useSWRConfig } from "swr"
 import { toast } from "react-toastify"
 import axios from "axios"
-import type { Account } from "@prisma/client"
+import { Account } from "@prisma/client"
 import clsx from "clsx"
 
 const schema = patchSchema.shape.body

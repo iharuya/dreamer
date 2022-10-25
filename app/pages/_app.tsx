@@ -2,7 +2,7 @@ import { APP_NAME } from "@/constants/config"
 import Head from "next/head"
 import "@/styles/globals.css"
 import Layout from "@/components/layouts/Layout"
-import type { AppProps } from "next/app"
+import { AppProps } from "next/app"
 import { WagmiConfig, createClient, configureChains, chain } from "wagmi"
 import { alchemyProvider } from "wagmi/providers/alchemy"
 import { publicProvider } from "wagmi/providers/public"
@@ -11,7 +11,7 @@ import { InjectedConnector } from "wagmi/connectors/injected"
 import { MetaMaskConnector } from "wagmi/connectors/metaMask"
 import { ConnectKitProvider } from "connectkit"
 import { SessionProvider } from "next-auth/react"
-import type { Session } from "next-auth"
+import { Session } from "next-auth"
 import { SWRConfig } from "swr"
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
@@ -27,9 +27,8 @@ const appProviders = [
     rpc: (currentChain) => {
       if (currentChain.id !== chain.hardhat.id) return null
       return {
-        http: `http://localhost:${
-          process.env.NEXT_PUBLIC_HARDHAT_PORT || "8545"
-        }`,
+        http: `http://localhost:${process.env.NEXT_PUBLIC_HARDHAT_PORT || "8545"
+          }`,
       }
     },
   }),
@@ -48,10 +47,9 @@ const client = createClient({
       chains,
       options: {
         name: (detectedName) =>
-          `埋め込み (${
-            typeof detectedName === "string"
-              ? detectedName
-              : detectedName.join(", ")
+          `埋め込み (${typeof detectedName === "string"
+            ? detectedName
+            : detectedName.join(", ")
           })`,
       },
     }),

@@ -1,5 +1,5 @@
 import { useSession } from "next-auth/react"
-import type { NextPage } from "next"
+import { NextPage } from "next"
 import { useState } from "react"
 import useSWR from "swr"
 import { useRouter } from "next/router"
