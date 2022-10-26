@@ -6,6 +6,7 @@ import Header from "./Header"
 import { toast } from "react-toastify"
 import clsx from "clsx"
 import axios, { AxiosError } from "axios"
+import { useSWRConfig } from "swr"
 
 const Component: FC<{ children: ReactNode }> = ({ children }) => {
   const { address: connectedAddress, isConnected } = useAccount()
@@ -14,6 +15,7 @@ const Component: FC<{ children: ReactNode }> = ({ children }) => {
   // previous authenticated address or undefined
   const [previousAddress, setPreviousAddress] = useState<string | undefined>()
   const [signinModal, setSigninModal] = useState<boolean>(false)
+  const { mutate } = useSWRConfig()
 
   /*
   接続状態管理（仮）
@@ -62,12 +64,12 @@ const Component: FC<{ children: ReactNode }> = ({ children }) => {
       autoClose: false,
     })
     try {
-      const accountExists = await axios
+      const needToCreateNew = await axios
         .head(`/api/accounts/${address}`)
-        .then(() => true)
+        .then(() => false)
         .catch((err: AxiosError | Error) => {
           if (axios.isAxiosError(err) && err.response?.status === 404) {
-            return false
+            return true
           }
           throw new Error(err.message)
         })
@@ -92,12 +94,12 @@ const Component: FC<{ children: ReactNode }> = ({ children }) => {
         redirect: false,
         signature,
       })
-      if (!accountExists) {
-        toast.update(toastId, { render: "アカウントを新規作成中..." })
+      if (needToCreateNew) {
         await createAccount(address)
+        mutate(`/api/accounts/${address}`)
       }
       toast.update(toastId, {
-        render: "サインインしました",
+        render: needToCreateNew ? "ようこそ" : "おかえりなさい",
         type: toast.TYPE.SUCCESS,
         autoClose: 3000,
       })
