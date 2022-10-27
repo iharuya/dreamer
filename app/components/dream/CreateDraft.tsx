@@ -6,19 +6,21 @@ import { createDraft as createDraftSchema } from "@/schema/dreams"
 import { toast } from "react-toastify"
 import axios from "axios"
 import clsx from "clsx"
-import { Account } from "@prisma/client"
 
-// Add /api/dreams/draft
 // Todo: Add or integrate "Edit draft"
 // Todo: Integrate "redream"
 
-const schema = createDraftSchema.shape.body
+const schema = createDraftSchema.shape.body.pick({
+  body: true,
+  prompt: true,
+})
 type Schema = z.infer<typeof schema>
 
 type Props = {
+  dreamerAddress: string
   close: () => void
 }
-const Component: FC<Props> = ({ close }) => {
+const Component: FC<Props> = ({ dreamerAddress, close }) => {
   const {
     register,
     handleSubmit,
@@ -28,8 +30,12 @@ const Component: FC<Props> = ({ close }) => {
   })
 
   const create = async (data: Schema) => {
+    const body = {
+      ...data,
+      dreamerAddress,
+    }
     axios
-      .post("/api/dreams", data)
+      .post("/api/dreams/draft", body)
       .then(() => {
         toast.info("ドラフトを作成しました")
         close()
@@ -46,9 +52,12 @@ const Component: FC<Props> = ({ close }) => {
         <h3 className="font-bold text-2xl mb-4">新規ドラフト</h3>
         <form onSubmit={handleSubmit(create)}>
           <div className="form-control">
-            <textarea 
+            <textarea
               placeholder="将来何してる？"
-              className={clsx("textarea", formErrors.body?.message && "textarea-error")}
+              className={clsx(
+                "textarea",
+                formErrors.body?.message && "textarea-error"
+              )}
               {...register("body")}
             ></textarea>
             {formErrors.body?.message && (
@@ -58,13 +67,17 @@ const Component: FC<Props> = ({ close }) => {
                 </span>
               </label>
             )}
+
             <label className="label">
               <span className="label-text">プロンプト</span>
             </label>
-            <textarea 
+            <textarea
               placeholder="A horse on the moon"
-              className={clsx("textarea", formErrors.prompt?.message && "textarea-error")}
-              {...register("body")}
+              className={clsx(
+                "textarea",
+                formErrors.prompt?.message && "textarea-error"
+              )}
+              {...register("prompt")}
             ></textarea>
             {formErrors.prompt?.message && (
               <label className="label">
@@ -79,7 +92,7 @@ const Component: FC<Props> = ({ close }) => {
               キャンセル
             </button>
             <button type="submit" className="btn btn-primary">
-              Dream
+              ドラフトを保存
             </button>
           </div>
         </form>

@@ -68,7 +68,7 @@ const Component: FC<Props> = ({ account, close }) => {
           </div>
           <div className="modal-action">
             <button type="button" className="btn" onClick={close}>
-              キャンセル
+              とじる
             </button>
             <button type="submit" className="btn btn-primary">
               保存

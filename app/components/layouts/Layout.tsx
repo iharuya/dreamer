@@ -4,9 +4,12 @@ import { signIn, signOut, getCsrfToken } from "next-auth/react"
 import { FC, ReactNode, useEffect, useState } from "react"
 import Header from "./Header"
 import { toast } from "react-toastify"
-import clsx from "clsx"
 import axios, { AxiosError } from "axios"
 import { useSWRConfig } from "swr"
+import SigninModal from "@/components/layouts/SigninModal"
+import CreateDraft from "@/components/dream/CreateDraft"
+import { useMyAccount } from "@/lib/hooks"
+import { MdEdit } from "react-icons/md"
 
 const Component: FC<{ children: ReactNode }> = ({ children }) => {
   const { address: connectedAddress, isConnected } = useAccount()
@@ -16,6 +19,8 @@ const Component: FC<{ children: ReactNode }> = ({ children }) => {
   const [previousAddress, setPreviousAddress] = useState<string | undefined>()
   const [signinModal, setSigninModal] = useState<boolean>(false)
   const { mutate } = useSWRConfig()
+  const { data: myAccount } = useMyAccount()
+  const [draftModal, setDraftModal] = useState<boolean>(false)
 
   /*
   接続状態管理（仮）
@@ -130,30 +135,35 @@ const Component: FC<{ children: ReactNode }> = ({ children }) => {
   }
 
   return (
-    <div className="min-h-screen overflow-hidden">
+    <div className="h-screen overflow-y-scroll overflow-x-hidden relative">
       <Header />
       <main style={{ minHeight: "1000px" }}>
         <div className="max-w-5xl mx-auto px-4">{children}</div>
-        <div className={clsx("modal", signinModal && "modal-open")}>
-          <div className="modal-box">
-            <h3 className="font-bold text-lg">サインインしてください</h3>
-            <p className="py-4">
-              サインインにはウォレットで署名する必要があります
-            </p>
-            <div className="modal-action">
-              <button className="btn" onClick={() => disconnect()}>
-                キャンセル
-              </button>
-              <button
-                className="btn btn-primary"
-                onClick={() => handleSignin(connectedAddress)}
-              >
-                サインイン
-              </button>
-            </div>
-          </div>
-        </div>
       </main>
+      {signinModal && (
+        <SigninModal
+          proceed={() => handleSignin(connectedAddress)}
+          cancel={() => disconnect()}
+        />
+      )}
+      {myAccount && (
+        <>
+          <div className="fixed bottom-4 right-8">
+            <button
+              className="btn btn-circle btn-lg btn-primary"
+              onClick={() => setDraftModal(true)}
+            >
+              <MdEdit className="text-4xl" />
+            </button>
+          </div>
+          {draftModal && (
+            <CreateDraft
+              dreamerAddress={myAccount.address}
+              close={() => setDraftModal(false)}
+            />
+          )}
+        </>
+      )}
     </div>
   )
 }
