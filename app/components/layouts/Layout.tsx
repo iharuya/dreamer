@@ -38,7 +38,7 @@ const Component: FC<{ children: ReactNode }> = ({ children }) => {
   ネットワークを変更したとき->今は何もしない
   */
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       if (isConnected && typeof previousAddress === "undefined") {
         await handleSignin(connectedAddress)
         return
@@ -99,33 +99,31 @@ const Component: FC<{ children: ReactNode }> = ({ children }) => {
         redirect: false,
         signature,
       })
+      toast.dismiss(toastId)
       if (needToCreateNew) {
         await createAccount(address)
         mutate(`/api/accounts/${address}`)
+        toast.success("ようこそ")
       }
-      toast.update(toastId, {
-        render: needToCreateNew ? "ようこそ" : "おかえりなさい",
-        type: toast.TYPE.SUCCESS,
-        autoClose: 3000,
-      })
       setPreviousAddress(connectedAddress)
       setSigninModal(false)
-    } catch (err) {
-      console.error(err)
-      // setPreviousAddress(undefined) ?
+    } catch (err: any) {
       setSigninModal(true)
-      toast.update(toastId, {
-        render: "サインインエラー",
-        type: toast.TYPE.ERROR,
-        autoClose: 5000,
-      })
+      // setPreviousAddress(undefined) ?
+      if (err.code !== "ACTION_REJECTED") {
+        console.error(err)
+        toast.update(toastId, {
+          render: "サインインエラー",
+          type: toast.TYPE.ERROR,
+          autoClose: 5000,
+        })
+      }
     }
   }
 
   const handleSignout = () => {
     signOut({ redirect: false })
     setPreviousAddress(undefined)
-    toast.info("サインアウトしました")
   }
 
   const createAccount = async (address: string) => {
