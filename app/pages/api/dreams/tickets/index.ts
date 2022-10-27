@@ -24,7 +24,7 @@ const handlePost = withZod(issueTicket, async (req, res) => {
   }
 
   // If the dream is the genesis then create a new DreamToken
-  // And if the ticket is deleted, 
+  // And if the ticket is deleted,
   // the token will no longer be minted with the id
   const tokenId =
     dream.tokenId === null

@@ -1,9 +1,12 @@
 import { z } from "zod"
 import { ethAddress } from "@/lib/zod"
 
-export const getMany = z.object({
+// Todo: Starts with capital case
+
+// Draft
+export const getDraftDreams = z.object({
   query: z.object({
-    dreamer: ethAddress.optional(),
+    dreamerAddress: ethAddress,
   }),
 })
 export const createDraft = z.object({
@@ -16,17 +19,26 @@ export const createDraft = z.object({
       .string()
       .min(1, { message: "内容を入力してください" })
       .max(400, { message: "400文字以下にしてください" }),
-    dreamer: ethAddress,
+    dreamerAddress: ethAddress,
     parentId: z.number().int().optional(),
   }),
 })
-
-export const generateImage = z.object({
+export const updateDraft = z.object({
+  query: z.object({
+    id: z.number().int(),
+  }),
   body: z.object({
-    dreamId: z.number().int(),
+    body: createDraft.shape.body.shape.body,
+    prompt: createDraft.shape.body.shape.prompt,
+  }),
+})
+export const deleteDraft = z.object({
+  query: z.object({
+    id: z.number().int(),
   }),
 })
 
+// Ticket
 export const issueTicket = z.object({
   body: z.object({
     senderAddress: ethAddress,
@@ -41,5 +53,19 @@ export const updateTicket = z.object({
 export const deleteTicket = z.object({
   query: z.object({
     id: z.number().int(),
+  }),
+})
+
+// Image
+export const generateImage = z.object({
+  body: z.object({
+    dreamId: z.number().int(),
+  }),
+})
+
+// Published
+export const getPublishedDreams = z.object({
+  query: z.object({
+    dreamerAddress: ethAddress.optional(),
   }),
 })
