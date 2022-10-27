@@ -5,8 +5,8 @@ import useSWR from "swr"
 import { useRouter } from "next/router"
 import Error from "next/error"
 import { LScale } from "@/components/common/Loading"
-import Info from "@/components/accounts/account/Info"
-import Config from "@/components/accounts/account/Config"
+import Info from "@/components/account/Info"
+import Config from "@/components/account/Config"
 
 const Page: NextPage = () => {
   const router = useRouter()
