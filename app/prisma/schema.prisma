@@ -33,8 +33,8 @@ model Dream {
   status         DreamStatus  @default(DRAFT)
   image          Image?
   dreamer        Account      @relation(fields: [dreamerAddress], references: [address])
-  dreamerAddress String       @unique
-  ticket         DreamTicket? 
+  dreamerAddress String
+  ticket         DreamTicket?
   token          DreamToken?  @relation(fields: [tokenId], references: [id])
   tokenId        Int?
   parent         Dream?       @relation("ParentChildren", fields: [parentId], references: [id])
@@ -73,7 +73,7 @@ model DreamTicket {
   expiresAt     Int // block number
   status        DreamTicketStatus @default(PENDING)
   sender        Account           @relation(fields: [senderAddress], references: [address])
-  senderAddress String            @unique
+  senderAddress String
   signature     String
   dream         Dream             @relation(fields: [dreamId], references: [id])
   dreamId       Int               @unique
