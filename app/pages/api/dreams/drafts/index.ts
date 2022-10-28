@@ -16,11 +16,7 @@ const handleGet = withZod(getDrafts, async (req, res) => {
       status: "DRAFT",
       dreamerAddress: address,
     },
-    orderBy: [
-      {
-        id: "asc"
-      }
-    ]
+    orderBy: [{ id: "desc" }],
   })
   return res.status(200).json(drafts)
 })

@@ -11,10 +11,12 @@ const handleGet = withZod(getPublishedDreams, async (req, res) => {
         status: "PUBLISHED",
         dreamerAddress: req.query.dreamerAddress,
       },
+      orderBy: [{ publishedAt: "desc" }],
     })
   } else {
     dreams = await prisma.dream.findMany({
       where: { status: "PUBLISHED" },
+      orderBy: [{ publishedAt: "desc" }],
     })
   }
   return res.status(200).json(dreams)

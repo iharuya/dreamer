@@ -63,14 +63,11 @@ const handlePost = withZod(generateImage, async (req, res) => {
         dreamId: dream.id,
       },
     })
-    await prisma.dreamTicket.update({
-      where: { id: dream.ticket.id },
-      data: { status: "COMPLETED" },
-    })
     newDream = await prisma.dream.update({
       where: { id: dream.id },
       data: {
         status: "PUBLISHED",
+        publishedAt: new Date(),
       },
       include: {
         image: true,
@@ -78,6 +75,10 @@ const handlePost = withZod(generateImage, async (req, res) => {
       },
     })
   }
+  await prisma.dreamTicket.update({
+    where: { id: dream.ticket.id },
+    data: { status: "COMPLETED" },
+  })
   return res.status(201).json(newDream)
 })
 
