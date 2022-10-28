@@ -2,9 +2,9 @@ import prisma from "@/lib/prisma"
 import { NextApiHandler } from "next"
 import { getToken } from "next-auth/jwt"
 import { withZod } from "@/lib/zod"
-import { getDraftDreams, createDraft } from "@/schema/dreams"
+import { getDrafts, createDraft } from "@/schema/dreams"
 
-const handleGet = withZod(getDraftDreams, async (req, res) => {
+const handleGet = withZod(getDrafts, async (req, res) => {
   const token = await getToken({ req })
   const address = req.query.dreamerAddress
   if (!token || token.sub !== address) {
@@ -16,6 +16,11 @@ const handleGet = withZod(getDraftDreams, async (req, res) => {
       status: "DRAFT",
       dreamerAddress: address,
     },
+    orderBy: [
+      {
+        id: "asc"
+      }
+    ]
   })
   return res.status(200).json(drafts)
 })

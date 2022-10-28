@@ -3,10 +3,11 @@ import { FC } from "react"
 
 type Props = {
   draft: Dream
+  onClick: () => void
 }
-const Component: FC<Props> = ({ draft }) => {
+const Component: FC<Props> = ({ draft, onClick }) => {
   return (
-    <div className="card w-full border shadow-sm">
+    <div className="card w-full border shadow-sm" onClick={onClick}>
       <div className="card-body px-6 py-4">
         <h2 className="text-lg font-bold truncate">{draft.title}</h2>
         <div className="text-base-content/80 flex items-center">

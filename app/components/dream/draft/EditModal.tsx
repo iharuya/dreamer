@@ -2,14 +2,18 @@ import { FC } from "react"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { createDraft as createDraftSchema } from "@/schema/dreams"
+import { updateDraft as updateDraftSchema } from "@/schema/dreams"
 import { toast } from "react-toastify"
 import axios from "axios"
 import clsx from "clsx"
+import useSWR from "swr"
+import { Dream } from "@prisma/client"
+import { LScale } from "@/components/common/Loading"
+import Error from "next/error"
 
-// Todo: Integrate "redream"
+// Todo: redream
 
-const schema = createDraftSchema.shape.body.pick({
+const schema = updateDraftSchema.shape.body.pick({
   title: true,
   caption: true,
   prompt: true,
@@ -17,10 +21,10 @@ const schema = createDraftSchema.shape.body.pick({
 type Schema = z.infer<typeof schema>
 
 type Props = {
-  dreamerAddress: string
+  draftId: number
   close: () => void
 }
-const Component: FC<Props> = ({ dreamerAddress, close }) => {
+const Component: FC<Props> = ({ draftId, close }) => {
   const {
     register,
     handleSubmit,
@@ -28,29 +32,33 @@ const Component: FC<Props> = ({ dreamerAddress, close }) => {
   } = useForm<Schema>({
     resolver: zodResolver(schema),
   })
+  const { data: draft, error: draftError } = useSWR<Dream>(
+    `/api/dreams/drafts/${draftId}`
+  )
+  if (draft === undefined && !draftError)
+    return <LScale message="ドラフトをロード中..." />
+  if (draft === undefined) {
+    console.error(draftError)
+    return <Error statusCode={draftError?.response?.status || 500} />
+  }
 
-  const create = async (data: Schema) => {
-    const body = {
-      ...data,
-      dreamerAddress,
-    }
+  const update = async (data: Schema) => {
     axios
-      .post("/api/dreams/drafts", body)
+      .patch(`/api/dreams/drafts/${draftId}`, data)
       .then(() => {
-        toast.info("ドラフトを作成しました")
         close()
       })
       .catch((e) => {
         console.error(e)
-        toast.error("ドラフト作成失敗")
+        toast.error("ドラフト更新失敗")
       })
   }
 
   return (
     <div className="modal modal-open">
       <div className="modal-box">
-        <h3 className="font-bold text-2xl mb-4">新規ドラフト</h3>
-        <form onSubmit={handleSubmit(create)}>
+        <h3 className="font-bold text-2xl mb-4">ドラフト編集</h3>
+        <form onSubmit={handleSubmit(update)}>
           <div className="form-control">
             <div className="mb-4">
               <label className="label">
@@ -59,6 +67,7 @@ const Component: FC<Props> = ({ dreamerAddress, close }) => {
               <input
                 type="text"
                 placeholder="1000年後の富士山"
+                defaultValue={draft.title}
                 className={clsx(
                   "input w-full",
                   formErrors.title?.message && "input-error"
@@ -80,6 +89,7 @@ const Component: FC<Props> = ({ dreamerAddress, close }) => {
               </label>
               <textarea
                 placeholder="View of Mt. Fuji in the distant future"
+                defaultValue={draft.prompt}
                 className={clsx(
                   "textarea w-full",
                   formErrors.prompt?.message && "textarea-error"
@@ -100,6 +110,7 @@ const Component: FC<Props> = ({ dreamerAddress, close }) => {
                 <span className="label-text">キャプション（任意）</span>
               </label>
               <textarea
+                defaultValue={draft.caption || undefined}
                 className={clsx(
                   "textarea w-full",
                   formErrors.caption?.message && "textarea-error"
@@ -120,7 +131,7 @@ const Component: FC<Props> = ({ dreamerAddress, close }) => {
               キャンセル
             </button>
             <button type="submit" className="btn btn-primary">
-              ドラフトを保存
+              更新
             </button>
           </div>
         </form>

@@ -4,9 +4,14 @@ import { ethAddress } from "@/lib/zod"
 // Todo: Starts with capital case
 
 // Draft
-export const getDraftDreams = z.object({
+export const getDrafts = z.object({
   query: z.object({
     dreamerAddress: ethAddress,
+  }),
+})
+export const getDraft = z.object({
+  query: z.object({
+    id: z.string().regex(/^\d+$/).transform(Number),
   }),
 })
 export const createDraft = z.object({
@@ -29,7 +34,7 @@ export const createDraft = z.object({
 })
 export const updateDraft = z.object({
   query: z.object({
-    id: z.number().int(),
+    id: z.string().regex(/^\d+$/).transform(Number),
   }),
   body: z.object({
     title: createDraft.shape.body.shape.title,
@@ -39,7 +44,7 @@ export const updateDraft = z.object({
 })
 export const deleteDraft = z.object({
   query: z.object({
-    id: z.number().int(),
+    id: z.string().regex(/^\d+$/).transform(Number),
   }),
 })
 
@@ -52,12 +57,12 @@ export const issueTicket = z.object({
 })
 export const updateTicket = z.object({
   query: z.object({
-    id: z.number().int(),
+    id: z.string().regex(/^\d+$/).transform(Number),
   }),
 })
 export const deleteTicket = z.object({
   query: z.object({
-    id: z.number().int(),
+    id: z.string().regex(/^\d+$/).transform(Number),
   }),
 })
 

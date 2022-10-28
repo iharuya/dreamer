@@ -20,6 +20,8 @@ export function withZod<T extends ZodSchema>(
       })
       return
     }
+    req.query = parsed.data.query
+    req.body = parsed.data.body
     return next(req, res)
   }
 }

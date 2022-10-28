@@ -2,21 +2,34 @@ import prisma from "@/lib/prisma"
 import { withZod } from "@/lib/zod"
 import { NextApiHandler } from "next"
 import { getToken } from "next-auth/jwt"
-import { updateDraft, deleteDraft } from "@/schema/dreams"
+import { getDraft, updateDraft, deleteDraft } from "@/schema/dreams"
+
+const handleGet = withZod(getDraft, async (req, res) => {
+  const token = await getToken({ req })
+  const draft = await prisma.dream.findFirst({
+    where: { id: req.query.id, status: "DRAFT" },
+  })
+  if (!draft) {
+    return res.status(404).json({ message: "Draft not found" })
+  }
+  // Draft can only be seen by its author
+  if (!token || token.sub !== draft.dreamerAddress) {
+    return res.status(401).json({ message: "Unauthorized" })
+  }
+
+  return res.status(200).json(draft)
+})
 
 const handleUpdate = withZod(updateDraft, async (req, res) => {
   const token = await getToken({ req })
-  const dream = await prisma.dream.findUnique({
-    where: { id: req.query.id },
+  const draft = await prisma.dream.findFirst({
+    where: { id: req.query.id, status: "DRAFT" },
   })
-  if (!dream) {
+  if (!draft) {
     return res.status(404).json({ message: "Draft not found" })
   }
-  if (!token || token.sub !== dream.dreamerAddress) {
+  if (!token || token.sub !== draft.dreamerAddress) {
     return res.status(401).json({ message: "Unauthorized" })
-  }
-  if (dream.status !== "DRAFT") {
-    return res.status(400).json({ message: "Dream's status is not draft" })
   }
 
   const newDraft = await prisma.dream.update({
@@ -32,17 +45,14 @@ const handleUpdate = withZod(updateDraft, async (req, res) => {
 
 const handleDelete = withZod(deleteDraft, async (req, res) => {
   const token = await getToken({ req })
-  const dream = await prisma.dream.findUnique({
-    where: { id: req.query.id },
+  const draft = await prisma.dream.findFirst({
+    where: { id: req.query.id, status: "DRAFT" },
   })
-  if (!dream) {
+  if (!draft) {
     return res.status(404).json({ message: "Draft not found" })
   }
-  if (!token || token.sub !== dream.dreamerAddress) {
+  if (!token || token.sub !== draft.dreamerAddress) {
     return res.status(401).json({ message: "Unauthorized" })
-  }
-  if (dream.status !== "DRAFT") {
-    return res.status(400).json({ message: "Dream's status is not draft" })
   }
 
   await prisma.dream.delete({ where: { id: req.query.id } })
@@ -51,6 +61,8 @@ const handleDelete = withZod(deleteDraft, async (req, res) => {
 
 const handler: NextApiHandler = async (req, res) => {
   switch (req.method) {
+    case "GET":
+      return handleGet(req, res)
     case "PATCH":
       return handleUpdate(req, res)
     case "DELETE":
