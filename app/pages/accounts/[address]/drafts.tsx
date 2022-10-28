@@ -17,10 +17,11 @@ const draftsFetcher = (address: string) =>
 
 const Page: NextPageWithLayout = () => {
   const { data: myAccount } = useMyAccount()
-  const { data: drafts, error: draftsError, mutate: draftsMutate } = useSWR<Dream[]>(
-    myAccount ? myAccount.address : null,
-    draftsFetcher
-  )
+  const {
+    data: drafts,
+    error: draftsError,
+    mutate: draftsMutate,
+  } = useSWR<Dream[]>(myAccount ? myAccount.address : null, draftsFetcher)
   const [editingDraftId, setEditingDraftId] = useState<number | undefined>()
 
   if (drafts === undefined && !draftsError)
