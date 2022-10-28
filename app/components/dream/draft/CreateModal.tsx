@@ -60,7 +60,7 @@ const Component: FC<Props> = ({ dreamerAddress, close }) => {
                 type="text"
                 placeholder="1000年後の富士山"
                 className={clsx(
-                  "input w-full",
+                  "input input-bordered w-full",
                   formErrors.title?.message && "input-error"
                 )}
                 {...register("title")}
@@ -81,7 +81,7 @@ const Component: FC<Props> = ({ dreamerAddress, close }) => {
               <textarea
                 placeholder="View of Mt. Fuji in the distant future"
                 className={clsx(
-                  "textarea w-full",
+                  "textarea textarea-bordered w-full",
                   formErrors.prompt?.message && "textarea-error"
                 )}
                 {...register("prompt")}
@@ -101,7 +101,7 @@ const Component: FC<Props> = ({ dreamerAddress, close }) => {
               </label>
               <textarea
                 className={clsx(
-                  "textarea w-full",
+                  "textarea textarea-bordered w-full",
                   formErrors.caption?.message && "textarea-error"
                 )}
                 {...register("caption")}
@@ -120,7 +120,7 @@ const Component: FC<Props> = ({ dreamerAddress, close }) => {
               キャンセル
             </button>
             <button type="submit" className="btn btn-primary">
-              ドラフトを保存
+              保存
             </button>
           </div>
         </form>

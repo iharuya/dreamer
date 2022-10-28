@@ -6,7 +6,7 @@ import { updateDraft as updateDraftSchema } from "@/schema/dreams"
 import { toast } from "react-toastify"
 import axios from "axios"
 import clsx from "clsx"
-import useSWR from "swr"
+import useSWR, { KeyedMutator } from "swr"
 import { Dream } from "@prisma/client"
 import { LScale } from "@/components/common/Loading"
 import Error from "next/error"
@@ -23,8 +23,9 @@ type Schema = z.infer<typeof schema>
 type Props = {
   draftId: number
   close: () => void
+  draftsMutate: KeyedMutator<Dream[]>
 }
-const Component: FC<Props> = ({ draftId, close }) => {
+const Component: FC<Props> = ({ draftId, close, draftsMutate }) => {
   const {
     register,
     handleSubmit,
@@ -46,6 +47,7 @@ const Component: FC<Props> = ({ draftId, close }) => {
     axios
       .patch(`/api/dreams/drafts/${draftId}`, data)
       .then(() => {
+        draftsMutate() // Should be optimistic and updated only this draft
         close()
       })
       .catch((e) => {
@@ -69,7 +71,7 @@ const Component: FC<Props> = ({ draftId, close }) => {
                 placeholder="1000年後の富士山"
                 defaultValue={draft.title}
                 className={clsx(
-                  "input w-full",
+                  "input input-bordered w-full",
                   formErrors.title?.message && "input-error"
                 )}
                 {...register("title")}
@@ -91,7 +93,7 @@ const Component: FC<Props> = ({ draftId, close }) => {
                 placeholder="View of Mt. Fuji in the distant future"
                 defaultValue={draft.prompt}
                 className={clsx(
-                  "textarea w-full",
+                  "textarea textarea-bordered w-full",
                   formErrors.prompt?.message && "textarea-error"
                 )}
                 {...register("prompt")}
@@ -112,7 +114,7 @@ const Component: FC<Props> = ({ draftId, close }) => {
               <textarea
                 defaultValue={draft.caption || undefined}
                 className={clsx(
-                  "textarea w-full",
+                  "textarea textarea-bordered w-full",
                   formErrors.caption?.message && "textarea-error"
                 )}
                 {...register("caption")}

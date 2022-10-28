@@ -17,7 +17,7 @@ const draftsFetcher = (address: string) =>
 
 const Page: NextPageWithLayout = () => {
   const { data: myAccount } = useMyAccount()
-  const { data: drafts, error: draftsError } = useSWR<Dream[]>(
+  const { data: drafts, error: draftsError, mutate: draftsMutate } = useSWR<Dream[]>(
     myAccount ? myAccount.address : null,
     draftsFetcher
   )
@@ -47,6 +47,7 @@ const Page: NextPageWithLayout = () => {
             <EditDraftModal
               draftId={editingDraftId}
               close={() => setEditingDraftId(undefined)}
+              draftsMutate={draftsMutate}
             />
           )}
         </>
