@@ -3,7 +3,7 @@ import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { patch as patchSchema } from "@/schema/accounts"
-import { useSWRConfig } from "swr"
+import { KeyedMutator } from "swr"
 import { toast } from "react-toastify"
 import axios from "axios"
 import { Account } from "@prisma/client"
@@ -15,9 +15,9 @@ type Schema = z.infer<typeof schema>
 type Props = {
   account: Account
   close: () => void
+  mutate: KeyedMutator<Account>
 }
-const Component: FC<Props> = ({ account, close }) => {
-  const { mutate } = useSWRConfig()
+const Component: FC<Props> = ({ account, close, mutate }) => {
   const {
     register,
     handleSubmit,
@@ -30,7 +30,7 @@ const Component: FC<Props> = ({ account, close }) => {
     axios
       .patch(`/api/accounts/${account.address}`, data)
       .then(() => {
-        mutate(`/api/accounts/${account.address}`)
+        mutate()
         close()
       })
       .catch((e) => {

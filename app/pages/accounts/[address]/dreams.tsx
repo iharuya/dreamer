@@ -1,7 +1,7 @@
 import { NextPageWithLayout } from "pages/_app"
 import { ReactElement } from "react"
 import AccountLayout from "@/components/layouts/account/Layout"
-const Page: NextPageWithLayout = (props) => {
+const Page: NextPageWithLayout = () => {
   return (
     <>
       <div>dreams</div>
