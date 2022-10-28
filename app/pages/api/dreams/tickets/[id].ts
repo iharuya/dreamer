@@ -42,7 +42,7 @@ const checkIfTicketIsMutable = async (
 const handleUpdate = withZod(updateTicket, async (req, res) => {
   const token = await getToken({ req }) // Should use middleware to check if authenticated
   const ticket = await prisma.dreamTicket.findUnique({
-    where: { id: req.query.id },
+    where: { id: req.query.id }
   })
   if (!ticket) {
     return res.status(404).json({ message: "Ticket not found" })
@@ -72,6 +72,7 @@ const handleDelete = withZod(deleteTicket, async (req, res) => {
   const token = await getToken({ req })
   const ticket = await prisma.dreamTicket.findUnique({
     where: { id: req.query.id },
+    include: { dream: true, token: true }
   })
   if (!ticket) {
     return res.status(404).json({ message: "Ticket not found" })
@@ -82,7 +83,12 @@ const handleDelete = withZod(deleteTicket, async (req, res) => {
 
   const mutableTest = await checkIfTicketIsMutable(ticket)
   if (mutableTest.yes) {
-    await prisma.dreamTicket.delete({ where: { id: ticket.id } })
+    if (ticket.dream.generation === 0) {
+      // This will also delete the ticket
+      await prisma.dreamToken.delete({ where: { id: ticket.token.id } })
+    } else {
+      await prisma.dreamTicket.delete({ where: { id: ticket.id } })
+    }
     await prisma.dream.update({
       where: { id: ticket.dreamId },
       data: { status: "DRAFT" },

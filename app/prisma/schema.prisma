@@ -35,8 +35,6 @@ model Dream {
   dreamer        Account      @relation(fields: [dreamerAddress], references: [address])
   dreamerAddress String
   ticket         DreamTicket?
-  token          DreamToken?  @relation(fields: [tokenId], references: [id])
-  tokenId        Int?
   parent         Dream?       @relation("ParentChildren", fields: [parentId], references: [id])
   parentId       Int?
   children       Dream[]      @relation("ParentChildren")
@@ -54,13 +52,6 @@ model Image {
   updatedAt DateTime @default(now()) @updatedAt
 }
 
-model DreamToken {
-  id        Int      @id @default(autoincrement()) // ERC1155 tokenId
-  dreams    Dream[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-}
-
 enum DreamTicketStatus {
   COMPLETED
   PROCESSING
@@ -69,6 +60,7 @@ enum DreamTicketStatus {
 
 model DreamTicket {
   id            Int               @id @default(autoincrement())
+  token         DreamToken        @relation(fields: [tokenId], references: [id], onDelete: Cascade)
   tokenId       Int
   expiresAt     Int // block number
   status        DreamTicketStatus @default(PENDING)
@@ -79,4 +71,11 @@ model DreamTicket {
   dreamId       Int               @unique
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @default(now()) @updatedAt
+}
+
+model DreamToken {
+  id        Int           @id @default(autoincrement()) // ERC1155 tokenId
+  tickets   DreamTicket[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @default(now()) @updatedAt
 }

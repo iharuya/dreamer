@@ -14,22 +14,24 @@ const handlePost = withZod(issueTicket, async (req, res) => {
   }
   const dream = await prisma.dream.findUnique({
     where: { id: req.body.dreamId },
-    include: { ticket: true },
+    include: { ticket: true, parent: { include: {ticket: true}} },
   })
   if (!dream) {
     return res.status(404).json({ message: "Dream not found" })
+  }
+  if (dream.dreamerAddress !== address) {
+    return res.status(401).json({ message: "Unauthorized" })
   }
   if (dream.ticket) {
     return res.status(400).json({ message: "Ticket already exists" })
   }
 
-  // If the dream is the genesis then create a new DreamToken
-  // And if the ticket is deleted,
-  // the token will no longer be minted with the id
-  const tokenId =
-    dream.tokenId === null
-      ? (await prisma.dreamToken.create({ data: {} })).id
-      : dream.tokenId
+  let tokenId
+  if (dream.parent) {
+    tokenId = dream.parent.ticket?.tokenId as number
+  } else {
+    tokenId = (await prisma.dreamToken.create({ data: {} })).id
+  }
   const currentBlock = await getBlockNumber()
   const signature = "signature123" // ad hoc
   const ticket = await prisma.dreamTicket.create({
