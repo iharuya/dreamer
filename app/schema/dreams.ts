@@ -11,13 +11,14 @@ export const getDraftDreams = z.object({
 })
 export const createDraft = z.object({
   body: z.object({
-    body: z
+    title: z
       .string()
-      .min(1, { message: "内容を入力してください" })
-      .max(240, { message: "240文字以下にしてください" }),
+      .min(1, { message: "タイトルを入力してください" })
+      .max(430, { message: "40文字以下にしてください" }),
+    caption: z.string().max(1000, {message: "1000文字以下にしてください"}).optional(),
     prompt: z
       .string()
-      .min(1, { message: "内容を入力してください" })
+      .min(1, { message: "プロンプトを入力してください" })
       .max(400, { message: "400文字以下にしてください" }),
     dreamerAddress: ethAddress,
     parentId: z.number().int().optional(),
@@ -28,7 +29,8 @@ export const updateDraft = z.object({
     id: z.number().int(),
   }),
   body: z.object({
-    body: createDraft.shape.body.shape.body,
+    title: createDraft.shape.body.shape.title,
+    caption: createDraft.shape.body.shape.caption,
     prompt: createDraft.shape.body.shape.prompt,
   }),
 })

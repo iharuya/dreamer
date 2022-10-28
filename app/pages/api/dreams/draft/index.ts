@@ -37,7 +37,8 @@ const handlePost = withZod(createDraft, async (req, res) => {
     }
     draft = await prisma.dream.create({
       data: {
-        body: req.body.body,
+        title: req.body.title,
+        caption: req.body.caption,
         prompt: req.body.prompt,
         dreamerAddress: address,
         parentId: parent.id,
@@ -47,7 +48,8 @@ const handlePost = withZod(createDraft, async (req, res) => {
   } else {
     draft = await prisma.dream.create({
       data: {
-        body: req.body.body,
+        title: req.body.title,
+        caption: req.body.caption,
         prompt: req.body.prompt,
         dreamerAddress: address,
         generation: 0,

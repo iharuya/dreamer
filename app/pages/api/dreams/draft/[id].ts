@@ -22,7 +22,8 @@ const handleUpdate = withZod(updateDraft, async (req, res) => {
   const newDraft = await prisma.dream.update({
     where: { id: req.query.id },
     data: {
-      body: req.body.body,
+      title: req.body.title,
+      caption: req.body.caption,
       prompt: req.body.prompt,
     },
   })

@@ -28,7 +28,8 @@ enum DreamStatus {
 
 model Dream {
   id             Int          @id @default(autoincrement())
-  body           String
+  title          String
+  caption        String?
   prompt         String
   status         DreamStatus  @default(DRAFT)
   image          Image?
