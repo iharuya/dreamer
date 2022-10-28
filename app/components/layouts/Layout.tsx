@@ -7,7 +7,7 @@ import { toast } from "react-toastify"
 import axios, { AxiosError } from "axios"
 import { useSWRConfig } from "swr"
 import SigninModal from "@/components/layouts/SigninModal"
-import CreateDraft from "@/components/dream/CreateDraft"
+import CreateDraftModal from "@/components/dream/draft/CreateModal"
 import { useMyAccount } from "@/lib/hooks"
 import { MdEdit } from "react-icons/md"
 
@@ -38,7 +38,7 @@ const Component: FC<{ children: ReactNode }> = ({ children }) => {
   ネットワークを変更したとき->今は何もしない
   */
   useEffect(() => {
-    ; (async () => {
+    ;(async () => {
       if (isConnected && typeof previousAddress === "undefined") {
         await handleSignin(connectedAddress)
         return
@@ -146,16 +146,16 @@ const Component: FC<{ children: ReactNode }> = ({ children }) => {
       )}
       {myAccount && (
         <>
-          <div className="fixed bottom-4 right-8">
+          <div className="fixed bottom-4 right-4 md:right-8">
             <button
-              className="btn btn-circle btn-lg btn-primary"
+              className="btn btn-circle btn-lg btn-primary shadow-lg"
               onClick={() => setDraftModal(true)}
             >
               <MdEdit className="text-4xl" />
             </button>
           </div>
           {draftModal && (
-            <CreateDraft
+            <CreateDraftModal
               dreamerAddress={myAccount.address}
               close={() => setDraftModal(false)}
             />

@@ -45,26 +45,28 @@ const Component: FC<Props> = ({ account, close }) => {
         <h3 className="font-bold text-2xl mb-4">アカウント設定</h3>
         <form onSubmit={handleSubmit(update)}>
           <div className="form-control">
-            <label className="label">
-              <span className="label-text">名前</span>
-            </label>
-            <input
-              type="text"
-              placeholder="名前を入力"
-              className={clsx(
-                "input input-bordered",
-                formErrors.name?.message && "input-error"
-              )}
-              defaultValue={account.name || ""}
-              {...register("name")}
-            />
-            {formErrors.name?.message && (
+            <div className="mb-4">
               <label className="label">
-                <span className="label-text text-error">
-                  {formErrors.name?.message}
-                </span>
+                <span className="label-text">名前</span>
               </label>
-            )}
+              <input
+                type="text"
+                placeholder="名前を入力"
+                className={clsx(
+                  "input w-full input-bordered",
+                  formErrors.name?.message && "input-error"
+                )}
+                defaultValue={account.name || ""}
+                {...register("name")}
+              />
+              {formErrors.name?.message && (
+                <label className="label">
+                  <span className="label-text text-error">
+                    {formErrors.name?.message}
+                  </span>
+                </label>
+              )}
+            </div>
           </div>
           <div className="modal-action">
             <button type="button" className="btn" onClick={close}>
