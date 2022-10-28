@@ -15,7 +15,10 @@ export const createDraft = z.object({
       .string()
       .min(1, { message: "タイトルを入力してください" })
       .max(40, { message: "40文字以下にしてください" }),
-    caption: z.string().max(1000, {message: "1000文字以下にしてください"}).optional(),
+    caption: z
+      .string()
+      .max(1000, { message: "1000文字以下にしてください" })
+      .optional(),
     prompt: z
       .string()
       .min(1, { message: "プロンプトを入力してください" })

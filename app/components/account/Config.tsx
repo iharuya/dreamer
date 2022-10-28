@@ -31,7 +31,6 @@ const Component: FC<Props> = ({ account, close }) => {
       .patch(`/api/accounts/${account.address}`, data)
       .then(() => {
         mutate(`/api/accounts/${account.address}`)
-        toast.info("アカウントを更新しました")
         close()
       })
       .catch((e) => {

@@ -1,8 +1,10 @@
 import { APP_NAME } from "@/constants/config"
 import Head from "next/head"
 import "@/styles/globals.css"
-import Layout from "@/components/layouts/Layout"
 import { AppProps } from "next/app"
+import BaseLayout from "@/components/layouts/base/Layout"
+import { ReactElement, ReactNode } from "react"
+import { NextPage } from "next"
 import { WagmiConfig, createClient, configureChains, chain } from "wagmi"
 import { alchemyProvider } from "wagmi/providers/alchemy"
 import { publicProvider } from "wagmi/providers/public"
@@ -16,6 +18,13 @@ import { SWRConfig } from "swr"
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import axios from "axios"
+
+export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
+  getLayout?: (page: ReactElement) => ReactNode
+}
+type AppPropsWithLayout<P, IP = P> = AppProps<P> & {
+  Component: NextPageWithLayout<P, IP>
+}
 
 const appChains = [chain.polygonMumbai, chain.hardhat]
 if (process.env.NODE_ENV == "development") {
@@ -60,15 +69,18 @@ const client = createClient({
   webSocketProvider,
 })
 
-const App = ({ Component, pageProps }: AppProps<{ session: Session }>) => {
+const App = ({
+  Component,
+  pageProps,
+}: AppPropsWithLayout<{ session: Session }>) => {
+  const getLayout = Component.getLayout ?? ((page) => page)
   return (
     <>
       <Head>
         <title>{APP_NAME}</title>
-        <meta name="description" content="夢広がるヒトとAIと価値のSNS" />
+        <meta name="description" content="ヒトとAIが紡ぐユメ" />
         <link rel="icon" href="/logo.png" />
       </Head>
-      <ToastContainer position="bottom-right" draggable />
       <WagmiConfig client={client}>
         <ConnectKitProvider>
           <SessionProvider session={pageProps.session}>
@@ -78,14 +90,14 @@ const App = ({ Component, pageProps }: AppProps<{ session: Session }>) => {
                   axios.get(url).then((res) => res.data),
               }}
             >
-              <Layout>
-                <Component {...pageProps} />
-              </Layout>
+              <BaseLayout>{getLayout(<Component {...pageProps} />)}</BaseLayout>
             </SWRConfig>
           </SessionProvider>
         </ConnectKitProvider>
       </WagmiConfig>
+      <ToastContainer position="bottom-right" draggable />
     </>
   )
 }
+
 export default App

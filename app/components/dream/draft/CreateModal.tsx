@@ -53,7 +53,6 @@ const Component: FC<Props> = ({ dreamerAddress, close }) => {
         <h3 className="font-bold text-2xl mb-4">新規ドラフト</h3>
         <form onSubmit={handleSubmit(create)}>
           <div className="form-control">
-
             <div className="mb-4">
               <label className="label">
                 <span className="label-text">タイトル</span>

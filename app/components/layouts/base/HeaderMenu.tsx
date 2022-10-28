@@ -49,7 +49,7 @@ const Component: FC<Props> = ({ show, connectedAddress, ensName }) => {
               <>
                 <ul className="menu menu-compact">
                   <li>
-                    <Link href={`/accounts/${connectedAddress}`}>
+                    <Link href={`/accounts/${connectedAddress}/dreams`}>
                       <a>
                         <span>
                           <MdAccountCircle className="inline pr-1 text-3xl text-base-content/60" />

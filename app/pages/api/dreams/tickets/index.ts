@@ -14,7 +14,7 @@ const handlePost = withZod(issueTicket, async (req, res) => {
   }
   const dream = await prisma.dream.findUnique({
     where: { id: req.body.dreamId },
-    include: { ticket: true, parent: { include: {ticket: true}} },
+    include: { ticket: true, parent: { include: { ticket: true } } },
   })
   if (!dream) {
     return res.status(404).json({ message: "Dream not found" })

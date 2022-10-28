@@ -7,7 +7,7 @@ import HeaderMenu from "./HeaderMenu"
 const Component: FC = () => {
   return (
     <>
-      <header className="w-full fixed bg-base-100">
+      <header className="w-full fixed bg-base-100 z-50">
         <div className="mx-auto max-w-7xl px-4">
           <div className="flex py-2 items-center space-x-4">
             <div className="flex">
