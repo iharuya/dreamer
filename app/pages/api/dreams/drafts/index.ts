@@ -3,6 +3,7 @@ import { NextApiHandler } from "next"
 import { getToken } from "next-auth/jwt"
 import { withZod } from "@/lib/zod"
 import { getDrafts, createDraft } from "@/schema/dreams"
+import { Dream } from "@prisma/client"
 
 const handleGet = withZod(getDrafts, async (req, res) => {
   const token = await getToken({ req })
@@ -20,6 +21,7 @@ const handleGet = withZod(getDrafts, async (req, res) => {
   })
   return res.status(200).json(drafts)
 })
+export type Get = Dream[]
 
 const handlePost = withZod(createDraft, async (req, res) => {
   const token = await getToken({ req })
@@ -59,6 +61,7 @@ const handlePost = withZod(createDraft, async (req, res) => {
   }
   return res.status(200).json(draft)
 })
+export type Post = Dream
 
 const handler: NextApiHandler = async (req, res) => {
   switch (req.method) {

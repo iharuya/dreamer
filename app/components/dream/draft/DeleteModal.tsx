@@ -1,10 +1,10 @@
 import { FC } from "react"
 import { toast } from "react-toastify"
 import axios from "axios"
-import { Dream } from "@prisma/client"
+import { Get as DraftGet } from "@/api/dreams/drafts/[id]"
 
 type Props = {
-  draft: Dream
+  draft: DraftGet
   close: () => void
   onDelete: () => void
 }

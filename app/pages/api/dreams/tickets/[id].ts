@@ -2,13 +2,13 @@ import prisma from "@/lib/prisma"
 import { withZod } from "@/lib/zod"
 import { NextApiHandler } from "next"
 import { getToken } from "next-auth/jwt"
-import { updateTicket, deleteTicket } from "@/schema/dreams"
+import { updateTicket, deleteTicket, getTicket } from "@/schema/dreams"
 import {
   getBlockNumber,
   isDreamMinted,
   signToMintDream,
 } from "@/lib/blockchain"
-import { DreamTicket } from "@prisma/client"
+import { Dream, DreamTicket } from "@prisma/client"
 import { EXPIRATION_BLOCKS } from "@/constants/contracts/dreamer"
 import { SERVER_CHAIN_ID } from "@/constants/config"
 
@@ -44,7 +44,25 @@ const checkIfTicketIsMutable = async (
   }
 }
 
-const handleUpdate = withZod(updateTicket, async (req, res) => {
+const handleGet = withZod(getTicket, async (req, res) => {
+  const token = await getToken({ req })
+  const ticket = await prisma.dreamTicket.findFirst({
+    where: { id: req.query.id },
+    include: { dream: true },
+  })
+  if (!ticket) {
+    return res.status(404).json({ message: "Ticket not found" })
+  }
+  // Ticket can only be seen by its author
+  if (!token || token.sub !== ticket.senderAddress) {
+    return res.status(401).json({ message: "Unauthorized" })
+  }
+
+  return res.status(200).json(ticket)
+})
+export type Get = DreamTicket & { dream: Dream }
+
+const handlePatch = withZod(updateTicket, async (req, res) => {
   const token = await getToken({ req }) // Should use middleware to check if authenticated
   const ticket = await prisma.dreamTicket.findUnique({
     where: { id: req.query.id },
@@ -66,14 +84,17 @@ const handleUpdate = withZod(updateTicket, async (req, res) => {
       ticket.tokenId,
       newExpiration
     )
-    const newTicket = await prisma.dreamTicket.update({
+    const updatedTicket = await prisma.dreamTicket.update({
       where: { id: ticket.id },
       data: {
         expiresAt: newExpiration,
         signature: newSignature,
       },
+      include: {
+        dream: true,
+      },
     })
-    return res.status(200).json(newTicket)
+    return res.status(200).json(updatedTicket)
   } else {
     return res.status(400).json({ message: mutableTest.message })
   }
@@ -112,8 +133,10 @@ const handleDelete = withZod(deleteTicket, async (req, res) => {
 
 const handler: NextApiHandler = async (req, res) => {
   switch (req.method) {
+    case "GET":
+      return handleGet(req, res)
     case "PATCH":
-      return handleUpdate(req, res)
+      return handlePatch(req, res)
     case "DELETE":
       return handleDelete(req, res)
     default:

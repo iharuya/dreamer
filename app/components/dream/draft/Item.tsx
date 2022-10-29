@@ -1,8 +1,7 @@
-import { Dream } from "@prisma/client"
 import { FC } from "react"
-
+import { Get as DraftGet } from "@/api/dreams/drafts/[id]"
 type Props = {
-  draft: Dream
+  draft: DraftGet
   onClick: () => void
 }
 const Component: FC<Props> = ({ draft, onClick }) => {

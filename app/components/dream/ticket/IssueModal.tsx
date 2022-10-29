@@ -43,7 +43,7 @@ const Component: FC<Props> = ({ senderAddress, draftId, close, onIssue }) => {
               ></path>
             </svg>
             <span>
-              チケットを発行すると、有効期限が切れるまでドリームを編集することはできません。
+              チケットを発行すると、有効期限が切れるまでドラフトを編集することはできません。
             </span>
           </div>
         </div>

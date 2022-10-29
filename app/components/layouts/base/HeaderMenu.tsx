@@ -2,7 +2,6 @@ import { FC } from "react"
 import Link from "next/link"
 import { AVATAR_COLORS } from "@/constants/config"
 import Avatar from "boring-avatars"
-import { MdAccountCircle } from "react-icons/md"
 import { useNetwork } from "wagmi"
 import { useMyAccount } from "@/lib/hooks"
 
@@ -52,8 +51,25 @@ const Component: FC<Props> = ({ show, connectedAddress, ensName }) => {
                     <Link href={`/accounts/${connectedAddress}/dreams`}>
                       <a>
                         <span>
-                          <MdAccountCircle className="inline pr-1 text-3xl text-base-content/60" />
-                          <span>アカウント</span>
+                          <span>マイドリーム</span>
+                        </span>
+                      </a>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href={`/accounts/${connectedAddress}/drafts`}>
+                      <a>
+                        <span>
+                          <span>ドラフト</span>
+                        </span>
+                      </a>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href={`/accounts/${connectedAddress}/tickets`}>
+                      <a>
+                        <span>
+                          <span>チケット</span>
                         </span>
                       </a>
                     </Link>

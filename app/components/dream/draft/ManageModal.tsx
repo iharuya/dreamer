@@ -7,13 +7,13 @@ import { toast } from "react-toastify"
 import axios from "axios"
 import clsx from "clsx"
 import useSWR, { KeyedMutator } from "swr"
-import { Dream } from "@prisma/client"
 import { LScale } from "@/components/common/Loading"
 import Error from "next/error"
 import { MdDelete } from "react-icons/md"
 import DeleteDraftModal from "@/components/dream/draft/DeleteModal"
 import IssueTicketModal from "@/components/dream/ticket/IssueModal"
-
+import { Get as DraftGet } from "@/api/dreams/drafts/[id]"
+import { Get as DraftsGet } from "@/api/dreams/drafts/index"
 // Todo: redream
 
 const schema = updateDraftSchema.shape.body.pick({
@@ -26,7 +26,7 @@ type Schema = z.infer<typeof schema>
 type Props = {
   draftId: number
   close: () => void
-  draftsMutate: KeyedMutator<Dream[]>
+  draftsMutate: KeyedMutator<DraftsGet>
 }
 const Component: FC<Props> = ({ draftId, close, draftsMutate }) => {
   const {
@@ -38,7 +38,7 @@ const Component: FC<Props> = ({ draftId, close, draftsMutate }) => {
   })
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false)
   const [isIssueTicketOpen, setIsIssueTicketOpen] = useState<boolean>(false)
-  const { data: draft, error: draftError } = useSWR<Dream>(
+  const { data: draft, error: draftError } = useSWR<DraftGet>(
     `/api/dreams/drafts/${draftId}`
   )
   if (draft === undefined && !draftError)
@@ -66,7 +66,7 @@ const Component: FC<Props> = ({ draftId, close, draftsMutate }) => {
       <div className="modal modal-open">
         <div className="modal-box">
           <div className="flex mb-4 items-center">
-            <h3 className="font-bold text-2xl">ドラフト編集</h3>
+            <h3 className="font-bold text-2xl">ドラフト</h3>
             <button
               className="btn btn-primary ml-auto"
               onClick={() => setIsIssueTicketOpen(true)}
@@ -151,7 +151,7 @@ const Component: FC<Props> = ({ draftId, close, draftsMutate }) => {
                 <MdDelete className="text-3xl" />
               </button>
               <button type="button" className="btn" onClick={close}>
-                キャンセル
+                とじる
               </button>
               <button type="submit" className="btn btn-primary">
                 更新

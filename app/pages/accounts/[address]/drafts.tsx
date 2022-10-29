@@ -2,13 +2,13 @@ import { NextPageWithLayout } from "pages/_app"
 import { ReactElement, useState } from "react"
 import AccountLayout from "@/components/layouts/account/Layout"
 import useSWR from "swr"
-import { Dream } from "@prisma/client"
 import { useMyAccount } from "@/lib/hooks"
 import Error from "next/error"
 import { LScale } from "@/components/common/Loading"
 import DraftItem from "@/components/dream/draft/Item"
-import EditDraftModal from "@/components/dream/draft/EditModal"
+import ManageDraftModal from "@/components/dream/draft/ManageModal"
 import { draftsFetcher } from "@/lib/fetchers"
+import { Get as DraftsGet } from "@/api/dreams/drafts/index"
 
 const Page: NextPageWithLayout = () => {
   const { data: myAccount } = useMyAccount()
@@ -16,11 +16,11 @@ const Page: NextPageWithLayout = () => {
     data: drafts,
     error: draftsError,
     mutate: draftsMutate,
-  } = useSWR<Dream[]>(
+  } = useSWR<DraftsGet>(
     myAccount ? ["drafts", myAccount.address] : null,
     draftsFetcher
   )
-  const [editingDraftId, setEditingDraftId] = useState<number | undefined>()
+  const [managingDraftId, setManagingDraftId] = useState<number | undefined>()
 
   if (drafts === undefined && !draftsError)
     return <LScale message="ドラフトをロード中..." />
@@ -38,14 +38,14 @@ const Page: NextPageWithLayout = () => {
               <DraftItem
                 key={draft.id}
                 draft={draft}
-                onClick={() => setEditingDraftId(draft.id)}
+                onClick={() => setManagingDraftId(draft.id)}
               />
             ))}
           </div>
-          {editingDraftId !== undefined && (
-            <EditDraftModal
-              draftId={editingDraftId}
-              close={() => setEditingDraftId(undefined)}
+          {managingDraftId !== undefined && (
+            <ManageDraftModal
+              draftId={managingDraftId}
+              close={() => setManagingDraftId(undefined)}
               draftsMutate={draftsMutate}
             />
           )}

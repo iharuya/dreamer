@@ -3,6 +3,7 @@ import { withZod } from "@/lib/zod"
 import { NextApiHandler } from "next"
 import { getToken } from "next-auth/jwt"
 import { getDraft, updateDraft, deleteDraft } from "@/schema/dreams"
+import { Dream } from "@prisma/client"
 
 const handleGet = withZod(getDraft, async (req, res) => {
   const token = await getToken({ req })
@@ -19,6 +20,7 @@ const handleGet = withZod(getDraft, async (req, res) => {
 
   return res.status(200).json(draft)
 })
+export type Get = Dream
 
 const handleUpdate = withZod(updateDraft, async (req, res) => {
   const token = await getToken({ req })
@@ -42,6 +44,7 @@ const handleUpdate = withZod(updateDraft, async (req, res) => {
   })
   return res.status(200).json(newDraft)
 })
+export type Patch = Dream
 
 const handleDelete = withZod(deleteDraft, async (req, res) => {
   const token = await getToken({ req })

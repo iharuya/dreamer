@@ -49,6 +49,16 @@ export const deleteDraft = z.object({
 })
 
 // Ticket
+export const getTickets = z.object({
+  query: z.object({
+    senderAddress: ethAddress,
+  }),
+})
+export const getTicket = z.object({
+  query: z.object({
+    id: z.string().regex(/^\d+$/).transform(Number),
+  }),
+})
 export const issueTicket = z.object({
   body: z.object({
     senderAddress: ethAddress,

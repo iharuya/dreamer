@@ -1,11 +1,28 @@
 import prisma from "@/lib/prisma"
 import { withZod } from "@/lib/zod"
 import { NextApiHandler } from "next"
-import { issueTicket } from "@/schema/dreams"
+import { issueTicket, getTickets } from "@/schema/dreams"
 import { getToken } from "next-auth/jwt"
 import { getBlockNumber, signToMintDream } from "@/lib/blockchain"
 import { EXPIRATION_BLOCKS } from "@/constants/contracts/dreamer"
 import { SERVER_CHAIN_ID } from "@/constants/config"
+import { Dream, DreamTicket } from "@prisma/client"
+
+const handleGet = withZod(getTickets, async (req, res) => {
+  const token = await getToken({ req })
+  const address = req.query.senderAddress
+  if (!token || token.sub !== address) {
+    return res.status(401).json({ message: "Unauthorized" })
+  }
+
+  const tickets = await prisma.dreamTicket.findMany({
+    where: { senderAddress: address },
+    include: { dream: true },
+    orderBy: [{ id: "desc" }],
+  })
+  return res.status(200).json(tickets)
+})
+export type Get = (DreamTicket & { dream: Dream })[]
 
 const handlePost = withZod(issueTicket, async (req, res) => {
   const token = await getToken({ req })
@@ -63,9 +80,12 @@ const handlePost = withZod(issueTicket, async (req, res) => {
   })
   return res.status(201).json(ticket)
 })
+export type Post = DreamTicket
 
 const handler: NextApiHandler = async (req, res) => {
   switch (req.method) {
+    case "GET":
+      return handleGet(req, res)
     case "POST":
       return handlePost(req, res)
     default:

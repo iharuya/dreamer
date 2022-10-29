@@ -12,3 +12,13 @@ export const draftsFetcher = (keyName: string, address: string) => {
     .get("/api/dreams/drafts", { params: { dreamerAddress: address } })
     .then((res) => res.data)
 }
+
+export const ticketsFetcher = (keyName: string, address: string) => {
+  console.assert(
+    keyName === "tickets",
+    "keyName must be 'tickets' to make a global key."
+  )
+  return axios
+    .get("/api/dreams/tickets", { params: { senderAddress: address } })
+    .then((res) => res.data)
+}
