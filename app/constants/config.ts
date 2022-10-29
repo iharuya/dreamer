@@ -1,3 +1,5 @@
+import { chain } from "wagmi"
+
 export const APP_NAME = "Dreamer"
 export const AVATAR_COLORS = [
   "#FEE9A6",
@@ -7,4 +9,4 @@ export const AVATAR_COLORS = [
   "#9380B7",
 ]
 
-export const EXPIRATION_BLOCKS = 10000000
+export const SERVER_CHAIN_ID = chain.polygonMumbai.id

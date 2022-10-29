@@ -1,7 +1,6 @@
 import { NextPageWithLayout } from "pages/_app"
 import { ReactElement, useState } from "react"
 import AccountLayout from "@/components/layouts/account/Layout"
-import axios from "axios"
 import useSWR from "swr"
 import { Dream } from "@prisma/client"
 import { useMyAccount } from "@/lib/hooks"
@@ -9,11 +8,7 @@ import Error from "next/error"
 import { LScale } from "@/components/common/Loading"
 import DraftItem from "@/components/dream/draft/Item"
 import EditDraftModal from "@/components/dream/draft/EditModal"
-
-const draftsFetcher = (address: string) =>
-  axios
-    .get("/api/dreams/drafts", { params: { dreamerAddress: address } })
-    .then((res) => res.data)
+import { draftsFetcher } from "@/lib/fetchers"
 
 const Page: NextPageWithLayout = () => {
   const { data: myAccount } = useMyAccount()
@@ -21,7 +16,10 @@ const Page: NextPageWithLayout = () => {
     data: drafts,
     error: draftsError,
     mutate: draftsMutate,
-  } = useSWR<Dream[]>(myAccount ? myAccount.address : null, draftsFetcher)
+  } = useSWR<Dream[]>(
+    myAccount ? ["drafts", myAccount.address] : null,
+    draftsFetcher
+  )
   const [editingDraftId, setEditingDraftId] = useState<number | undefined>()
 
   if (drafts === undefined && !draftsError)

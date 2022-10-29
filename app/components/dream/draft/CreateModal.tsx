@@ -6,7 +6,7 @@ import { createDraft as createDraftSchema } from "@/schema/dreams"
 import { toast } from "react-toastify"
 import axios from "axios"
 import clsx from "clsx"
-
+import { useSWRConfig } from "swr"
 // Todo: Integrate "redream"
 
 const schema = createDraftSchema.shape.body.pick({
@@ -28,6 +28,7 @@ const Component: FC<Props> = ({ dreamerAddress, close }) => {
   } = useForm<Schema>({
     resolver: zodResolver(schema),
   })
+  const { mutate } = useSWRConfig()
 
   const create = async (data: Schema) => {
     const body = {
@@ -38,6 +39,7 @@ const Component: FC<Props> = ({ dreamerAddress, close }) => {
       .post("/api/dreams/drafts", body)
       .then(() => {
         toast.info("ドラフトを作成しました")
+        mutate(["drafts", dreamerAddress])
         close()
       })
       .catch((e) => {

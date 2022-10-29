@@ -17,7 +17,7 @@ import { Session } from "next-auth"
 import { SWRConfig } from "swr"
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
-import axios from "axios"
+import { defaultFetcher } from "@/lib/fetchers"
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   // eslint-disable-next-line no-unused-vars
@@ -87,8 +87,7 @@ const App = ({
           <SessionProvider session={pageProps.session}>
             <SWRConfig
               value={{
-                fetcher: (url: string) =>
-                  axios.get(url).then((res) => res.data),
+                fetcher: defaultFetcher,
               }}
             >
               <BaseLayout>{getLayout(<Component {...pageProps} />)}</BaseLayout>

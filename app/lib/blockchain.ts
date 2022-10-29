@@ -1,9 +1,14 @@
 import { ethers } from "ethers"
+import { Alchemy, Network } from "alchemy-sdk"
+
+const alchemy = new Alchemy({
+  apiKey: process.env.NEXT_PUBLIC_ALCHEMY_APIKEY_MUMBAI,
+  network: Network.MATIC_MUMBAI,
+})
 
 /* eslint-disable */
 export const getBlockNumber = async () => {
-  // ad hoc
-  return await Promise.resolve(40000000)
+  return alchemy.core.getBlockNumber()
 }
 
 export const isDreamMinted = async (ticketId: number): Promise<boolean> => {
