@@ -5,11 +5,12 @@ import useSWR from "swr"
 
 export const useMyAccount = () => {
   const { data: session } = useSession()
-  const { data, error } = useSWR<Account, AxiosError>(
+  const { data, error, mutate } = useSWR<Account, AxiosError>(
     session?.address ? `/api/accounts/${session.address}` : null
   )
   return {
     data: data,
     error: error,
+    mutate: mutate,
   }
 }

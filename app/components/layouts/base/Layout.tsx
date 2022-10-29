@@ -1,70 +1,61 @@
 import { SiweMessage } from "siwe"
-import { useAccount, useSignMessage, useDisconnect } from "wagmi"
-import { signIn, signOut, getCsrfToken } from "next-auth/react"
+import { useAccount, useSignMessage, useDisconnect, useNetwork } from "wagmi"
+import { signIn, signOut, getCsrfToken, useSession } from "next-auth/react"
 import { FC, ReactNode, useEffect, useState } from "react"
 import Header from "./Header"
 import { toast } from "react-toastify"
 import axios, { AxiosError } from "axios"
-import { useSWRConfig } from "swr"
-import SigninModal from "@/components/layouts/base/SigninModal"
+import ChangeChainModal from "@/components/layouts/base/ChangeChainModal"
+import SignInModal from "@/components/layouts/base/SignInModal"
 import CreateDraftModal from "@/components/dream/draft/CreateModal"
 import { useMyAccount } from "@/lib/hooks"
 import { MdEdit } from "react-icons/md"
 
 const Component: FC<{ children: ReactNode }> = ({ children }) => {
-  const { address: connectedAddress, isConnected } = useAccount()
+  const { address: connectedAddress } = useAccount()
   const { disconnect } = useDisconnect()
+  const { chain: connectedChain } = useNetwork()
   const { signMessageAsync } = useSignMessage()
-  // previous authenticated address or undefined
-  const [previousAddress, setPreviousAddress] = useState<string | undefined>()
-  const [signinModal, setSigninModal] = useState<boolean>(false)
-  const { mutate } = useSWRConfig()
-  const { data: myAccount } = useMyAccount()
+  const { status: sessionStatus } = useSession()
+  // Previously authenticated chain/address
+  const [prevChainId, setPrevChainId] = useState<number>()
+  const [prevAddress, setPrevAddress] = useState<string>()
+  const [changeChainModal, setChangeChainModal] = useState<boolean>(false)
+  const [signInModal, setSignInModal] = useState<boolean>(false)
+
+  const { data: myAccount, mutate: mutateMyAccount } = useMyAccount()
   const [draftModal, setDraftModal] = useState<boolean>(false)
 
-  /*
-  接続状態管理（仮）
-  - ウォレット接続
-    - セッション接続（authenticated）
-    - unauthenticated
-  - ウォレット未接続
-    - unauthenticated
-
-  ウォレット未接続の状態から接続したとき->自動で署名をポップアップ
-  ウォレットの接続を解除したとき->サインアウト
-  リロードしたとき->今は無条件でサインアウト
-  アカウントを切り替えたとき->サインアウトして、署名を促すモーダルを出す
-  署名をキャンセルもしくは認証に失敗したとき->接続している間は署名を促すモーダルを出す
-  ネットワークを変更したとき->今は何もしない
-  */
-  useEffect(() => {
-    ;(async () => {
-      if (isConnected && typeof previousAddress === "undefined") {
-        await handleSignin(connectedAddress)
-        return
-      }
-      if (!isConnected) {
-        handleSignout()
-        return
-      }
-      if (isConnected && typeof previousAddress !== "undefined") {
-        console.assert(connectedAddress !== previousAddress)
-        handleSignout()
-        setSigninModal(true)
-        return
-      }
-    })()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [connectedAddress])
-
-  useEffect(() => {
-    if (!isConnected) {
-      setSigninModal(false)
+  const handleSignIn = async () => {
+    if (connectedAddress === undefined || connectedChain === undefined) {
+      reset()
+      return
     }
-  }, [isConnected])
+    if (connectedChain.id !== prevChainId || connectedAddress !== prevAddress) {
+      signOut({ redirect: false })
+    }
+    if (connectedChain.unsupported) {
+      setChangeChainModal(true)
+      return
+    }
 
-  const handleSignin = async (address: string | undefined) => {
-    if (typeof address === "undefined") return
+    setChangeChainModal(false)
+    const success = await trySignIn(connectedAddress, connectedChain.id)
+    if (success) {
+      setSignInModal(false)
+      setPrevAddress(connectedAddress)
+      setPrevChainId(connectedChain.id)
+    } else {
+      setSignInModal(true)
+    }
+  }
+
+  useEffect(() => {
+    handleSignIn()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [connectedAddress, connectedChain])
+
+  const trySignIn = async (address: string, chainId: number) => {
     const toastId = toast.info("ウォレットで署名してください", {
       autoClose: false,
     })
@@ -87,7 +78,7 @@ const Component: FC<{ children: ReactNode }> = ({ children }) => {
         statement: "ウォレットでサインインします",
         uri: window.location.origin,
         version: "1",
-        // chainId: connectedChain?.id,
+        chainId: chainId,
         nonce: await getCsrfToken(),
         issuedAt: now.toISOString(),
         expirationTime: expiration.toISOString(),
@@ -102,15 +93,14 @@ const Component: FC<{ children: ReactNode }> = ({ children }) => {
       toast.dismiss(toastId)
       if (needToCreateNew) {
         await createAccount(address)
-        mutate(`/api/accounts/${address}`)
+        mutateMyAccount()
         toast.success("ようこそ")
       }
-      setPreviousAddress(connectedAddress)
-      setSigninModal(false)
+      return true
     } catch (err: any) {
-      setSigninModal(true)
-      // setPreviousAddress(undefined) ?
-      if (err.code !== "ACTION_REJECTED") {
+      if (err.code === "ACTION_REJECTED") {
+        toast.dismiss(toastId)
+      } else {
         console.error(err)
         toast.update(toastId, {
           render: "サインインエラー",
@@ -118,12 +108,23 @@ const Component: FC<{ children: ReactNode }> = ({ children }) => {
           autoClose: 5000,
         })
       }
+      return false
     }
   }
 
-  const handleSignout = () => {
-    signOut({ redirect: false })
-    setPreviousAddress(undefined)
+  const reset = () => {
+    if (sessionStatus !== "unauthenticated") {
+      signOut({ redirect: false })
+    }
+    if (connectedAddress !== undefined) {
+      disconnect()
+    }
+    if (changeChainModal) {
+      setChangeChainModal(false)
+    }
+    if (signInModal) {
+      setSignInModal(false)
+    }
   }
 
   const createAccount = async (address: string) => {
@@ -138,12 +139,12 @@ const Component: FC<{ children: ReactNode }> = ({ children }) => {
       <main style={{ minHeight: "1000px" }}>
         <div className="max-w-5xl mx-auto px-4">{children}</div>
       </main>
-      {signinModal && (
-        <SigninModal
-          proceed={() => handleSignin(connectedAddress)}
-          cancel={() => disconnect()}
-        />
+
+      {changeChainModal && <ChangeChainModal cancel={() => reset()} />}
+      {signInModal && (
+        <SignInModal proceed={() => handleSignIn()} cancel={() => reset()} />
       )}
+
       {myAccount && (
         <>
           <div className="fixed bottom-4 right-4 md:right-8">
