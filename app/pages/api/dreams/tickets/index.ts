@@ -3,7 +3,7 @@ import { withZod } from "@/lib/zod"
 import { NextApiHandler } from "next"
 import { issueTicket } from "@/schema/dreams"
 import { getToken } from "next-auth/jwt"
-import { getBlockNumber } from "@/lib/blockchain"
+import { getBlockNumber, signToMintDream } from "@/lib/blockchain"
 import { EXPIRATION_BLOCKS } from "@/constants/config"
 
 const handlePost = withZod(issueTicket, async (req, res) => {
@@ -33,11 +33,24 @@ const handlePost = withZod(issueTicket, async (req, res) => {
     tokenId = (await prisma.dreamToken.create({ data: {} })).id
   }
   const currentBlock = await getBlockNumber()
-  const signature = "signature123" // ad hoc
+
+  // new ticket ID should be random big number
+  const lastTicket = await prisma.dreamTicket.findFirst({
+    orderBy: [{ id: "desc" }],
+  })
+  const nextTicketId = lastTicket ? lastTicket.id + 1 : 1
+  const expiresAt = currentBlock + EXPIRATION_BLOCKS
+  const signature = await signToMintDream(
+    nextTicketId,
+    address,
+    tokenId,
+    expiresAt
+  )
   const ticket = await prisma.dreamTicket.create({
     data: {
+      id: nextTicketId,
       tokenId: tokenId,
-      expiresAt: currentBlock + EXPIRATION_BLOCKS,
+      expiresAt: expiresAt,
       senderAddress: address,
       dreamId: dream.id,
       signature,

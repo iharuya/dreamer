@@ -3,7 +3,11 @@ import { withZod } from "@/lib/zod"
 import { NextApiHandler } from "next"
 import { getToken } from "next-auth/jwt"
 import { updateTicket, deleteTicket } from "@/schema/dreams"
-import { getBlockNumber, isDreamMinted } from "@/lib/blockchain"
+import {
+  getBlockNumber,
+  isDreamMinted,
+  signToMintDream,
+} from "@/lib/blockchain"
 import { DreamTicket } from "@prisma/client"
 import { EXPIRATION_BLOCKS } from "@/constants/config"
 
@@ -54,11 +58,17 @@ const handleUpdate = withZod(updateTicket, async (req, res) => {
   const mutableTest = await checkIfTicketIsMutable(ticket)
   if (mutableTest.yes) {
     const currentBlock = await getBlockNumber()
-    const newSignature = "newSig" // ad hoc
+    const newExpiration = currentBlock + EXPIRATION_BLOCKS
+    const newSignature = await signToMintDream(
+      ticket.id,
+      ticket.senderAddress,
+      ticket.tokenId,
+      newExpiration
+    )
     const newTicket = await prisma.dreamTicket.update({
       where: { id: ticket.id },
       data: {
-        expiresAt: currentBlock + EXPIRATION_BLOCKS,
+        expiresAt: newExpiration,
         signature: newSignature,
       },
     })
