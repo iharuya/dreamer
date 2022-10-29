@@ -12,6 +12,7 @@ import { LScale } from "@/components/common/Loading"
 import Error from "next/error"
 import { MdDelete } from "react-icons/md"
 import DeleteDraftModal from "@/components/dream/draft/DeleteModal"
+import IssueTicketModal from "@/components/dream/ticket/IssueModal"
 
 // Todo: redream
 
@@ -36,6 +37,7 @@ const Component: FC<Props> = ({ draftId, close, draftsMutate }) => {
     resolver: zodResolver(schema),
   })
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false)
+  const [isIssueTicketOpen, setIsIssueTicketOpen] = useState<boolean>(false)
   const { data: draft, error: draftError } = useSWR<Dream>(
     `/api/dreams/drafts/${draftId}`
   )
@@ -65,6 +67,12 @@ const Component: FC<Props> = ({ draftId, close, draftsMutate }) => {
         <div className="modal-box">
           <div className="flex mb-4 items-center">
             <h3 className="font-bold text-2xl">ドラフト編集</h3>
+            <button
+              className="btn btn-primary ml-auto"
+              onClick={() => setIsIssueTicketOpen(true)}
+            >
+              チケット発行
+            </button>
           </div>
           <form onSubmit={handleSubmit(update)}>
             <div className="form-control">
@@ -152,6 +160,18 @@ const Component: FC<Props> = ({ draftId, close, draftsMutate }) => {
           </form>
         </div>
       </div>
+
+      {isIssueTicketOpen && (
+        <IssueTicketModal
+          senderAddress={draft.dreamerAddress}
+          draftId={draft.id}
+          close={() => setIsIssueTicketOpen(false)}
+          onIssue={() => {
+            draftsMutate()
+            close()
+          }}
+        />
+      )}
 
       {isDeleteOpen && (
         <DeleteDraftModal
