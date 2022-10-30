@@ -1,15 +1,7 @@
-import { chain } from "wagmi"
-
-export const ADDRESSES = {
-  [chain.polygonMumbai.id]: "0xFa18FC96FD6F9Cc55aBf93B737BAC2f51f1E2450",
-  [chain.hardhat.id]: "0x87310FaDe31595FE267B331Aa88B7ab77cc5298d",
-}
-
-export const EXPIRATION_BLOCKS = {
-  [chain.polygonMumbai.id]: 12, // 5s/block -> 1m
-  [chain.hardhat.id]: 10,
-}
-
+export const ADDRESS = "0xDe3eDFE8Da4a14757629f55e2c96E76A78ab5996"
+export const MINED_BLOCK = 28888471
+export const TOPIC_MINTED =
+  "0x25b428dfde728ccfaddad7e29e4ac23c24ed7fd1a6e3e3f91894a9a073f5dfff"
 export const ABI = [
   {
     inputs: [

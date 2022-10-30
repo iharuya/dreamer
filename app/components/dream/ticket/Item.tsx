@@ -1,12 +1,11 @@
 import { FC } from "react"
-import { Get as TicketGet } from "@/api/dreams/tickets/[id]"
-import ClipLoader from "react-spinners/ClipLoader"
+import { Get as TicketGet } from "@/api/dreams/tickets/[id]/index"
+
 type Props = {
   ticket: TicketGet
-  currentBlockNumber: number | undefined
   onClick: () => void
 }
-const Component: FC<Props> = ({ ticket, onClick, currentBlockNumber }) => {
+const Component: FC<Props> = ({ ticket, onClick }) => {
   return (
     <div className="card w-full border shadow-sm" onClick={onClick}>
       <div className="card-body px-6 py-4">
@@ -29,19 +28,6 @@ const Component: FC<Props> = ({ ticket, onClick, currentBlockNumber }) => {
               <span className="badge">完了</span>
             )}
           </div>
-
-          {currentBlockNumber !== undefined ? (
-            currentBlockNumber < ticket.expiresAt ? (
-              <span className="badge">
-                有効：あと{ticket.expiresAt - currentBlockNumber}
-                ブロック
-              </span>
-            ) : (
-              <span className="badge badge-error">操作が必要です</span>
-            )
-          ) : (
-            <ClipLoader size={24} color="#aaaaaa" />
-          )}
         </div>
       </div>
     </div>

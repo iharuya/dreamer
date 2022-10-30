@@ -8,8 +8,7 @@ import { LScale } from "@/components/common/Loading"
 import Error from "next/error"
 import TicketItem from "@/components/dream/ticket/Item"
 import { Get as TicketsGet } from "@/api/dreams/tickets/index"
-import { useBlockNumber, chain } from "wagmi"
-import ManageTicketModal from "@/components/dream/ticket/ManageModal"
+import ManageTicketModal from "@/components/dream/ticket/manage/Main"
 
 const Page: NextPageWithLayout = () => {
   const { data: myAccount } = useMyAccount()
@@ -21,9 +20,7 @@ const Page: NextPageWithLayout = () => {
     myAccount ? ["tickets", myAccount.address] : null,
     ticketsFetcher
   )
-  const { data: currentBlockNumber } = useBlockNumber({
-    chainId: chain.polygonMumbai.id,
-  })
+
   const [managingTicketId, setManagingTicketId] = useState<number | undefined>()
 
   if (tickets === undefined && !ticketsError)
@@ -41,7 +38,6 @@ const Page: NextPageWithLayout = () => {
               <TicketItem
                 key={ticket.id}
                 ticket={ticket}
-                currentBlockNumber={currentBlockNumber}
                 onClick={() => setManagingTicketId(ticket.id)}
               />
             ))}

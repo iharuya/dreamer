@@ -45,7 +45,7 @@ contract Dreams is ERC1155, Ownable, ERC1155Supply {
         require(ECDSA.recover(ethSignedMessageHash, signature) == SIGNER, "Forbidden");
         require(block.number <= expiresAt, "Signature expired");
         require(msg.value == mintValue(tokenId, 1), "Wrong price sent"); // should this be hard coded?
-        ticketIds[ticketId] == true;
+        ticketIds[ticketId] = true;
         _mint(msg.sender, tokenId, 1, "");
         emit Minted(msg.sender, tokenId, ticketId);
     }

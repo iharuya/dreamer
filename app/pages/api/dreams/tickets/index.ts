@@ -4,8 +4,7 @@ import { NextApiHandler } from "next"
 import { issueTicket, getTickets } from "@/schema/dreams"
 import { getToken } from "next-auth/jwt"
 import { getBlockNumber, signToMintDream } from "@/lib/blockchain"
-import { EXPIRATION_BLOCKS } from "@/constants/contracts/dreamer"
-import { SERVER_CHAIN_ID } from "@/constants/config"
+import { DREAM_EXPIRATION_BLOCKS } from "@/constants/chain"
 import { Dream, DreamTicket } from "@prisma/client"
 
 const handleGet = withZod(getTickets, async (req, res) => {
@@ -57,7 +56,7 @@ const handlePost = withZod(issueTicket, async (req, res) => {
     orderBy: [{ id: "desc" }],
   })
   const nextTicketId = lastTicket ? lastTicket.id + 1 : 1
-  const expiresAt = currentBlock + EXPIRATION_BLOCKS[SERVER_CHAIN_ID]
+  const expiresAt = currentBlock + DREAM_EXPIRATION_BLOCKS
   const signature = await signToMintDream(
     nextTicketId,
     address,

@@ -6,6 +6,7 @@ const handleGet = async (res: NextApiResponse) => {
   const currentBlockNumber = await getBlockNumber()
   return res.status(200).json(currentBlockNumber)
 }
+export type Get = number
 
 const handler: NextApiHandler = async (req, res) => {
   switch (req.method) {

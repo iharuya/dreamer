@@ -28,3 +28,8 @@ export const cssHslToHex = (s: string): string => {
   const third = parseInt(arr[2].replace("%", ""))
   return hslToHex(first, second, third)
 }
+
+export const decimalToHexWithPrefix = (d: number) => {
+  const hex = d.toString(16)
+  return `0x${hex}`
+}

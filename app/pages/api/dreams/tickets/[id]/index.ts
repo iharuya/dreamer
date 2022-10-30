@@ -9,8 +9,7 @@ import {
   signToMintDream,
 } from "@/lib/blockchain"
 import { Dream, DreamTicket } from "@prisma/client"
-import { EXPIRATION_BLOCKS } from "@/constants/contracts/dreamer"
-import { SERVER_CHAIN_ID } from "@/constants/config"
+import { DREAM_EXPIRATION_BLOCKS } from "@/constants/chain"
 
 const checkIfTicketIsMutable = async (
   ticket: DreamTicket
@@ -77,7 +76,7 @@ const handlePatch = withZod(updateTicket, async (req, res) => {
   const mutableTest = await checkIfTicketIsMutable(ticket)
   if (mutableTest.yes) {
     const currentBlock = await getBlockNumber()
-    const newExpiration = currentBlock + EXPIRATION_BLOCKS[SERVER_CHAIN_ID]
+    const newExpiration = currentBlock + DREAM_EXPIRATION_BLOCKS
     const newSignature = await signToMintDream(
       ticket.id,
       ticket.senderAddress,

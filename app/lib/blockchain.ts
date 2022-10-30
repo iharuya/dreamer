@@ -1,26 +1,35 @@
 import { ethers } from "ethers"
 import { Alchemy, Network } from "alchemy-sdk"
+import {
+  ADDRESS,
+  MINED_BLOCK,
+  TOPIC_MINTED,
+} from "@/constants/contracts/dreams"
+import { decimalToHexWithPrefix } from "./utils"
 
 const alchemy = new Alchemy({
   apiKey: process.env.NEXT_PUBLIC_ALCHEMY_APIKEY_MUMBAI,
   network: Network.MATIC_MUMBAI,
 })
 
-/* eslint-disable */
 export const getBlockNumber = async () => {
   return alchemy.core.getBlockNumber()
 }
 
 export const isDreamMinted = async (ticketId: number): Promise<boolean> => {
-  // ad hoc
-  const events = await Promise.resolve([
-    {
-      to: "0x",
-      tokenId: "123",
-      ticketId: "246",
-    },
-  ])
-  return events.length === 1
+  const logs = await alchemy.core.getLogs({
+    address: ADDRESS,
+    // Should use blockhash in order not to get all events
+    fromBlock: decimalToHexWithPrefix(MINED_BLOCK),
+    toBlock: "latest",
+    topics: [TOPIC_MINTED],
+  })
+
+  const mintedLog = logs.find((log) => {
+    const ticketIdHex = log.topics[3]
+    return parseInt(ticketIdHex, 16) === ticketId
+  })
+  return mintedLog !== undefined ? true : false
 }
 
 export const signToMintDream = async (

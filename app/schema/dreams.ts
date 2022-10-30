@@ -59,6 +59,11 @@ export const getTicket = z.object({
     id: z.string().regex(/^\d+$/).transform(Number),
   }),
 })
+export const getIsDreamMinted = z.object({
+  query: z.object({
+    id: z.string().regex(/^\d+$/).transform(Number),
+  }),
+})
 export const issueTicket = z.object({
   body: z.object({
     senderAddress: ethAddress,
