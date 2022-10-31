@@ -2,7 +2,7 @@ import { FC, useState } from "react"
 import useSWR, { KeyedMutator } from "swr"
 import { LScale } from "@/components/common/Loading"
 import Error from "@/components/common/Error"
-import { Get as TicketGet } from "@/api/dreams/tickets/[id]/index"
+import { Get as TicketGet } from "@/api/dreams/tickets/[id]"
 import { Get as TicketsGet } from "@/api/dreams/tickets/index"
 import { Get as BlockNumberGet } from "@/api/blockchain/general/current-block-number"
 import { BLOCK_TIME } from "@/constants/chain"
@@ -46,7 +46,9 @@ const Component: FC<Props> = ({ ticketId, close, ticketsMutate }) => {
     isValidating: isMintedValidating,
     error: isMintedError,
   } = useSWR<boolean>(
-    isPending ? `/api/dreams/tickets/${ticketId}/is-dream-minted` : null
+    isPending
+      ? `/api/blockchain/dreams/is-dream-minted?ticketId=${ticket.id}`
+      : null
   )
 
   const ticketLoading = ticket === undefined && !ticketError

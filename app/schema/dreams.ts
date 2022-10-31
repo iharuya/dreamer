@@ -58,12 +58,6 @@ export const GetTicket = z.object({
   }),
 })
 
-// Todo: change api route
-export const GetIsDreamMinted = z.object({
-  query: z.object({
-    id: z.string().regex(/^\d+$/).transform(Number),
-  }),
-})
 export const IssueTicket = z.object({
   body: z.object({
     senderAddress: ethAddress,

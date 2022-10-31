@@ -1,5 +1,5 @@
 import { FC } from "react"
-import { Get as TicketGet } from "@/api/dreams/tickets/[id]/index"
+import { Get as TicketGet } from "@/api/dreams/tickets/[id]"
 import { Get as BlockNumberGet } from "@/api/blockchain/general/current-block-number"
 import { BLOCK_MARGIN } from "@/constants/chain"
 import { ClipLoader } from "react-spinners"

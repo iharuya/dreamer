@@ -3,11 +3,8 @@ import { withZod } from "@/lib/zod"
 import { NextApiHandler } from "next"
 import { getToken } from "next-auth/jwt"
 import { UpdateTicket, DeleteTicket, GetTicket } from "@/schema/dreams"
-import {
-  getBlockNumber,
-  isDreamMinted,
-  signToMintDream,
-} from "@/lib/blockchain"
+import { getBlockNumber } from "@/lib/blockchain/general"
+import { isDreamMinted, signToMintDream } from "@/lib/blockchain/dreams"
 import { Dream, DreamTicket } from "@prisma/client"
 import { DREAM_EXPIRATION_BLOCKS } from "@/constants/chain"
 

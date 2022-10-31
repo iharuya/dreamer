@@ -1,20 +1,15 @@
 import { ethers } from "ethers"
-import { Alchemy, Network } from "alchemy-sdk"
+import { alchemy, provider } from "@/lib/alchemy"
 import {
   ADDRESS,
   MINED_BLOCK,
   TOPIC_MINTED,
 } from "@/constants/contracts/dreams"
-import { decimalToHexWithPrefix } from "./utils"
+import ABI from "@/constants/contracts/abi/Dreams.json"
+import { Dreams } from "@/types/contracts/Dreams"
+import { decimalToHexWithPrefix } from "../utils"
 
-const alchemy = new Alchemy({
-  apiKey: process.env.ALCHEMY_APIKEY_MUMBAI,
-  network: Network.MATIC_MUMBAI,
-})
-
-export const getBlockNumber = async () => {
-  return alchemy.core.getBlockNumber()
-}
+const dreams = new ethers.Contract(ADDRESS, ABI, provider) as Dreams
 
 export const isDreamMinted = async (ticketId: number): Promise<boolean> => {
   const logs = await alchemy.core.getLogs({
@@ -32,8 +27,9 @@ export const isDreamMinted = async (ticketId: number): Promise<boolean> => {
   return mintedLog !== undefined ? true : false
 }
 
-export const getMintValue = async (tokenId: number): Promise<number> => {
-  
+export const getMintValue = async (tokenId: number): Promise<string> => {
+  const raw = await dreams.mintValue(tokenId)
+  return raw.toString()
 }
 
 export const signToMintDream = async (

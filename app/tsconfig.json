@@ -21,6 +21,7 @@
       "@/constants/*": ["constants/*"],
       "@/lib/*": ["lib/*"],
       "@/schema/*": ["schema/*"],
+      "@/types/*": ["types/*"],
       "@/api/*": ["pages/api/*"]
     }
   },

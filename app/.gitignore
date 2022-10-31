@@ -34,8 +34,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+types/contracts
 
 # prisma
 prisma/.env
-
 postgres
+
+constants/contracts/abi

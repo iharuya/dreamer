@@ -1,5 +1,5 @@
 import { FC } from "react"
-import { Get as TicketGet } from "@/api/dreams/tickets/[id]/index"
+import { Get as TicketGet } from "@/api/dreams/tickets/[id]"
 
 type Props = {
   ticket: TicketGet
