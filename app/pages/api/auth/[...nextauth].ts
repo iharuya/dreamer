@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import { NextApiRequest, NextApiResponse } from "next"
 import { getCsrfToken } from "next-auth/react"
 import { SiweMessage } from "siwe"
+import { SERVER_CHAIN_ID } from "@/constants/config"
 
 const auth = async (req: NextApiRequest, res: NextApiResponse) => {
   const authOptions: NextAuthOptions = {
@@ -29,6 +30,11 @@ const auth = async (req: NextApiRequest, res: NextApiResponse) => {
             const nextAuthHost = new URL(nextAuthUrl).host
             if (message.domain !== nextAuthHost) return null
             if (message.nonce !== (await getCsrfToken({ req }))) return null
+            if (
+              process.env.NODE_ENV === "production" &&
+              message.chainId !== SERVER_CHAIN_ID
+            )
+              return null
 
             const result = await message.verify({
               signature: credentials.signature,

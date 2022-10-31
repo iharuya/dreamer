@@ -3,8 +3,8 @@ import { ReactElement, useState } from "react"
 import AccountLayout from "@/components/layouts/account/Layout"
 import useSWR from "swr"
 import { useMyAccount } from "@/lib/hooks"
-import Error from "next/error"
 import { LScale } from "@/components/common/Loading"
+import Error from "@/components/common/Error"
 import DraftItem from "@/components/dream/draft/Item"
 import ManageDraftModal from "@/components/dream/draft/ManageModal"
 import { draftsFetcher } from "@/lib/fetchers"
@@ -26,7 +26,12 @@ const Page: NextPageWithLayout = () => {
     return <LScale message="ドラフトをロード中..." />
   if (drafts === undefined) {
     console.error(draftsError)
-    return <Error statusCode={draftsError?.response?.status || 500} />
+    return (
+      <Error
+        code={draftsError?.response?.status || 500}
+        message="ドラフトの取得に失敗しました"
+      />
+    )
   }
 
   return (

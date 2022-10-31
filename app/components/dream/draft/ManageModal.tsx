@@ -8,9 +8,9 @@ import axios from "axios"
 import clsx from "clsx"
 import useSWR, { KeyedMutator } from "swr"
 import { LScale } from "@/components/common/Loading"
-import Error from "next/error"
+import Error from "@/components/common/Error"
+import DeleteModal from "@/components/common/DeleteModal"
 import { MdDelete } from "react-icons/md"
-import DeleteDraftModal from "@/components/dream/draft/DeleteModal"
 import IssueTicketModal from "@/components/dream/ticket/IssueModal"
 import { Get as DraftGet } from "@/api/dreams/drafts/[id]"
 import { Get as DraftsGet } from "@/api/dreams/drafts/index"
@@ -42,13 +42,20 @@ const Component: FC<Props> = ({ draftId, close, draftsMutate }) => {
     `/api/dreams/drafts/${draftId}`
   )
   if (draft === undefined && !draftError)
-    return <LScale message="ドラフトをロード中..." />
+    return <LScale message="ドラフトをロード中..." modal />
   if (draft === undefined) {
     console.error(draftError)
-    return <Error statusCode={draftError?.response?.status || 500} />
+    return (
+      <Error
+        code={draftError?.response?.status || 500}
+        message="ドラフトの取得に失敗しました"
+        modal
+        onClose={close}
+      />
+    )
   }
 
-  const update = async (data: Schema) => {
+  const handleUpdate = async (data: Schema) => {
     axios
       .patch(`/api/dreams/drafts/${draftId}`, data)
       .then(() => {
@@ -61,9 +68,22 @@ const Component: FC<Props> = ({ draftId, close, draftsMutate }) => {
       })
   }
 
+  const handleDelete = async () => {
+    axios
+      .delete(`/api/dreams/drafts/${draft.id}`)
+      .then(() => {
+        draftsMutate()
+        close()
+      })
+      .catch((e) => {
+        console.error(e)
+        toast.error("ドラフト削除失敗")
+      })
+  }
+
   return (
     <>
-      <div className="modal modal-open">
+      <div className="modal modal-open modal-bottom md:modal-middle">
         <div className="modal-box">
           <div className="flex mb-4 items-center">
             <h3 className="font-bold text-2xl">ドラフト</h3>
@@ -74,7 +94,7 @@ const Component: FC<Props> = ({ draftId, close, draftsMutate }) => {
               チケット発行
             </button>
           </div>
-          <form onSubmit={handleSubmit(update)}>
+          <form onSubmit={handleSubmit(handleUpdate)}>
             <div className="form-control">
               <div className="mb-4">
                 <label className="label">
@@ -154,7 +174,7 @@ const Component: FC<Props> = ({ draftId, close, draftsMutate }) => {
                 とじる
               </button>
               <button type="submit" className="btn btn-primary">
-                更新
+                保存
               </button>
             </div>
           </form>
@@ -165,7 +185,7 @@ const Component: FC<Props> = ({ draftId, close, draftsMutate }) => {
         <IssueTicketModal
           senderAddress={draft.dreamerAddress}
           draftId={draft.id}
-          close={() => setIsIssueTicketOpen(false)}
+          onClose={() => setIsIssueTicketOpen(false)}
           onIssue={() => {
             draftsMutate()
             close()
@@ -174,13 +194,10 @@ const Component: FC<Props> = ({ draftId, close, draftsMutate }) => {
       )}
 
       {isDeleteOpen && (
-        <DeleteDraftModal
-          draft={draft}
-          close={() => setIsDeleteOpen(false)}
-          onDelete={() => {
-            draftsMutate()
-            close()
-          }}
+        <DeleteModal
+          title="ドラフトを削除しますか？"
+          onCancel={() => setIsDeleteOpen(false)}
+          onDelete={() => handleDelete()}
         />
       )}
     </>

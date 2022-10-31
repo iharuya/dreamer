@@ -5,7 +5,7 @@ import { useMyAccount } from "@/lib/hooks"
 import useSWR from "swr"
 import { ticketsFetcher } from "@/lib/fetchers"
 import { LScale } from "@/components/common/Loading"
-import Error from "next/error"
+import Error from "@/components/common/Error"
 import TicketItem from "@/components/dream/ticket/Item"
 import { Get as TicketsGet } from "@/api/dreams/tickets/index"
 import ManageTicketModal from "@/components/dream/ticket/manage/Main"
@@ -27,7 +27,12 @@ const Page: NextPageWithLayout = () => {
     return <LScale message="チケットをロード中..." />
   if (tickets === undefined) {
     console.error(ticketsError)
-    return <Error statusCode={ticketsError?.response?.status || 500} />
+    return (
+      <Error
+        code={ticketsError?.response?.status || 500}
+        message="チケットの取得に失敗しました"
+      />
+    )
   }
   return (
     <>

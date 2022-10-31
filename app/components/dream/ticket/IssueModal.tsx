@@ -5,17 +5,17 @@ import axios from "axios"
 type Props = {
   senderAddress: string
   draftId: number
-  close: () => void
+  onClose: () => void
   onIssue: () => void
 }
-const Component: FC<Props> = ({ senderAddress, draftId, close, onIssue }) => {
-  const issue = async () => {
+const Component: FC<Props> = ({ senderAddress, draftId, onClose, onIssue }) => {
+  const handleIssue = async () => {
     axios
       .post("/api/dreams/tickets", { senderAddress, dreamId: draftId })
       .then(() => {
         toast.info("チケットを発行しました")
         onIssue()
-        close()
+        onClose()
       })
       .catch((e) => {
         console.error(e)
@@ -50,11 +50,11 @@ const Component: FC<Props> = ({ senderAddress, draftId, close, onIssue }) => {
         <form
           onSubmit={(e) => {
             e.preventDefault()
-            issue()
+            handleIssue()
           }}
         >
           <div className="modal-action">
-            <button type="button" className="btn" onClick={close}>
+            <button type="button" className="btn" onClick={onClose}>
               キャンセル
             </button>
             <button type="submit" className="btn btn-primary">

@@ -19,7 +19,7 @@ const Component: FC<Props> = ({ ticket, onClick }) => {
         <div className="flex justify-between items-center">
           <div>
             {ticket.status === "PENDING" && (
-              <span className="badge badge-info">待機中</span>
+              <span className="badge badge-info">確認してください</span>
             )}
             {ticket.status === "PROCESSING" && (
               <span className="badge badge-accent">処理中</span>

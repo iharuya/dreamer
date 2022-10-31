@@ -49,7 +49,7 @@ const Component: FC<Props> = ({ dreamerAddress, close }) => {
   }
 
   return (
-    <div className="modal modal-open">
+    <div className="modal modal-open modal-bottom md:modal-middle">
       <div className="modal-box">
         <h3 className="font-bold text-2xl mb-4">新規ドラフト</h3>
         <form onSubmit={handleSubmit(create)}>

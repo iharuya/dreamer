@@ -9,11 +9,11 @@ const Component: FC<Props> = ({ draft, onClick }) => {
     <div className="card w-full border shadow-sm" onClick={onClick}>
       <div className="card-body px-6 py-4">
         <h2 className="text-lg font-bold truncate">{draft.title}</h2>
-        <div className="text-base-content/80 flex items-center">
+        <div className="text-base-content/80 flex-inline truncate">
           <span className="text-xl mr-1">
             &gt;<span className="text-sm font-bold">_ </span>
           </span>
-          <p className="truncate">{draft.prompt}</p>
+          <span>{draft.prompt}</span>
         </div>
         <p className="text-sm text-base-content/80 truncate">
           {draft.caption || "キャプションなし"}

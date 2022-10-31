@@ -2,36 +2,49 @@ import { useSession } from "next-auth/react"
 import { FC, ReactNode, useState } from "react"
 import useSWR from "swr"
 import { useRouter } from "next/router"
-import Error from "next/error"
 import { LScale } from "@/components/common/Loading"
+import Error from "@/components/common/Error"
 import Info from "@/components/account/Info"
 import Config from "@/components/account/Config"
 import { Account } from "@prisma/client"
 import clsx from "clsx"
 import Link from "next/link"
+import { ethAddress } from "@/lib/zod"
 
 const Component: FC<{ children: ReactNode; pageName: string }> = ({
   children,
   pageName,
 }) => {
   const router = useRouter()
-  const queryAddress = router.query.address as string | undefined
+  let queryAddress = router.query.address as string
+  const isOkToLoadAccount = ethAddress.safeParse(queryAddress).success
+
   const { data: session } = useSession()
   const {
     data: account,
     error: accountError,
     mutate,
-  } = useSWR<Account>(queryAddress ? `/api/accounts/${queryAddress}` : null)
+  } = useSWR<Account>(
+    isOkToLoadAccount ? `/api/accounts/${queryAddress}` : null
+  )
   const [isConfigOpen, setIsConfigOpen] = useState<boolean>(false)
 
+  if (!isOkToLoadAccount) {
+    return <Error code={400} message="アドレスが間違っています" />
+  }
   if (account === undefined && !accountError)
     return <LScale message="アカウントをロード中..." />
   if (account === undefined) {
     console.error(accountError)
-    return <Error statusCode={accountError?.response?.status || 500} />
+    return (
+      <Error
+        code={accountError?.response?.status || 500}
+        message="アカウントの取得に失敗しました"
+      />
+    )
   }
-  const isMe = account.address === session?.address
 
+  const isMe = account.address === session?.address
   if (!isMe && pageName !== "dreams") {
     // Should use middleware...
     router.push(`/accounts/${account.address}/dreams`)

@@ -18,11 +18,11 @@ const Component: FC<Props> = ({ dream }) => {
         {dreamStatusToTitle[dream.status]}
       </div>
       <div className="collapse-content">
-        <div className="text-base-content/80 flex items-center mb-2">
+        <div className="text-base-content/80 flex-inline mb-2">
           <span className="text-xl mr-1">
             &gt;<span className="text-sm font-bold">_ </span>
           </span>
-          <p>{dream.prompt}</p>
+          <span>{dream.prompt}</span>
         </div>
         <div>
           <p className="text-sm text-base-content/80">
