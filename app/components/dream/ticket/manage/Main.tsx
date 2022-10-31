@@ -2,14 +2,15 @@ import { FC, useState } from "react"
 import useSWR, { KeyedMutator } from "swr"
 import { LScale } from "@/components/common/Loading"
 import Error from "@/components/common/Error"
-import { MdDelete } from "react-icons/md"
-import DeleteModal from "@/components/common/DeleteModal"
 import { Get as TicketGet } from "@/api/dreams/tickets/[id]/index"
 import { Get as TicketsGet } from "@/api/dreams/tickets/index"
-import { Get as BlockNumberGet } from "@/api/blockchain/current-block-number"
+import { Get as BlockNumberGet } from "@/api/blockchain/general/current-block-number"
 import { BLOCK_TIME } from "@/constants/chain"
 import TicketStatus from "./Status"
 import TicketDream from "./Dream"
+import MintModal from "./MintModal"
+import { MdDelete } from "react-icons/md"
+import DeleteModal from "@/components/common/DeleteModal"
 import axios from "axios"
 import { toast } from "react-toastify"
 
@@ -22,6 +23,7 @@ type Props = {
 }
 const Component: FC<Props> = ({ ticketId, close, ticketsMutate }) => {
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false)
+  const [isMintOpen, setIsMintOpen] = useState<boolean>(false)
 
   const {
     data: ticket,
@@ -32,7 +34,7 @@ const Component: FC<Props> = ({ ticketId, close, ticketsMutate }) => {
 
   const { data: currentBlockNumber, mutate: blockNumerMutate } =
     useSWR<BlockNumberGet>(
-      isPending ? "/api/blockchain/current-block-number" : null,
+      isPending ? "/api/blockchain/general/current-block-number" : null,
       {
         refreshInterval: BLOCK_TIME * 1000,
       }
@@ -136,7 +138,10 @@ const Component: FC<Props> = ({ ticketId, close, ticketsMutate }) => {
                       </button>
                     </>
                   ) : (
-                    <button className="btn btn-primary">
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => setIsMintOpen(true)}
+                    >
                       トークンをミント
                     </button>
                   )
@@ -147,6 +152,18 @@ const Component: FC<Props> = ({ ticketId, close, ticketsMutate }) => {
           </div>
         </div>
       </div>
+
+      {isMintOpen && (
+        <MintModal
+          ticketId={ticket.id}
+          tokenId={ticket.tokenId}
+          expiresAt={ticket.expiresAt}
+          signature={ticket.signature}
+          onClose={() => setIsMintOpen(false)}
+          onMint={() => console.log("minted!")}
+        />
+      )}
+
       {isDeleteOpen && (
         <DeleteModal
           title="チケットを削除しますか？"

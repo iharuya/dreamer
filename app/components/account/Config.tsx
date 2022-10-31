@@ -2,14 +2,14 @@ import { FC } from "react"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { patch as patchSchema } from "@/schema/accounts"
+import { UpdateAccount } from "@/schema/accounts"
 import { KeyedMutator } from "swr"
 import { toast } from "react-toastify"
 import axios from "axios"
 import { Account } from "@prisma/client"
 import clsx from "clsx"
 
-const schema = patchSchema.shape.body
+const schema = UpdateAccount.shape.body
 type Schema = z.infer<typeof schema>
 
 type Props = {

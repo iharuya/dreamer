@@ -1,4 +1,4 @@
-export const ADDRESS = "0xDe3eDFE8Da4a14757629f55e2c96E76A78ab5996"
+export const ADDRESS = "0xd1ADe9283f3c781D4412e983759A0A3040Cde9f4"
 export const MINED_BLOCK = 28888471
 export const TOPIC_MINTED =
   "0x25b428dfde728ccfaddad7e29e4ac23c24ed7fd1a6e3e3f91894a9a073f5dfff"
@@ -230,10 +230,7 @@ export const ABI = [
     type: "function",
   },
   {
-    inputs: [
-      { internalType: "uint256", name: "tokenId", type: "uint256" },
-      { internalType: "uint256", name: "amount", type: "uint256" },
-    ],
+    inputs: [{ internalType: "uint256", name: "tokenId", type: "uint256" }],
     name: "mintValue",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",

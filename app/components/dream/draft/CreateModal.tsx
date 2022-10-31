@@ -2,14 +2,14 @@ import { FC } from "react"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { createDraft as createDraftSchema } from "@/schema/dreams"
+import { CreateDraft as CreateDraftSchema } from "@/schema/dreams"
 import { toast } from "react-toastify"
 import axios from "axios"
 import clsx from "clsx"
 import { useSWRConfig } from "swr"
 // Todo: Integrate "redream"
 
-const schema = createDraftSchema.shape.body.pick({
+const schema = CreateDraftSchema.shape.body.pick({
   title: true,
   caption: true,
   prompt: true,

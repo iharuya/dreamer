@@ -2,9 +2,9 @@ import prisma from "@/lib/prisma"
 import { getToken } from "next-auth/jwt"
 import { NextApiHandler } from "next"
 import { withZod } from "@/lib/zod"
-import { getOne, head, patch } from "@/schema/accounts"
+import { GetAccount, HeadAccount, UpdateAccount } from "@/schema/accounts"
 
-const handleGet = withZod(getOne, async (req, res) => {
+const handleGet = withZod(GetAccount, async (req, res) => {
   const address = req.query.address
   const account = await prisma.account.findUnique({
     where: { address },
@@ -13,7 +13,7 @@ const handleGet = withZod(getOne, async (req, res) => {
   return res.status(200).json(account)
 })
 
-const handlePatch = withZod(patch, async (req, res) => {
+const handlePatch = withZod(UpdateAccount, async (req, res) => {
   const address = req.query.address
   const token = await getToken({ req })
   if (!token || token.sub !== address) {
@@ -27,7 +27,7 @@ const handlePatch = withZod(patch, async (req, res) => {
   return res.status(200).json(updatedAccount)
 })
 
-const handleHead = withZod(head, async (req, res) => {
+const handleHead = withZod(HeadAccount, async (req, res) => {
   const address = req.query.address
   const account = await prisma.account.findUnique({
     where: { address },

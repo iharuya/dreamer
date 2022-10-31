@@ -2,7 +2,7 @@ import { FC, useState } from "react"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { updateDraft as updateDraftSchema } from "@/schema/dreams"
+import { UpdateDraft } from "@/schema/dreams"
 import { toast } from "react-toastify"
 import axios from "axios"
 import clsx from "clsx"
@@ -16,7 +16,7 @@ import { Get as DraftGet } from "@/api/dreams/drafts/[id]"
 import { Get as DraftsGet } from "@/api/dreams/drafts/index"
 // Todo: redream
 
-const schema = updateDraftSchema.shape.body.pick({
+const schema = UpdateDraft.shape.body.pick({
   title: true,
   caption: true,
   prompt: true,

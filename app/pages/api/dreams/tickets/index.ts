@@ -1,13 +1,13 @@
 import prisma from "@/lib/prisma"
 import { withZod } from "@/lib/zod"
 import { NextApiHandler } from "next"
-import { issueTicket, getTickets } from "@/schema/dreams"
+import { IssueTicket, GetTickets } from "@/schema/dreams"
 import { getToken } from "next-auth/jwt"
 import { getBlockNumber, signToMintDream } from "@/lib/blockchain"
 import { DREAM_EXPIRATION_BLOCKS } from "@/constants/chain"
 import { Dream, DreamTicket } from "@prisma/client"
 
-const handleGet = withZod(getTickets, async (req, res) => {
+const handleGet = withZod(GetTickets, async (req, res) => {
   const token = await getToken({ req })
   const address = req.query.senderAddress
   if (!token || token.sub !== address) {
@@ -23,7 +23,7 @@ const handleGet = withZod(getTickets, async (req, res) => {
 })
 export type Get = (DreamTicket & { dream: Dream })[]
 
-const handlePost = withZod(issueTicket, async (req, res) => {
+const handlePost = withZod(IssueTicket, async (req, res) => {
   const token = await getToken({ req })
   const address = req.body.senderAddress
   if (!token || token.sub !== address) {

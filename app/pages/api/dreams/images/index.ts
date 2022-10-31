@@ -1,11 +1,11 @@
 import prisma from "@/lib/prisma"
 import { withZod } from "@/lib/zod"
 import { NextApiHandler } from "next"
-import { generateImage } from "@/schema/dreams"
+import { GenerateImage } from "@/schema/dreams"
 import { isDreamMinted } from "@/lib/blockchain"
 import { requestImage } from "@/lib/ai"
 
-const handlePost = withZod(generateImage, async (req, res) => {
+const handlePost = withZod(GenerateImage, async (req, res) => {
   // no need to authorize
   const dream = await prisma.dream.findUnique({
     where: { id: req.body.dreamId },

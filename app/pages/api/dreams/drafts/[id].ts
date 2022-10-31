@@ -2,10 +2,10 @@ import prisma from "@/lib/prisma"
 import { withZod } from "@/lib/zod"
 import { NextApiHandler } from "next"
 import { getToken } from "next-auth/jwt"
-import { getDraft, updateDraft, deleteDraft } from "@/schema/dreams"
+import { GetDraft, UpdateDraft, DeleteDraft } from "@/schema/dreams"
 import { Dream } from "@prisma/client"
 
-const handleGet = withZod(getDraft, async (req, res) => {
+const handleGet = withZod(GetDraft, async (req, res) => {
   const token = await getToken({ req })
   const draft = await prisma.dream.findFirst({
     where: { id: req.query.id, status: "DRAFT" },
@@ -22,7 +22,7 @@ const handleGet = withZod(getDraft, async (req, res) => {
 })
 export type Get = Dream
 
-const handleUpdate = withZod(updateDraft, async (req, res) => {
+const handleUpdate = withZod(UpdateDraft, async (req, res) => {
   const token = await getToken({ req })
   const draft = await prisma.dream.findFirst({
     where: { id: req.query.id, status: "DRAFT" },
@@ -46,7 +46,7 @@ const handleUpdate = withZod(updateDraft, async (req, res) => {
 })
 export type Patch = Dream
 
-const handleDelete = withZod(deleteDraft, async (req, res) => {
+const handleDelete = withZod(DeleteDraft, async (req, res) => {
   const token = await getToken({ req })
   const draft = await prisma.dream.findFirst({
     where: { id: req.query.id, status: "DRAFT" },

@@ -2,7 +2,7 @@ import prisma from "@/lib/prisma"
 import { withZod } from "@/lib/zod"
 import { NextApiHandler } from "next"
 import { getToken } from "next-auth/jwt"
-import { updateTicket, deleteTicket, getTicket } from "@/schema/dreams"
+import { UpdateTicket, DeleteTicket, GetTicket } from "@/schema/dreams"
 import {
   getBlockNumber,
   isDreamMinted,
@@ -43,7 +43,7 @@ const checkIfTicketIsMutable = async (
   }
 }
 
-const handleGet = withZod(getTicket, async (req, res) => {
+const handleGet = withZod(GetTicket, async (req, res) => {
   const token = await getToken({ req })
   const ticket = await prisma.dreamTicket.findFirst({
     where: { id: req.query.id },
@@ -61,7 +61,7 @@ const handleGet = withZod(getTicket, async (req, res) => {
 })
 export type Get = DreamTicket & { dream: Dream }
 
-const handlePatch = withZod(updateTicket, async (req, res) => {
+const handlePatch = withZod(UpdateTicket, async (req, res) => {
   const token = await getToken({ req }) // Should use middleware to check if authenticated
   const ticket = await prisma.dreamTicket.findUnique({
     where: { id: req.query.id },
@@ -99,7 +99,7 @@ const handlePatch = withZod(updateTicket, async (req, res) => {
   }
 })
 
-const handleDelete = withZod(deleteTicket, async (req, res) => {
+const handleDelete = withZod(DeleteTicket, async (req, res) => {
   const token = await getToken({ req })
   const ticket = await prisma.dreamTicket.findUnique({
     where: { id: req.query.id },

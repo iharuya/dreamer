@@ -1,9 +1,9 @@
 import prisma from "@/lib/prisma"
 import { NextApiHandler } from "next"
 import { withZod } from "@/lib/zod"
-import { getPublishedDreams } from "@/schema/dreams"
+import { GetPublishedDreams } from "@/schema/dreams"
 
-const handleGet = withZod(getPublishedDreams, async (req, res) => {
+const handleGet = withZod(GetPublishedDreams, async (req, res) => {
   let dreams
   if (req.query.dreamerAddress) {
     dreams = await prisma.dream.findMany({

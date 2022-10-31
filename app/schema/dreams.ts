@@ -1,20 +1,18 @@
 import { z } from "zod"
 import { ethAddress } from "@/lib/zod"
 
-// Todo: Starts with capital case
-
 // Draft
-export const getDrafts = z.object({
+export const GetDrafts = z.object({
   query: z.object({
     dreamerAddress: ethAddress,
   }),
 })
-export const getDraft = z.object({
+export const GetDraft = z.object({
   query: z.object({
     id: z.string().regex(/^\d+$/).transform(Number),
   }),
 })
-export const createDraft = z.object({
+export const CreateDraft = z.object({
   body: z.object({
     title: z
       .string()
@@ -32,64 +30,66 @@ export const createDraft = z.object({
     parentId: z.number().int().optional(),
   }),
 })
-export const updateDraft = z.object({
+export const UpdateDraft = z.object({
   query: z.object({
     id: z.string().regex(/^\d+$/).transform(Number),
   }),
   body: z.object({
-    title: createDraft.shape.body.shape.title,
-    caption: createDraft.shape.body.shape.caption,
-    prompt: createDraft.shape.body.shape.prompt,
+    title: CreateDraft.shape.body.shape.title,
+    caption: CreateDraft.shape.body.shape.caption,
+    prompt: CreateDraft.shape.body.shape.prompt,
   }),
 })
-export const deleteDraft = z.object({
+export const DeleteDraft = z.object({
   query: z.object({
     id: z.string().regex(/^\d+$/).transform(Number),
   }),
 })
 
 // Ticket
-export const getTickets = z.object({
+export const GetTickets = z.object({
   query: z.object({
     senderAddress: ethAddress,
   }),
 })
-export const getTicket = z.object({
+export const GetTicket = z.object({
   query: z.object({
     id: z.string().regex(/^\d+$/).transform(Number),
   }),
 })
-export const getIsDreamMinted = z.object({
+
+// Todo: change api route
+export const GetIsDreamMinted = z.object({
   query: z.object({
     id: z.string().regex(/^\d+$/).transform(Number),
   }),
 })
-export const issueTicket = z.object({
+export const IssueTicket = z.object({
   body: z.object({
     senderAddress: ethAddress,
     dreamId: z.number().int(),
   }),
 })
-export const updateTicket = z.object({
+export const UpdateTicket = z.object({
   query: z.object({
     id: z.string().regex(/^\d+$/).transform(Number),
   }),
 })
-export const deleteTicket = z.object({
+export const DeleteTicket = z.object({
   query: z.object({
     id: z.string().regex(/^\d+$/).transform(Number),
   }),
 })
 
 // Image
-export const generateImage = z.object({
+export const GenerateImage = z.object({
   body: z.object({
     dreamId: z.number().int(),
   }),
 })
 
 // Published
-export const getPublishedDreams = z.object({
+export const GetPublishedDreams = z.object({
   query: z.object({
     dreamerAddress: ethAddress.optional(),
   }),

@@ -8,7 +8,7 @@ import {
 import { decimalToHexWithPrefix } from "./utils"
 
 const alchemy = new Alchemy({
-  apiKey: process.env.NEXT_PUBLIC_ALCHEMY_APIKEY_MUMBAI,
+  apiKey: process.env.ALCHEMY_APIKEY_MUMBAI,
   network: Network.MATIC_MUMBAI,
 })
 
@@ -30,6 +30,10 @@ export const isDreamMinted = async (ticketId: number): Promise<boolean> => {
     return parseInt(ticketIdHex, 16) === ticketId
   })
   return mintedLog !== undefined ? true : false
+}
+
+export const getMintValue = async (tokenId: number): Promise<number> => {
+  
 }
 
 export const signToMintDream = async (

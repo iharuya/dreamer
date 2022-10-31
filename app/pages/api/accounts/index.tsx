@@ -2,15 +2,15 @@ import prisma from "@/lib/prisma"
 import { NextApiHandler } from "next"
 import { getToken } from "next-auth/jwt"
 import { withZod } from "@/lib/zod"
-import { getMany, post } from "@/schema/accounts"
+import { GetAccounts, CreateAccount } from "@/schema/accounts"
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime"
 
-const handleGet = withZod(getMany, async (req, res) => {
+const handleGet = withZod(GetAccounts, async (req, res) => {
   const accounts = await prisma.account.findMany()
   return res.status(200).json(accounts)
 })
 
-const handlePost = withZod(post, async (req, res) => {
+const handlePost = withZod(CreateAccount, async (req, res) => {
   const token = await getToken({ req })
   const address = req.body.address
   if (!token || token.sub !== address) {

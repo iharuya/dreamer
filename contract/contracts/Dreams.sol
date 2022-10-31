@@ -44,7 +44,7 @@ contract Dreams is ERC1155, Ownable, ERC1155Supply {
         bytes32 ethSignedMessageHash = ECDSA.toEthSignedMessageHash(messageHash);
         require(ECDSA.recover(ethSignedMessageHash, signature) == SIGNER, "Forbidden");
         require(block.number <= expiresAt, "Signature expired");
-        require(msg.value == mintValue(tokenId, 1), "Wrong price sent"); // should this be hard coded?
+        require(msg.value == mintValue(tokenId), "Wrong price sent");
         ticketIds[ticketId] = true;
         _mint(msg.sender, tokenId, 1, "");
         emit Minted(msg.sender, tokenId, ticketId);
@@ -65,10 +65,8 @@ contract Dreams is ERC1155, Ownable, ERC1155Supply {
         require(success, "failed to send value");
     }
 
-    function mintValue(uint256 tokenId, uint256 amount) public view returns (uint256) {
-        uint256 a = totalSupply(tokenId) + 1;
-        uint256 b = a + amount - 1;
-        return ((b - a + 1) * (2 * (ALPHA + DELTA) + BETA * (a + b - 2))) / 2;
+    function mintValue(uint256 tokenId) public view returns (uint256) {
+        return (ALPHA + DELTA) + BETA * (totalSupply(tokenId));
     }
 
     function burnValue(uint256 tokenId, uint256 amount) public view returns (uint256) {

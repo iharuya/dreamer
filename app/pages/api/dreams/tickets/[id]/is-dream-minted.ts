@@ -2,10 +2,10 @@ import prisma from "@/lib/prisma"
 import { withZod } from "@/lib/zod"
 import { NextApiHandler } from "next"
 import { getToken } from "next-auth/jwt"
-import { getIsDreamMinted } from "@/schema/dreams"
+import { GetIsDreamMinted } from "@/schema/dreams"
 import { isDreamMinted } from "@/lib/blockchain"
 
-const handleGet = withZod(getIsDreamMinted, async (req, res) => {
+const handleGet = withZod(GetIsDreamMinted, async (req, res) => {
   const token = await getToken({ req })
   const ticket = await prisma.dreamTicket.findFirst({
     where: { id: req.query.id },

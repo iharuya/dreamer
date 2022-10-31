@@ -8,7 +8,6 @@ import { NextPage } from "next"
 import { WagmiConfig, createClient, configureChains, chain } from "wagmi"
 import { alchemyProvider } from "wagmi/providers/alchemy"
 import { publicProvider } from "wagmi/providers/public"
-import { jsonRpcProvider } from "wagmi/providers/jsonRpc"
 import { InjectedConnector } from "wagmi/connectors/injected"
 import { MetaMaskConnector } from "wagmi/connectors/metaMask"
 import { ConnectKitProvider } from "connectkit"
@@ -27,22 +26,9 @@ type AppPropsWithLayout<P, IP = P> = AppProps<P> & {
   Component: NextPageWithLayout<P, IP>
 }
 
-const appChains = [chain.polygonMumbai, chain.hardhat]
-if (process.env.NODE_ENV == "development") {
-  appChains.reverse()
-}
+const appChains = [chain.polygonMumbai]
 const appProviders = [
   alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_APIKEY_MUMBAI }),
-  jsonRpcProvider({
-    rpc: (currentChain) => {
-      if (currentChain.id !== chain.hardhat.id) return null
-      return {
-        http: `http://localhost:${
-          process.env.NEXT_PUBLIC_HARDHAT_PORT || "8545"
-        }`,
-      }
-    },
-  }),
   publicProvider(),
 ]
 const { chains, provider, webSocketProvider } = configureChains(
