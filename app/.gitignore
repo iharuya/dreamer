@@ -39,5 +39,3 @@ types/contracts
 # prisma
 prisma/.env
 postgres
-
-constants/contracts/abi

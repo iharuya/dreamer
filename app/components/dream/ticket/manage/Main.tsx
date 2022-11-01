@@ -7,12 +7,12 @@ import { Get as TicketsGet } from "@/api/dreams/tickets/index"
 import { Get as BlockNumberGet } from "@/api/blockchain/general/current-block-number"
 import { BLOCK_TIME } from "@/constants/chain"
 import TicketStatus from "./Status"
+import ActionsInPending from "./ActionsInPending"
 import TicketDream from "./Dream"
-import MintModal from "./MintModal"
-import { MdDelete } from "react-icons/md"
 import DeleteModal from "@/components/common/DeleteModal"
 import axios from "axios"
 import { toast } from "react-toastify"
+import { MdRefresh } from "react-icons/md"
 
 // Todo: Jump to the dream page if completed and not nsfw
 
@@ -23,7 +23,6 @@ type Props = {
 }
 const Component: FC<Props> = ({ ticketId, close, ticketsMutate }) => {
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false)
-  const [isMintOpen, setIsMintOpen] = useState<boolean>(false)
 
   const {
     data: ticket,
@@ -31,14 +30,6 @@ const Component: FC<Props> = ({ ticketId, close, ticketsMutate }) => {
     mutate: ticketMutate,
   } = useSWR<TicketGet>(`/api/dreams/tickets/${ticketId}`)
   const isPending = ticket?.status === "PENDING"
-
-  const { data: currentBlockNumber, mutate: blockNumerMutate } =
-    useSWR<BlockNumberGet>(
-      isPending ? "/api/blockchain/general/current-block-number" : null,
-      {
-        refreshInterval: BLOCK_TIME * 1000,
-      }
-    )
 
   const {
     data: isMinted,
@@ -50,6 +41,14 @@ const Component: FC<Props> = ({ ticketId, close, ticketsMutate }) => {
       ? `/api/blockchain/dreams/is-dream-minted?ticketId=${ticket.id}`
       : null
   )
+
+  const { data: currentBlockNumber, mutate: blockNumerMutate } =
+    useSWR<BlockNumberGet>(
+      isPending ? "/api/blockchain/general/current-block-number" : null,
+      {
+        refreshInterval: BLOCK_TIME * 1000,
+      }
+    )
 
   const ticketLoading = ticket === undefined && !ticketError
   const isMintedLoading = isPending && isMintedValidating
@@ -103,8 +102,8 @@ const Component: FC<Props> = ({ ticketId, close, ticketsMutate }) => {
           <div className="flex mb-2 items-center">
             <h3 className="font-bold text-2xl">ドリームチケット</h3>
             {ticket.status !== "COMPLETED" && (
-              <button className="btn ml-auto" onClick={reload}>
-                リロード
+              <button className="btn btn-circle ml-auto" onClick={reload}>
+                <MdRefresh className="text-3xl" />
               </button>
             )}
           </div>
@@ -113,6 +112,7 @@ const Component: FC<Props> = ({ ticketId, close, ticketsMutate }) => {
             <TicketStatus
               ticket={ticket}
               currentBlockNumber={currentBlockNumber}
+              isMinted={isMinted}
             />
           </div>
           <div>
@@ -123,52 +123,26 @@ const Component: FC<Props> = ({ ticketId, close, ticketsMutate }) => {
               とじる
             </button>
             <div className="flex items-center space-x-2">
-              {ticket.status === "PENDING" &&
-                (isMinted ? (
-                  <button className="btn btn-primary">ドリーム</button>
-                ) : currentBlockNumber !== undefined ? (
-                  ticket.expiresAt - currentBlockNumber < 0 ? (
-                    <>
-                      <button
-                        className="btn btn-square btn-error"
-                        onClick={() => setIsDeleteOpen(true)}
-                      >
-                        <MdDelete className="text-3xl" />
-                      </button>
-                      <button className="btn" onClick={handleUpdate}>
-                        期限を更新
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => setIsMintOpen(true)}
-                    >
-                      トークンをミント
-                    </button>
-                  )
-                ) : (
-                  <span>ブロック取得中...</span>
-                ))}
+              {ticket.status === "PENDING" && (
+                <ActionsInPending
+                  ticket={ticket}
+                  currentBlockNumber={currentBlockNumber}
+                  isMinted={isMinted}
+                  onDream={() => console.log("dream!")}
+                  onUpdate={() => handleUpdate()}
+                  onDelete={() => setIsDeleteOpen(true)}
+                  onMinted={() => reload()}
+                />
+              )}
             </div>
           </div>
         </div>
       </div>
 
-      {isMintOpen && (
-        <MintModal
-          ticketId={ticket.id}
-          tokenId={ticket.tokenId}
-          expiresAt={ticket.expiresAt}
-          signature={ticket.signature}
-          onClose={() => setIsMintOpen(false)}
-          onMint={() => console.log("minted!")}
-        />
-      )}
-
       {isDeleteOpen && (
         <DeleteModal
           title="チケットを削除しますか？"
+          info="削除するとドリームはドラフト状態に戻ります"
           onCancel={() => setIsDeleteOpen(false)}
           onDelete={() => handleDelete()}
         />

@@ -196,6 +196,7 @@ const Component: FC<Props> = ({ draftId, close, draftsMutate }) => {
       {isDeleteOpen && (
         <DeleteModal
           title="ドラフトを削除しますか？"
+          info="この操作は元に戻せません"
           onCancel={() => setIsDeleteOpen(false)}
           onDelete={() => handleDelete()}
         />
