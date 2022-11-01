@@ -18,7 +18,9 @@ const Component: FC = () => {
               </Link>
             </div>
             <div className="w-full items-center justify-end flex space-x-4">
-              <Link href="/stats">Stats</Link>
+              {process.env.NODE_ENV === "development" && (
+                <Link href="/dev">Dev</Link>
+              )}
               <ConnectKitButton.Custom>
                 {({ show, address, ensName }) => {
                   return (

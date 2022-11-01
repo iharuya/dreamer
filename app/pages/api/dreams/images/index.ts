@@ -2,7 +2,7 @@ import prisma from "@/lib/prisma"
 import { withZod } from "@/lib/zod"
 import { NextApiHandler } from "next"
 import { GenerateImage } from "@/schema/dreams"
-import { isDreamMinted } from "@/lib/blockchain/dre"
+import { isDreamMinted } from "@/lib/blockchain/dreams"
 import { requestImage } from "@/lib/ai"
 
 const handlePost = withZod(GenerateImage, async (req, res) => {
