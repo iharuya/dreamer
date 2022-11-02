@@ -1,7 +1,6 @@
 import { Account } from "@prisma/client"
 import { FC } from "react"
-import Avatar from "boring-avatars"
-import { AVATAR_COLORS } from "@/constants/config"
+import Avatar from "@/components/common/Avatar"
 
 type Props = {
   account: Account
@@ -12,12 +11,7 @@ const Component: FC<Props> = ({ account, isMe, openConfig }) => {
   return (
     <div className="py-6 flex flex-col space-y-4 md:flex-row md:items-center md:space-x-4 md:space-y-0">
       <div>
-        <Avatar
-          size={120}
-          name={account.address}
-          variant="beam"
-          colors={AVATAR_COLORS}
-        />
+        <Avatar size={120} address={account.address} />
       </div>
       <div className="w-full">
         <div className="flex mb-2 items-center">

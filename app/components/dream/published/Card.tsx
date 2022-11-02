@@ -1,7 +1,6 @@
 import { FC } from "react"
 import { Get as DreamsGet } from "@/api/dreams/index"
-import Avatar from "boring-avatars"
-import { AVATAR_COLORS } from "@/constants/config"
+import Avatar from "@/components/common/Avatar"
 import Link from "next/link"
 import Image from "next/image"
 
@@ -19,7 +18,7 @@ const Component: FC<Props> = ({ dream, onClick }) => {
         <Image
           src={`/seed-images/${dream.image.filename}`}
           alt={dream.title}
-          className="hover:scale-110 transition-all duration-300"
+          className="md:hover:scale-110 transition-all duration-300"
           width="512px"
           height="512px"
         />
@@ -29,12 +28,7 @@ const Component: FC<Props> = ({ dream, onClick }) => {
         <Link href={`/accounts/${dream.dreamer.address}/home`}>
           <a className="inline-flex items-center w-full hover:opacity-60">
             <span className="mr-1">
-              <Avatar
-                size={28}
-                name={dream.dreamer.address}
-                variant="beam"
-                colors={AVATAR_COLORS}
-              />
+              <Avatar size={28} address={dream.dreamer.address} />
             </span>
             <span className="text-base-content/90 truncate">
               {dream.dreamer.name || "ななしさん"}

@@ -1,16 +1,20 @@
 import { FC } from "react"
 import Link from "next/link"
-import { AVATAR_COLORS } from "@/constants/config"
-import Avatar from "boring-avatars"
+import Avatar from "@/components/common/Avatar"
 import { useNetwork } from "wagmi"
 import { useMyAccount } from "@/lib/hooks"
+import {} from "@rainbow-me/rainbowkit"
 
 type Props = {
-  show?: () => void
+  openConnectModal: () => void
+  openAccountModal: () => void
   connectedAddress?: string
-  ensName?: string
 }
-const Component: FC<Props> = ({ show, connectedAddress, ensName }) => {
+const Component: FC<Props> = ({
+  openConnectModal,
+  openAccountModal,
+  connectedAddress,
+}) => {
   const { chain } = useNetwork()
   const { data: myAccount } = useMyAccount()
 
@@ -19,11 +23,7 @@ const Component: FC<Props> = ({ show, connectedAddress, ensName }) => {
       {connectedAddress ? (
         <div className="dropdown dropdown-end">
           <label tabIndex={0}>
-            <Avatar
-              name={connectedAddress}
-              variant="beam"
-              colors={AVATAR_COLORS}
-            />
+            <Avatar size={36} address={connectedAddress} />
           </label>
           <div
             tabIndex={0}
@@ -36,7 +36,7 @@ const Component: FC<Props> = ({ show, connectedAddress, ensName }) => {
                     {myAccount.name || "ななしさん"}
                   </h3>
                   <span className="text-sm truncate text-base-content/70">
-                    {ensName || connectedAddress}
+                    {connectedAddress}
                   </span>
                 </div>
               ) : (
@@ -84,14 +84,14 @@ const Component: FC<Props> = ({ show, connectedAddress, ensName }) => {
                   ? "チェーンを変更してください"
                   : `${chain?.name}に接続中`}
               </span>
-              <button onClick={show} className="btn btn-sm">
-                ウォレット設定
+              <button onClick={openAccountModal} className="btn btn-sm">
+                ウォレットアカウント
               </button>
             </div>
           </div>
         </div>
       ) : (
-        <button onClick={show} className="btn btn-primary">
+        <button onClick={openConnectModal} className="btn btn-primary">
           接続
         </button>
       )}

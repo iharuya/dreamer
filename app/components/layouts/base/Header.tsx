@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { APP_NAME } from "@/constants/config"
 import { FC } from "react"
-import { ConnectKitButton } from "connectkit"
+import { ConnectButton } from "@rainbow-me/rainbowkit"
 import HeaderMenu from "./HeaderMenu"
 
 const Component: FC = () => {
@@ -21,17 +21,17 @@ const Component: FC = () => {
               {process.env.NODE_ENV === "development" && (
                 <Link href="/dev">Dev</Link>
               )}
-              <ConnectKitButton.Custom>
-                {({ show, address, ensName }) => {
+              <ConnectButton.Custom>
+                {({ account, openAccountModal, openConnectModal }) => {
                   return (
                     <HeaderMenu
-                      show={show}
-                      connectedAddress={address}
-                      ensName={ensName}
+                      openConnectModal={openConnectModal}
+                      openAccountModal={openAccountModal}
+                      connectedAddress={account?.address}
                     />
                   )
                 }}
-              </ConnectKitButton.Custom>
+              </ConnectButton.Custom>
             </div>
           </div>
         </div>

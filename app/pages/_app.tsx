@@ -8,9 +8,9 @@ import { NextPage } from "next"
 import { WagmiConfig, createClient, configureChains, chain } from "wagmi"
 import { alchemyProvider } from "wagmi/providers/alchemy"
 import { publicProvider } from "wagmi/providers/public"
-import { InjectedConnector } from "wagmi/connectors/injected"
-import { MetaMaskConnector } from "wagmi/connectors/metaMask"
-import { ConnectKitProvider } from "connectkit"
+import "@rainbow-me/rainbowkit/styles.css"
+import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit"
+import Avatar from "@/components/common/Avatar"
 import { SessionProvider } from "next-auth/react"
 import { Session } from "next-auth"
 import { SWRConfig } from "swr"
@@ -31,29 +31,15 @@ const appProviders = [
   alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_APIKEY_MUMBAI }),
   publicProvider(),
 ]
-const { chains, provider, webSocketProvider } = configureChains(
-  appChains,
-  appProviders
-)
-
+const { chains, provider } = configureChains(appChains, appProviders)
+const { connectors } = getDefaultWallets({
+  appName: "Dreamer",
+  chains: appChains,
+})
 const client = createClient({
   autoConnect: false, // if true, nextjs dev server pops up error for hydration mismatch
-  connectors: [
-    new MetaMaskConnector({ chains }),
-    new InjectedConnector({
-      chains,
-      options: {
-        name: (detectedName) =>
-          `埋め込み (${
-            typeof detectedName === "string"
-              ? detectedName
-              : detectedName.join(", ")
-          })`,
-      },
-    }),
-  ],
+  connectors,
   provider,
-  webSocketProvider,
 })
 
 const App = ({
@@ -69,7 +55,12 @@ const App = ({
         <link rel="icon" href="/logo.png" />
       </Head>
       <WagmiConfig client={client}>
-        <ConnectKitProvider>
+        <RainbowKitProvider
+          chains={chains}
+          modalSize="compact"
+          avatar={Avatar}
+          showRecentTransactions
+        >
           <SessionProvider session={pageProps.session}>
             <SWRConfig
               value={{
@@ -79,7 +70,7 @@ const App = ({
               <BaseLayout>{getLayout(<Component {...pageProps} />)}</BaseLayout>
             </SWRConfig>
           </SessionProvider>
-        </ConnectKitProvider>
+        </RainbowKitProvider>
       </WagmiConfig>
       <ToastContainer position="bottom-right" draggable />
     </>
