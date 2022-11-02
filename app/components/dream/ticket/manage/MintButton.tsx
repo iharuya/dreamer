@@ -10,8 +10,8 @@ import { Dreams } from "@/types/contracts"
 import { SYMBOL } from "@/constants/chain"
 
 type Props = {
-  ticketId: number
-  tokenId: number
+  ticketId: string
+  tokenId: string
   expiresAt: number
   signature: string
   onMinted: () => void

@@ -7,6 +7,7 @@ import { getBlockNumber } from "@/lib/blockchain/general"
 import { signToMintDream } from "@/lib/blockchain/dreams"
 import { DREAM_EXPIRATION_BLOCKS } from "@/constants/chain"
 import { Dream, DreamTicket } from "@prisma/client"
+import { getUuidDecimalString } from "@/lib/utils"
 
 const handleGet = withZod(GetTickets, async (req, res) => {
   const token = await getToken({ req })
@@ -18,7 +19,7 @@ const handleGet = withZod(GetTickets, async (req, res) => {
   const tickets = await prisma.dreamTicket.findMany({
     where: { senderAddress: address },
     include: { dream: true },
-    orderBy: [{ id: "desc" }],
+    orderBy: [{ createdAt: "desc" }],
   })
   return res.status(200).json(tickets)
 })
@@ -44,29 +45,24 @@ const handlePost = withZod(IssueTicket, async (req, res) => {
     return res.status(400).json({ message: "Ticket already exists" })
   }
 
+  console.log("hello")
+  const currentBlock = await getBlockNumber()
   let tokenId
   if (dream.parent) {
-    tokenId = dream.parent.ticket?.tokenId as number
+    tokenId = dream.parent.ticket?.tokenId as string
   } else {
-    tokenId = (await prisma.dreamToken.create({ data: {} })).id
+    // create new token
+    tokenId = getUuidDecimalString()
+    console.log(tokenId)
+    await prisma.dreamToken.create({ data: { id: tokenId } })
   }
-  const currentBlock = await getBlockNumber()
 
-  // new ticket ID should be random big number
-  const lastTicket = await prisma.dreamTicket.findFirst({
-    orderBy: [{ id: "desc" }],
-  })
-  const nextTicketId = lastTicket ? lastTicket.id + 1 : 1
+  const ticketId = getUuidDecimalString()
   const expiresAt = currentBlock + DREAM_EXPIRATION_BLOCKS
-  const signature = await signToMintDream(
-    nextTicketId,
-    address,
-    tokenId,
-    expiresAt
-  )
+  const signature = await signToMintDream(ticketId, address, tokenId, expiresAt)
   const ticket = await prisma.dreamTicket.create({
     data: {
-      id: nextTicketId,
+      id: ticketId,
       tokenId: tokenId,
       expiresAt: expiresAt,
       senderAddress: address,

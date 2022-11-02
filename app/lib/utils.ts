@@ -1,9 +1,34 @@
+import { ethers } from "ethers"
+import { v4 as uuidV4, parse as uuidParse } from "uuid"
+
 export const sleep = async (ms: number): Promise<void> => {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve()
     }, ms)
   })
+}
+
+export const getRandomInt = (min: number, max: number) => {
+  min = Math.ceil(min)
+  max = Math.floor(max)
+  return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
+export const isBigNumberish = (input: any) => {
+  try {
+    ethers.BigNumber.from(input)
+    return true
+  } catch {
+    return false
+  }
+}
+
+export const getUuidDecimalString = () => {
+  const id = uuidV4()
+  const id_parsed = Array.from(uuidParse(id), (n) => n.toString())
+  // Length: 46~48
+  return id_parsed.reduce((prev, curr) => prev + curr.padStart(3, "0"))
 }
 
 // 360, 100, 50 -> #ff0000

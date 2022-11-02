@@ -39,3 +39,5 @@ types/contracts
 # prisma
 prisma/.env
 postgres
+
+public/seed-images/*.jpg

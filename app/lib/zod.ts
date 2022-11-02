@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import { z, ZodSchema } from "zod"
 import { getAddress, isAddress } from "ethers/lib/utils"
+import { isBigNumberish } from "./utils"
 
 export function withZod<T extends ZodSchema>(
   schema: T,
@@ -30,3 +31,7 @@ export const ethAddress = z.string().refine((val) => {
   const low = val.toLowerCase()
   return isAddress(low) && getAddress(low) === val
 }, "Invalid ethereum address")
+
+export const bigNumberString = z.string().refine((val) => {
+  return isBigNumberish(val)
+}, "Invalid string")

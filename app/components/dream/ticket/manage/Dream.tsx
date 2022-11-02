@@ -1,13 +1,14 @@
 import { FC } from "react"
 import { Get as TicketGet } from "@/api/dreams/tickets/[id]"
 
+// Todo: add button to jump to the dream page if published
 type Props = {
   dream: TicketGet["dream"]
 }
 const Component: FC<Props> = ({ dream }) => {
   const dreamStatusToTitle = {
-    PUBLISHED: "ドリーム",
-    BANNED: "ドラフト",
+    PUBLISHED: "投稿したドリーム",
+    BANNED: "禁止されたドリーム",
     PENDING: "ドラフト",
     DRAFT: "ドラフト",
   }

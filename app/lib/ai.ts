@@ -1,22 +1,29 @@
-// ad hoc. Add "parent image" for redream
+import { getRandomInt, sleep } from "./utils"
+
 /* eslint-disable */
-export const requestImage = async (
-  prompt: string
+export const mockRequestImage = async (
+  prompt: string,
+  parentFilename?: string
 ): Promise<{
-  url?: string
+  filename?: string
   nsfw?: boolean
-  error?: any
+  errorMessage?: string
 }> => {
-  let apiResult
-  try {
-    apiResult = await Promise.resolve(["https://example.com"])
-    const nsfw = apiResult[0].length === 0
-    const url = apiResult[0]
+  const apiResult = await Promise.resolve("hoge")
+  await sleep(5000)
+  const rand = Math.random()
+  if (rand < 0.8) {
     return {
-      url,
-      nsfw,
+      filename: `${getRandomInt(0, 32)}.jpg`,
+      nsfw: false,
     }
-  } catch (err) {
-    return { error: err }
+  }
+  if (rand < 0.95) {
+    return {
+      nsfw: true,
+    }
+  }
+  return {
+    errorMessage: "API request limit exceeded",
   }
 }

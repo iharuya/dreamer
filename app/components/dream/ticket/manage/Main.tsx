@@ -5,6 +5,7 @@ import Error from "@/components/common/Error"
 import { Get as TicketGet } from "@/api/dreams/tickets/[id]"
 import { Get as TicketsGet } from "@/api/dreams/tickets/index"
 import { Get as BlockNumberGet } from "@/api/blockchain/general/current-block-number"
+import { Post as ImagePost } from "@/api/dreams/images"
 import { BLOCK_TIME } from "@/constants/chain"
 import TicketStatus from "./Status"
 import ActionsInPending from "./ActionsInPending"
@@ -17,12 +18,13 @@ import { MdRefresh } from "react-icons/md"
 // Todo: Jump to the dream page if completed and not nsfw
 
 type Props = {
-  ticketId: number
+  ticketId: string
   close: () => void
   ticketsMutate: KeyedMutator<TicketsGet>
 }
 const Component: FC<Props> = ({ ticketId, close, ticketsMutate }) => {
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false)
+  const [isDreamingOpen, setIsDreamingOpen] = useState<boolean>(false)
 
   const {
     data: ticket,
@@ -71,17 +73,39 @@ const Component: FC<Props> = ({ ticketId, close, ticketsMutate }) => {
     isMintedMutate()
   }
 
+  const handleDream = async () => {
+    setIsDreamingOpen(true)
+    try {
+      const res = await axios.post(`/api/dreams/images`, {
+        dreamId: ticket.dreamId,
+      })
+      const newDream = res.data as ImagePost
+      if (newDream.status === "BANNED") {
+        toast.warning("ドリームはNSFWで禁止されました")
+      } else if (newDream.status === "PUBLISHED") {
+        toast.success("ドリームが成功し、投稿が完了しました！")
+      }
+      reload()
+      ticketsMutate()
+    } catch (err) {
+      console.error(err)
+      toast.error("ドリームに失敗しました。後でやり直してください。")
+    }
+    setIsDreamingOpen(false)
+  }
+
   const handleUpdate = async () => {
     axios
       .patch(`/api/dreams/tickets/${ticket.id}`)
       .then(() => {
         reload()
       })
-      .catch((e) => {
-        console.error(e)
+      .catch((err) => {
+        console.error(err)
         toast.error("チケット更新失敗")
       })
   }
+
   const handleDelete = async () => {
     axios
       .delete(`/api/dreams/tickets/${ticket.id}`)
@@ -89,8 +113,8 @@ const Component: FC<Props> = ({ ticketId, close, ticketsMutate }) => {
         ticketsMutate()
         close()
       })
-      .catch((e) => {
-        console.error(e)
+      .catch((err) => {
+        console.error(err)
         toast.error("チケット削除失敗")
       })
   }
@@ -128,7 +152,7 @@ const Component: FC<Props> = ({ ticketId, close, ticketsMutate }) => {
                   ticket={ticket}
                   currentBlockNumber={currentBlockNumber}
                   isMinted={isMinted}
-                  onDream={() => console.log("dream!")}
+                  onDream={() => handleDream()}
                   onUpdate={() => handleUpdate()}
                   onDelete={() => setIsDeleteOpen(true)}
                   onMinted={() => reload()}
@@ -147,6 +171,8 @@ const Component: FC<Props> = ({ ticketId, close, ticketsMutate }) => {
           onDelete={() => handleDelete()}
         />
       )}
+
+      {isDreamingOpen && <LScale message="ドリーム中" modal />}
     </>
   )
 }

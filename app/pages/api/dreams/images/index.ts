@@ -3,13 +3,14 @@ import { withZod } from "@/lib/zod"
 import { NextApiHandler } from "next"
 import { GenerateImage } from "@/schema/dreams"
 import { isDreamMinted } from "@/lib/blockchain/dreams"
-import { requestImage } from "@/lib/ai"
+import { mockRequestImage } from "@/lib/ai"
+import { Dream, DreamImage, DreamTicket } from "@prisma/client"
 
 const handlePost = withZod(GenerateImage, async (req, res) => {
   // no need to authorize
   const dream = await prisma.dream.findUnique({
     where: { id: req.body.dreamId },
-    include: { ticket: true },
+    include: { ticket: true, parent: { include: { image: true } } },
   })
   if (!dream) {
     return res.status(404).json({ message: "Dream not found" })
@@ -30,11 +31,23 @@ const handlePost = withZod(GenerateImage, async (req, res) => {
     where: { id: dream.ticket.id },
     data: { status: "PROCESSING" },
   })
-  // use socket to show the status?
 
-  const { url, nsfw, error } = await requestImage(dream.prompt)
-  if (error) {
-    console.error(error)
+  // Wanna use server push to show the progress...
+  let parentFilename: string | undefined
+  if (dream.parent) {
+    if (dream.parent.image) {
+      parentFilename = dream.parent.image.filename
+    } else {
+      res.status(400).json({ message: "Parent dream does not have an image" })
+    }
+  }
+  const { filename, nsfw, errorMessage } = await mockRequestImage(
+    dream.prompt,
+    parentFilename
+  )
+
+  if (errorMessage) {
+    console.error(errorMessage)
     await prisma.dreamTicket.update({
       where: { id: dream.ticket.id },
       data: { status: "PENDING" },
@@ -57,9 +70,9 @@ const handlePost = withZod(GenerateImage, async (req, res) => {
       },
     })
   } else {
-    await prisma.image.create({
+    await prisma.dreamImage.create({
       data: {
-        url: url as string,
+        filename: filename as string,
         dreamId: dream.id,
       },
     })
@@ -81,6 +94,7 @@ const handlePost = withZod(GenerateImage, async (req, res) => {
   })
   return res.status(201).json(newDream)
 })
+export type Post = Dream & { image: DreamImage | null; ticket: DreamTicket }
 
 const handler: NextApiHandler = async (req, res) => {
   switch (req.method) {

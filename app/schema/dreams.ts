@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { ethAddress } from "@/lib/zod"
+import { ethAddress, bigNumberString } from "@/lib/zod"
 
 // Draft
 export const GetDrafts = z.object({
@@ -54,7 +54,7 @@ export const GetTickets = z.object({
 })
 export const GetTicket = z.object({
   query: z.object({
-    id: z.string().regex(/^\d+$/).transform(Number),
+    id: bigNumberString,
   }),
 })
 
@@ -66,12 +66,12 @@ export const IssueTicket = z.object({
 })
 export const UpdateTicket = z.object({
   query: z.object({
-    id: z.string().regex(/^\d+$/).transform(Number),
+    id: bigNumberString,
   }),
 })
 export const DeleteTicket = z.object({
   query: z.object({
-    id: z.string().regex(/^\d+$/).transform(Number),
+    id: bigNumberString,
   }),
 })
 

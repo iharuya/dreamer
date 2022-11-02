@@ -21,7 +21,7 @@ const Page: NextPageWithLayout = () => {
     ticketsFetcher
   )
 
-  const [managingTicketId, setManagingTicketId] = useState<number | undefined>()
+  const [managingTicketId, setManagingTicketId] = useState<string | undefined>()
 
   if (tickets === undefined && !ticketsError)
     return <LScale message="チケットをロード中..." />

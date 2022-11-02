@@ -32,7 +32,7 @@ model Dream {
   caption        String?
   prompt         String
   status         DreamStatus  @default(DRAFT)
-  image          Image?
+  image          DreamImage?
   dreamer        Account      @relation(fields: [dreamerAddress], references: [address])
   dreamerAddress String
   ticket         DreamTicket?
@@ -45,9 +45,9 @@ model Dream {
   updatedAt      DateTime     @default(now()) @updatedAt
 }
 
-model Image {
+model DreamImage {
   id        Int      @id @default(autoincrement())
-  url       String
+  filename  String
   dream     Dream    @relation(fields: [dreamId], references: [id])
   dreamId   Int      @unique
   createdAt DateTime @default(now())
@@ -61,10 +61,10 @@ enum DreamTicketStatus {
 }
 
 model DreamTicket {
-  id            Int               @id @default(autoincrement())
+  id            String            @id // uint256 on the blockchain
   token         DreamToken        @relation(fields: [tokenId], references: [id], onDelete: Cascade)
-  tokenId       Int
-  expiresAt     Int // block number
+  tokenId       String
+  expiresAt     Int // block number (uint256 but always less than Number.MAX_SAFE_INTEGER)
   status        DreamTicketStatus @default(PENDING)
   sender        Account           @relation(fields: [senderAddress], references: [address])
   senderAddress String
@@ -76,7 +76,7 @@ model DreamTicket {
 }
 
 model DreamToken {
-  id        Int           @id @default(autoincrement()) // ERC1155 tokenId
+  id        String        @id // ERC1155 tokenId (uint256)
   tickets   DreamTicket[]
   createdAt DateTime      @default(now())
   updatedAt DateTime      @default(now()) @updatedAt
