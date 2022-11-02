@@ -31,11 +31,7 @@ const Page: NextPage = () => {
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 md:gap-2 lg:grid-cols-4">
         {dreams.map((dream) => (
-          <DreamCard
-            key={dream.id}
-            dream={dream}
-            onClick={() => console.log("clicked")}
-          />
+          <DreamCard key={dream.id} dream={dream} />
         ))}
       </div>
     </>

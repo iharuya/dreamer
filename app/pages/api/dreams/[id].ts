@@ -25,6 +25,7 @@ export type Get = Dream & {
   image: DreamImage
   ticket: DreamTicket
   dreamer: Account
+  publishedAt: string
   parent?: Dream & {
     status: "PUBLISHED"
     image: DreamImage

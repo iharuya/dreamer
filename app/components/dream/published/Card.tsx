@@ -6,14 +6,10 @@ import Image from "next/image"
 
 type Props = {
   dream: DreamsGet[number]
-  onClick: () => void
 }
-const Component: FC<Props> = ({ dream, onClick }) => {
+const Component: FC<Props> = ({ dream }) => {
   return (
-    <div
-      className="card rounded-none md:rounded-lg md:border md:shadow-sm"
-      onClick={onClick}
-    >
+    <div className="card rounded-none md:rounded-lg md:border md:shadow-sm">
       <figure className="overflow-hidden">
         <Link href={`/dreams/${dream.id}`}>
           <a>
