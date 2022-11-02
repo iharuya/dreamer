@@ -16,7 +16,7 @@ const Component: FC<{ children: ReactNode; pageName: string }> = ({
   pageName,
 }) => {
   const router = useRouter()
-  let queryAddress = router.query.address as string
+  const queryAddress = router.query.address as string
   const isOkToLoadAccount = ethAddress.safeParse(queryAddress).success
 
   const { data: session } = useSession()
@@ -45,18 +45,20 @@ const Component: FC<{ children: ReactNode; pageName: string }> = ({
   }
 
   const isMe = account.address === session?.address
-  if (!isMe && pageName !== "dreams") {
+  if (!isMe && pageName !== "home") {
     // Should use middleware...
-    router.push(`/accounts/${account.address}/dreams`)
+    router.push(`/accounts/${account.address}/home`)
   }
 
   return (
     <>
-      <Info
-        account={account}
-        isMe={isMe}
-        openConfig={() => setIsConfigOpen(true)}
-      />
+      <div className="px-4">
+        <Info
+          account={account}
+          isMe={isMe}
+          openConfig={() => setIsConfigOpen(true)}
+        />
+      </div>
 
       {isConfigOpen && (
         <Config
@@ -68,15 +70,15 @@ const Component: FC<{ children: ReactNode; pageName: string }> = ({
         />
       )}
 
-      <ul className="tabs font-bold mt-8 justify-center flex-nowrap">
+      <ul className="tabs font-bold mt-8 mb-4 justify-center flex-nowrap">
         <li
           className={clsx(
             "tab tab-bordered md:tab-lg w-full px-0",
-            pageName === "dreams" && "tab-active"
+            pageName === "home" && "tab-active"
           )}
         >
-          <Link href={`/accounts/${account.address}/dreams`}>
-            <a className="w-full">ドリーム</a>
+          <Link href={`/accounts/${account.address}/home`}>
+            <a className="w-full">ホーム</a>
           </Link>
         </li>
         {isMe && (
@@ -109,7 +111,7 @@ const Component: FC<{ children: ReactNode; pageName: string }> = ({
         <li className="tab tab-bordered hidden w-full lg:inline-flex lg:flex-grow"></li>
       </ul>
 
-      <div className="py-6">{children}</div>
+      <div>{children}</div>
     </>
   )
 }

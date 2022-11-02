@@ -3,6 +3,16 @@ import axios from "axios"
 export const defaultFetcher = (url: string) =>
   axios.get(url).then((res) => res.data)
 
+export const publishedDreamsFetcher = (keyName: string, address?: string) => {
+  console.assert(
+    keyName === "publishedDreams",
+    "keyName must be 'dreams' to make a global key."
+  )
+  return axios
+    .get("/api/dreams", { params: { dreamerAddress: address || null } })
+    .then((res) => res.data)
+}
+
 export const draftsFetcher = (keyName: string, address: string) => {
   console.assert(
     keyName === "drafts",

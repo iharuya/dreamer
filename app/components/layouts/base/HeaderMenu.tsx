@@ -48,10 +48,10 @@ const Component: FC<Props> = ({ show, connectedAddress, ensName }) => {
               <>
                 <ul className="menu menu-compact">
                   <li>
-                    <Link href={`/accounts/${connectedAddress}/dreams`}>
+                    <Link href={`/accounts/${connectedAddress}/home`}>
                       <a>
                         <span>
-                          <span>マイドリーム</span>
+                          <span>マイページ</span>
                         </span>
                       </a>
                     </Link>

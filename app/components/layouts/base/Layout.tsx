@@ -136,8 +136,8 @@ const Component: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <div className="h-screen overflow-y-scroll overflow-x-hidden relative">
       <Header />
-      <main style={{ minHeight: "1000px" }}>
-        <div className="max-w-5xl mx-auto px-4">{children}</div>
+      <main>
+        <div className="max-w-5xl mx-auto md:px-4">{children}</div>
       </main>
 
       {changeChainModal && <ChangeChainModal cancel={() => reset()} />}

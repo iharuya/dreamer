@@ -28,8 +28,8 @@ const Component: FC<Props> = ({ account, isMe, openConfig }) => {
             </button>
           )}
         </div>
-        <h2 className="text-gray-600 truncate">{account.address}</h2>
-        <p className="text-sm text-gray-600" suppressHydrationWarning>
+        <h2 className="text-base-content/80 truncate">{account.address}</h2>
+        <p className="text-sm text-base-content/80" suppressHydrationWarning>
           {/* createdAt is actually ISO string... */}
           {`${new Date(account.createdAt).toLocaleDateString()} にはじめました`}
         </p>

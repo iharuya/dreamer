@@ -35,7 +35,7 @@ const Page: NextPageWithLayout = () => {
     )
   }
   return (
-    <>
+    <div className="px-4 md:px-0">
       {tickets.length > 0 ? (
         <>
           <div className="flex flex-col space-y-4">
@@ -56,14 +56,14 @@ const Page: NextPageWithLayout = () => {
           )}
         </>
       ) : (
-        <div className="flex flex-col justify-center items-center h-36 space-y-4 text-base-content/60">
+        <div className="flex flex-col justify-center items-center pt-12 space-y-4 text-base-content/60">
           <span className="text-2xl font-bold">チケットを発行しよう</span>
           <span>
             ドラフト一覧からドラフトを選択するとチケットが発行できます
           </span>
         </div>
       )}
-    </>
+    </div>
   )
 }
 
