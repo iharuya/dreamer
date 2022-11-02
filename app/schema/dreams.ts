@@ -25,7 +25,7 @@ export const CreateDraft = z.object({
     prompt: z
       .string()
       .min(1, { message: "プロンプトを入力してください" })
-      .max(400, { message: "400文字以下にしてください" }),
+      .max(1000, { message: "1000文字以下にしてください" }),
     dreamerAddress: ethAddress,
     parentId: z.number().int().optional(),
   }),

@@ -1,4 +1,4 @@
-import { FC, memo } from "react"
+import { FC, memo, useState } from "react"
 import { toast } from "react-toastify"
 import { ethers } from "ethers"
 import useSWR from "swr"
@@ -32,11 +32,12 @@ const Component: FC<Props> = ({
     abi: ABI,
     signerOrProvider: signer,
   }) as Dreams | null
-
+  const [isMinting, setIsMinting] = useState<boolean>(false)
   const isMintable = mintValue !== undefined && contract !== null
 
   const handleMint = async () => {
     if (!isMintable) return
+    setIsMinting(true)
     const toastId = toast.info("トランザクションを送って下さい", {
       autoClose: false,
     })
@@ -66,6 +67,7 @@ const Component: FC<Props> = ({
         })
       }
     }
+    setIsMinting(false)
   }
 
   if (mintValue === undefined && !mintValueError)
@@ -81,7 +83,7 @@ const Component: FC<Props> = ({
       <button
         className="btn btn-primary normal-case"
         onClick={handleMint}
-        disabled={!isMintable}
+        disabled={!isMintable || isMinting}
       >
         トークンをミント（{mintValueHuman} {SYMBOL}）
       </button>

@@ -36,14 +36,12 @@ const Component: FC<Props> = ({ ticketId, close, ticketsMutate }) => {
   const {
     data: isMinted,
     mutate: isMintedMutate,
-    isValidating: isMintedValidating,
     error: isMintedError,
   } = useSWR<boolean>(
     isPending
       ? `/api/blockchain/dreams/is-dream-minted?ticketId=${ticket.id}`
       : null
   )
-
   const { data: currentBlockNumber, mutate: blockNumerMutate } =
     useSWR<BlockNumberGet>(
       isPending ? "/api/blockchain/general/current-block-number" : null,
@@ -53,9 +51,7 @@ const Component: FC<Props> = ({ ticketId, close, ticketsMutate }) => {
     )
 
   const ticketLoading = ticket === undefined && !ticketError
-  const isMintedLoading = isPending && isMintedValidating
-  if (ticketLoading || isMintedLoading)
-    return <LScale message="チケットをロード中..." modal />
+  if (ticketLoading) return <LScale message="チケットをロード中..." modal />
   if (ticket === undefined || isMintedError) {
     return (
       <Error
