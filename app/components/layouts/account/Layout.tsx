@@ -30,7 +30,7 @@ const Component: FC<{ children: ReactNode; pageName: string }> = ({
   const [isConfigOpen, setIsConfigOpen] = useState<boolean>(false)
 
   if (!isOkToLoadAccount) {
-    return <Error code={400} message="アドレスが間違っています" />
+    return <Error code={400} message="アドレスは存在しません" />
   }
   if (account === undefined && !accountError)
     return <LScale message="アカウントをロード中..." />

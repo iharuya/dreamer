@@ -15,16 +15,24 @@ const Component: FC<Props> = ({ dream, onClick }) => {
       onClick={onClick}
     >
       <figure className="overflow-hidden">
-        <Image
-          src={`/seed-images/${dream.image.filename}`}
-          alt={dream.title}
-          className="md:hover:scale-110 transition-all duration-300"
-          width="512px"
-          height="512px"
-        />
+        <Link href={`/dreams/${dream.id}`}>
+          <a>
+            <Image
+              src={`/seed-images/${dream.image.filename}`}
+              alt={dream.title}
+              className="md:hover:scale-110 transition-all duration-300"
+              width="512px"
+              height="512px"
+            />
+          </a>
+        </Link>
       </figure>
       <div className="card-body hidden md:block p-2">
-        <h2 className="font-bold truncate mb-1">{dream.title}</h2>
+        <h2 className="font-bold truncate mb-1 hover:opacity-60">
+          <Link href={`/dreams/${dream.id}`}>
+            <a>{dream.title}</a>
+          </Link>
+        </h2>
         <Link href={`/accounts/${dream.dreamer.address}/home`}>
           <a className="inline-flex items-center w-full hover:opacity-60">
             <span className="mr-1">

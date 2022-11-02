@@ -88,3 +88,9 @@ export const GetPublishedDreams = z.object({
     dreamerAddress: ethAddress.optional(),
   }),
 })
+
+export const GetPublishedDream = z.object({
+  query: z.object({
+    id: z.string().regex(/^\d+$/).transform(Number),
+  }),
+})

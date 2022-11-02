@@ -10,9 +10,7 @@ type Props = {
 const Component: FC<Props> = ({ account, isMe, openConfig }) => {
   return (
     <div className="py-6 flex flex-col space-y-4 md:flex-row md:items-center md:space-x-4 md:space-y-0">
-      <div>
-        <Avatar size={120} address={account.address} />
-      </div>
+      <Avatar size={120} address={account.address} />
       <div className="w-full">
         <div className="flex mb-2 items-center">
           <h1 className="text-4xl">{account.name || "ななしさん"}</h1>

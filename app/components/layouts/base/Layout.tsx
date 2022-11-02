@@ -75,7 +75,7 @@ const Component: FC<{ children: ReactNode }> = ({ children }) => {
       const message = new SiweMessage({
         domain: window.location.host,
         address,
-        statement: "ウォレットでサインインします",
+        statement: "Dreamerにサインインします",
         uri: window.location.origin,
         version: "1",
         chainId: chainId,
