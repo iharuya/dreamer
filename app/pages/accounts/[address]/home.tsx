@@ -38,11 +38,7 @@ const Page: NextPageWithLayout = () => {
       {dreams.length > 0 ? (
         <div className="grid grid-cols-2 md:grid-cols-3 md:gap-2 lg:grid-cols-4">
           {dreams.map((dream) => (
-            <DreamCard
-              key={dream.id}
-              dream={dream}
-              onClick={() => console.log("clicked")}
-            />
+            <DreamCard key={dream.id} dream={dream} />
           ))}
         </div>
       ) : (
@@ -54,7 +50,7 @@ const Page: NextPageWithLayout = () => {
               <ol className="list-decimal">
                 <li>ドラフトを作成（右下のペンマークから）</li>
                 <li>ドラフト管理画面からチケットを発行</li>
-                <li>チケット管理画面からトークンをミント</li>
+                <li>チケット管理画面からトークンを購入</li>
                 <li>ドリームボタンを押す</li>
               </ol>
             </div>

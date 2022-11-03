@@ -46,12 +46,12 @@ const Component: FC<Props> = ({
         value: mintValue,
       })
       toast.update(toastId, {
-        render: "トークンをミント中...",
+        render: "トークンを購入中...",
       })
       await tx.wait()
       onMinted()
       toast.update(toastId, {
-        render: "トークンをミントしました！",
+        render: "トークンを購入しました！",
         type: toast.TYPE.SUCCESS,
         autoClose: 5000,
       })
@@ -61,7 +61,7 @@ const Component: FC<Props> = ({
       } else {
         console.error(err)
         toast.update(toastId, {
-          render: "ミントに失敗しました",
+          render: "購入に失敗しました",
           type: toast.TYPE.ERROR,
           autoClose: 5000,
         })
@@ -85,7 +85,7 @@ const Component: FC<Props> = ({
         onClick={handleMint}
         disabled={!isMintable || isMinting}
       >
-        トークンをミント（{mintValueHuman} {SYMBOL}）
+        トークンを購入（{mintValueHuman} {SYMBOL}）
       </button>
     </>
   )

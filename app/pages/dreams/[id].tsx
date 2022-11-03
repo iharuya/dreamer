@@ -10,6 +10,7 @@ import Link from "next/link"
 import Avatar from "@/components/common/Avatar"
 import ReadMore from "@/components/common/ReadMore"
 import { BiRefresh } from "react-icons/bi"
+import Token from "@/components/dream/published/Token"
 
 const Page: NextPage = () => {
   const router = useRouter()
@@ -37,7 +38,7 @@ const Page: NextPage = () => {
 
   return (
     <div className="py-8 px-4 md:px-0 flex flex-wrap space-y-8 lg:space-y-0">
-      {/* About this dream */}
+      {/* About this dream (Base info) */}
       <section className="w-full lg:w-3/5">
         <figure className="text-center">
           <Image
@@ -102,7 +103,9 @@ const Page: NextPage = () => {
 
       {/* Token, Parent/children */}
       <section className="w-full lg:w-2/5">
-        <div></div>
+        <div className="w-full md:w-1/2 lg:w-full">
+          <Token tokenId={dream.ticket.tokenId} />
+        </div>
       </section>
 
       <pre>

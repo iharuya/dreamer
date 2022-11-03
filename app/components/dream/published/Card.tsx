@@ -12,7 +12,7 @@ const Component: FC<Props> = ({ dream }) => {
     <div className="card rounded-none md:rounded-lg md:border md:shadow-sm">
       <figure className="overflow-hidden">
         <Link href={`/dreams/${dream.id}`}>
-          <a>
+          <a className="flex">
             <Image
               src={`/seed-images/${dream.image.filename}`}
               alt={dream.title}

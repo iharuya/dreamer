@@ -28,9 +28,19 @@ export const isDreamMinted = async (ticketId: string): Promise<boolean> => {
   return mintedLog !== undefined ? true : false
 }
 
-export const getMintValue = async (tokenId: string): Promise<string> => {
+export const getMintValue = async (tokenId: string) => {
   const raw = await dreams.mintValue(tokenId)
   return raw.toString()
+}
+
+export const getTotalSupply = async (tokenId: string) => {
+  const raw = await dreams.totalSupply(tokenId)
+  return raw.toNumber()
+}
+
+export const getBalanceOf = async (address: string, tokenId: string) => {
+  const raw = await dreams.balanceOf(address, tokenId)
+  return raw.toNumber()
 }
 
 export const signToMintDream = async (
