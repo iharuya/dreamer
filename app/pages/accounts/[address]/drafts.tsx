@@ -1,17 +1,20 @@
 import { NextPageWithLayout } from "pages/_app"
-import { ReactElement, useState } from "react"
+import { ReactElement, useContext, useState } from "react"
 import AccountLayout from "@/components/layouts/account/Layout"
 import useSWR from "swr"
-import { useMyAccount } from "@/lib/hooks"
+import { useMyAccount } from "@/lib/hooks/useMyAccount"
 import { LScale } from "@/components/common/Loading"
 import Error from "@/components/common/Error"
 import DraftItem from "@/components/dream/draft/Item"
 import ManageDraftModal from "@/components/dream/draft/ManageModal"
 import { draftsFetcher } from "@/lib/fetchers"
 import { Get as DraftsGet } from "@/api/dreams/drafts/index"
+import { CreateDraftCtx } from "@/lib/contexts/CreateDraft"
 
 const Page: NextPageWithLayout = () => {
   const { data: myAccount } = useMyAccount()
+  const { dispatch: dispatchCreateDraft } = useContext(CreateDraftCtx)
+
   const {
     data: drafts,
     error: draftsError,
@@ -59,7 +62,12 @@ const Page: NextPageWithLayout = () => {
         <div className="flex flex-col justify-center items-center py-12 space-y-4 text-base-content/60">
           <span className="text-2xl font-bold">ドラフトをつくろう</span>
           {/* Todo: 新しく作るボタン（作成モーダルのglobal state化） */}
-          <span>右下のペンマークから</span>
+          <button
+            className="btn btn-primary"
+            onClick={() => dispatchCreateDraft({ type: "open" })}
+          >
+            新しくつくる
+          </button>
         </div>
       )}
     </div>

@@ -8,7 +8,7 @@ import { LScale } from "@/components/common/Loading"
 import Error from "@/components/common/Error"
 import Image from "next/image"
 import { formatEther } from "ethers/lib/utils"
-import { useMyAccount } from "@/lib/hooks"
+import { useMyAccount } from "@/lib/hooks/useMyAccount"
 import Tooltip from "@/components/common/Tooltip"
 import BurnToken from "./BurnToken"
 

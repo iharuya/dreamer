@@ -7,9 +7,9 @@ import { toast } from "react-toastify"
 import axios, { AxiosError } from "axios"
 import ChangeChainModal from "@/components/layouts/base/ChangeChainModal"
 import SignInModal from "@/components/layouts/base/SignInModal"
-import CreateDraftModal from "@/components/dream/draft/CreateModal"
-import { useMyAccount } from "@/lib/hooks"
-import { MdEdit } from "react-icons/md"
+import HandleCreateDraft from "./HandleCreateDraft"
+import { useMyAccount } from "@/lib/hooks/useMyAccount"
+import { CreateDraftProvider } from "@/lib/contexts/CreateDraft"
 
 const Component: FC<{ children: ReactNode }> = ({ children }) => {
   const { address: connectedAddress } = useAccount()
@@ -22,9 +22,7 @@ const Component: FC<{ children: ReactNode }> = ({ children }) => {
   const [prevAddress, setPrevAddress] = useState<string>()
   const [changeChainModal, setChangeChainModal] = useState<boolean>(false)
   const [signInModal, setSignInModal] = useState<boolean>(false)
-
   const { data: myAccount, mutate: mutateMyAccount } = useMyAccount()
-  const [draftModal, setDraftModal] = useState<boolean>(false)
 
   const handleSignIn = async () => {
     if (connectedAddress === undefined || connectedChain === undefined) {
@@ -135,34 +133,19 @@ const Component: FC<{ children: ReactNode }> = ({ children }) => {
 
   return (
     <div className="h-screen overflow-y-scroll overflow-x-hidden relative">
-      <Header />
-      <main>
-        <div className="max-w-5xl mx-auto md:px-4">{children}</div>
-      </main>
+      <CreateDraftProvider>
+        <Header />
+        <main>
+          <div className="max-w-5xl mx-auto md:px-4">{children}</div>
+        </main>
 
-      {changeChainModal && <ChangeChainModal cancel={() => reset()} />}
-      {signInModal && (
-        <SignInModal proceed={() => handleSignIn()} cancel={() => reset()} />
-      )}
+        {changeChainModal && <ChangeChainModal cancel={() => reset()} />}
+        {signInModal && (
+          <SignInModal proceed={() => handleSignIn()} cancel={() => reset()} />
+        )}
 
-      {myAccount && (
-        <>
-          <div className="fixed bottom-4 right-4 md:right-8">
-            <button
-              className="btn btn-circle btn-lg btn-primary shadow-lg"
-              onClick={() => setDraftModal(true)}
-            >
-              <MdEdit className="text-4xl" />
-            </button>
-          </div>
-          {draftModal && (
-            <CreateDraftModal
-              dreamerAddress={myAccount.address}
-              close={() => setDraftModal(false)}
-            />
-          )}
-        </>
-      )}
+        {myAccount && <HandleCreateDraft myAddress={myAccount.address} />}
+      </CreateDraftProvider>
     </div>
   )
 }

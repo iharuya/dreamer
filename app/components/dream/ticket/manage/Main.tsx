@@ -9,13 +9,12 @@ import { Post as ImagePost } from "@/api/dreams/images"
 import { BLOCK_TIME } from "@/constants/chain"
 import TicketStatus from "./Status"
 import ActionsInPending from "./ActionsInPending"
-import TicketDream from "./Dream"
+import ViewDraft from "./ViewDraft"
 import DeleteModal from "@/components/common/DeleteModal"
 import axios from "axios"
 import { toast } from "react-toastify"
 import { MdRefresh } from "react-icons/md"
-
-// Todo: Jump to the dream page if completed and not nsfw
+import Link from "next/link"
 
 type Props = {
   ticketId: string
@@ -136,7 +135,7 @@ const Component: FC<Props> = ({ ticketId, close, ticketsMutate }) => {
             />
           </div>
           <div>
-            <TicketDream dream={ticket.dream} />
+            <ViewDraft dream={ticket.dream} />
           </div>
           <div className="modal-action">
             <button className="btn mr-auto" onClick={close}>
@@ -153,6 +152,11 @@ const Component: FC<Props> = ({ ticketId, close, ticketsMutate }) => {
                   onDelete={() => setIsDeleteOpen(true)}
                   onMinted={() => reload()}
                 />
+              )}
+              {ticket.dream.status === "PUBLISHED" && (
+                <Link href={`/dreams/${ticket.dream.id}`}>
+                  <a className="btn btn-primary">ドリームを見る</a>
+                </Link>
               )}
             </div>
           </div>

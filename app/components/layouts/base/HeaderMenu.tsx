@@ -2,8 +2,7 @@ import { FC } from "react"
 import Link from "next/link"
 import Avatar from "@/components/common/Avatar"
 import { useNetwork } from "wagmi"
-import { useMyAccount } from "@/lib/hooks"
-import {} from "@rainbow-me/rainbowkit"
+import { useMyAccount } from "@/lib/hooks/useMyAccount"
 
 type Props = {
   openConnectModal: () => void

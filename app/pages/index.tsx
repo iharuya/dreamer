@@ -29,7 +29,7 @@ const Page: NextPage = () => {
       <div className="px-4 md:px-0 mb-2">
         <h1 className="font-bold text-xl">新着</h1>
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-3 md:gap-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 md:gap-2 lg:grid-cols-4 mb-24">
         {dreams.map((dream) => (
           <DreamCard key={dream.id} dream={dream} />
         ))}

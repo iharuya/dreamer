@@ -1,7 +1,7 @@
 import { NextPageWithLayout } from "pages/_app"
 import { ReactElement, useState } from "react"
 import AccountLayout from "@/components/layouts/account/Layout"
-import { useMyAccount } from "@/lib/hooks"
+import { useMyAccount } from "@/lib/hooks/useMyAccount"
 import useSWR from "swr"
 import { ticketsFetcher } from "@/lib/fetchers"
 import { LScale } from "@/components/common/Loading"

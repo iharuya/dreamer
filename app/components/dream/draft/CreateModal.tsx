@@ -9,31 +9,33 @@ import clsx from "clsx"
 import { useSWRConfig } from "swr"
 // Todo: Integrate "redream"
 
-const schema = CreateDraftSchema.shape.body.pick({
+const formSchema = CreateDraftSchema.shape.body.pick({
   title: true,
   caption: true,
   prompt: true,
 })
-type Schema = z.infer<typeof schema>
+type FormSchema = z.infer<typeof formSchema>
 
 type Props = {
   dreamerAddress: string
+  parentId?: number
   close: () => void
 }
-const Component: FC<Props> = ({ dreamerAddress, close }) => {
+const Component: FC<Props> = ({ dreamerAddress, parentId, close }) => {
   const {
     register,
     handleSubmit,
     formState: { errors: formErrors },
-  } = useForm<Schema>({
-    resolver: zodResolver(schema),
+  } = useForm<FormSchema>({
+    resolver: zodResolver(formSchema),
   })
   const { mutate } = useSWRConfig()
 
-  const create = async (data: Schema) => {
+  const create = async (data: FormSchema) => {
     const body = {
       ...data,
       dreamerAddress,
+      parentId,
     }
     axios
       .post("/api/dreams/drafts", body)
@@ -42,8 +44,8 @@ const Component: FC<Props> = ({ dreamerAddress, close }) => {
         mutate(["drafts", dreamerAddress])
         close()
       })
-      .catch((e) => {
-        console.error(e)
+      .catch((err) => {
+        console.error(err)
         toast.error("ドラフト作成失敗")
       })
   }
@@ -51,7 +53,9 @@ const Component: FC<Props> = ({ dreamerAddress, close }) => {
   return (
     <div className="modal modal-open modal-bottom md:modal-middle">
       <div className="modal-box">
-        <h3 className="font-bold text-2xl mb-4">新規ドラフト</h3>
+        <h3 className="font-bold text-2xl mb-4">
+          {parentId === undefined ? "新しいドリーム" : "リドリーム"}のドラフト
+        </h3>
         <form onSubmit={handleSubmit(create)}>
           <div className="form-control">
             <div className="mb-4">

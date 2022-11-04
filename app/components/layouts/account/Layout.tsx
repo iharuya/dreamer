@@ -111,7 +111,7 @@ const Component: FC<{ children: ReactNode; pageName: string }> = ({
         <li className="tab tab-bordered hidden w-full lg:inline-flex lg:flex-grow"></li>
       </ul>
 
-      <div>{children}</div>
+      <div className="mb-24">{children}</div>
     </>
   )
 }
