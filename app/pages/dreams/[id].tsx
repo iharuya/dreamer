@@ -7,6 +7,8 @@ import { LScale } from "@/components/common/Loading"
 import Error from "@/components/common/Error"
 import Main from "@/components/dream/published/detail/Main"
 import Token from "@/components/dream/published/detail/Token"
+import ParentDream from "@/components/dream/published/detail/ParentDream"
+import ChildDreams from "@/components/dream/published/detail/ChildDreams"
 
 const Page: NextPage = () => {
   const router = useRouter()
@@ -33,20 +35,38 @@ const Page: NextPage = () => {
   }
 
   return (
-    <div className="py-8 px-4 md:px-0 flex flex-wrap space-y-8 lg:space-y-0">
-      <section className="w-full lg:w-3/5">
+    <div className="py-8 px-4 grid grid-cols-12 gap-x-4 gap-y-8 md:px-0 mb-24">
+      <section className="col-span-12 lg:col-span-8">
         <Main dream={dream} />
       </section>
 
-      <section className="w-full lg:w-2/5">
-        <div className="w-full md:w-1/2 lg:w-full">
-          <Token tokenId={dream.ticket.tokenId} />
+      <section className="col-span-12 lg:col-span-4">
+        <div className="grid grid-cols-12 gap-x-4 gap-y-8">
+          <div className="col-span-12 sm:col-span-7 md:col-span-8 lg:col-span-12">
+            <Token tokenId={dream.ticket.tokenId} />
+          </div>
+
+          {dream.parent ? (
+            <div className="col-span-8 sm:col-span-5 md:col-span-4 lg:col-span-12">
+              <ParentDream dream={dream.parent} />
+            </div>
+          ) : (
+            <div className="col-span-12 sm:col-span-5 md:col-span-4 lg:col-span-12">
+              <h2 className="font-bold text-xl badge badge-accent badge-lg mb-2">
+                Root Dream
+              </h2>
+              <p>
+                これが<span className="px-1">&quot;{dream.title}&quot;</span>
+                からはじまる伝説のドリームの幕開けだ！
+              </p>
+            </div>
+          )}
         </div>
       </section>
 
-      <pre>
-        <code>{JSON.stringify(dream, null, 2)}</code>
-      </pre>
+      <section className="col-span-12">
+        <ChildDreams dreams={dream.children} />
+      </section>
     </div>
   )
 }

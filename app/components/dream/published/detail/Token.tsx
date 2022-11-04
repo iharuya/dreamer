@@ -64,88 +64,86 @@ const Component: FC<Props> = ({ tokenId }) => {
   const token_explorer_url = `${EXPLORER_BASEURL}/token/${ADDRESS}?a=${tokenId}`
 
   return (
-    <>
-      <div className="md:p-4">
-        <div className="w-full inline-flex justify-between">
-          <h2 className="font-bold text-xl">ドリームトークン</h2>
-          <a
-            href={token_explorer_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-ghost btn-sm"
-          >
-            <Image
-              src="/polygon.svg"
-              height={32}
-              width={32}
-              alt="エクスプローラー"
-            />
-          </a>
-        </div>
-        {totalSupply === undefined ? (
-          <LScale message="トークンをロード中..." />
-        ) : (
-          <div className="py-2">
-            <div className="mb-2 flex flex-col">
-              <span className="badge badge-info mb-1">
-                {totalSupply > 0
-                  ? `${totalSupply}枚が流通しています`
-                  : "トークンの流通はありません"}
+    <div>
+      <div className="w-full inline-flex justify-between">
+        <h2 className="font-bold text-xl">ドリームトークン</h2>
+        <a
+          href={token_explorer_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn btn-ghost btn-sm"
+        >
+          <Image
+            src="/polygon.svg"
+            height={32}
+            width={32}
+            alt="エクスプローラー"
+          />
+        </a>
+      </div>
+      {totalSupply === undefined ? (
+        <LScale message="トークンをロード中..." />
+      ) : (
+        <div className="py-2">
+          <div className="mb-2 flex flex-col">
+            <span className="badge badge-info mb-1">
+              {totalSupply > 0
+                ? `${totalSupply}枚が流通しています`
+                : "トークンの流通はありません"}
+            </span>
+            <div className="inline-flex items-center">
+              <span className="mr-1">リドリーム価格</span>
+              <span className="mr-2">
+                {formatEther(mintValue(totalSupply))} {SYMBOL}
               </span>
-              <div className="inline-flex items-center">
-                <span className="mr-1">リドリーム価格</span>
-                <span className="mr-2">
-                  {formatEther(mintValue(totalSupply))} {SYMBOL}
-                </span>
-                <Tooltip
-                  message="このドリームをもとにドラフトを作成して投稿するための参考価格です。"
-                  position="bottom"
-                />
-              </div>
+              <Tooltip
+                message="このドリームをもとにドラフトを作成して投稿するための参考価格です。"
+                position="bottom"
+              />
             </div>
           </div>
-        )}
-        {myAccount &&
-          (myBalance === undefined ? (
-            <LScale message="保有数をロード中..." />
-          ) : (
-            <div className="py-2">
-              {myBalance > 0 ? (
-                <div>
-                  <p className="mb-2">
-                    <span className="badge badge-secondary">
-                      {myBalance}枚保有しています
-                    </span>
-                  </p>
-                  {totalSupply === undefined ? (
-                    <LScale />
-                  ) : (
-                    <BurnToken
-                      tokenId={tokenId}
-                      totalSupply={totalSupply}
-                      myBalance={myBalance}
-                      myAddress={myAccount.address}
-                      onBurnt={reload}
-                    />
-                  )}
-                </div>
-              ) : (
-                <div>
-                  <p className="inline-flex items-center">
-                    <span className="badge mr-2">
-                      このトークンを保有していません
-                    </span>
-                    <Tooltip
-                      message="トークンが買われるほど売却単価が上がります。"
-                      position="bottom"
-                    />
-                  </p>
-                </div>
-              )}
-            </div>
-          ))}
-      </div>
-    </>
+        </div>
+      )}
+      {myAccount &&
+        (myBalance === undefined ? (
+          <LScale message="保有数をロード中..." />
+        ) : (
+          <div className="py-2">
+            {myBalance > 0 ? (
+              <div>
+                <p className="mb-2">
+                  <span className="badge badge-secondary">
+                    {myBalance}枚保有しています
+                  </span>
+                </p>
+                {totalSupply === undefined ? (
+                  <LScale />
+                ) : (
+                  <BurnToken
+                    tokenId={tokenId}
+                    totalSupply={totalSupply}
+                    myBalance={myBalance}
+                    myAddress={myAccount.address}
+                    onBurnt={reload}
+                  />
+                )}
+              </div>
+            ) : (
+              <div>
+                <p className="inline-flex items-center">
+                  <span className="badge mr-2">
+                    このトークンを保有していません
+                  </span>
+                  <Tooltip
+                    message="トークンが買われるほど売却単価が上がります。"
+                    position="bottom"
+                  />
+                </p>
+              </div>
+            )}
+          </div>
+        ))}
+    </div>
   )
 }
 

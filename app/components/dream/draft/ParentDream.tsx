@@ -1,6 +1,6 @@
 import { FC } from "react"
 import { Get as DraftGet } from "@/api/dreams/drafts/[id]"
-import DreamCard from "@/components/dream/published/Card"
+import DreamCardOrPanel from "@/components/dream/published/CardOrPanel"
 
 type Props = {
   dream: NonNullable<DraftGet["parent"]>
@@ -12,8 +12,8 @@ const Component: FC<Props> = ({ dream }) => {
       <div className="collapse-title text-lg font-medium ">
         元のドリームを見る
       </div>
-      <div className="collapse-content ">
-        <DreamCard
+      <div className="collapse-content">
+        <DreamCardOrPanel
           dreamId={dream.id}
           dreamTitle={dream.title}
           imageFilename={dream.image.filename}

@@ -17,21 +17,21 @@ const Component: FC<Props> = ({
   dreamer,
 }) => {
   return (
-    <div className="card rounded-lg border shadow-sm">
+    <div className="card rounded-none md:rounded-lg md:border md:shadow-sm">
       <figure className="overflow-hidden">
         <Link href={`/dreams/${dreamId}`}>
           <a className="flex">
             <Image
               src={`/seed-images/${imageFilename}`}
               alt={dreamTitle}
-              className="hover:scale-110 transition-all duration-300"
+              className="md:hover:scale-110 transition-all duration-300"
               width="512px"
               height="512px"
             />
           </a>
         </Link>
       </figure>
-      <div className="card-body p-2">
+      <div className="card-body hidden md:block p-2">
         <h2 className="font-bold truncate mb-1 hover:opacity-60">
           <Link href={`/dreams/${dreamId}`}>
             <a>{dreamTitle}</a>

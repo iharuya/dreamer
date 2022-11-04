@@ -21,7 +21,12 @@ const Component: FC<Props> = ({ dream }) => {
         />
       </figure>
       <div>
-        <h1 className="text-xl font-bold py-2">{dream.title}</h1>
+        <div className="inline-flex py-2 items-center w-full">
+          <h1 className="text-xl font-bold">{dream.title}</h1>
+          <span className="badge badge-lg badge-accent whitespace-nowrap font-bold ml-auto">
+            {dream.generation}世代目
+          </span>
+        </div>
         <div className="flex justify-between">
           <Link href={`/accounts/${dream.dreamer.address}/home`}>
             <a className="inline-flex items-center hover:opacity-60 truncate">

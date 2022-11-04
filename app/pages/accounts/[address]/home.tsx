@@ -8,7 +8,7 @@ import { Get as DreamsGet } from "@/api/dreams/published/index"
 import { publishedDreamsFetcher } from "@/lib/fetchers"
 import { LScale } from "@/components/common/Loading"
 import Error from "@/components/common/Error"
-import DreamCard from "@/components/dream/published/Card"
+import DreamCardOrPanel from "@/components/dream/published/CardOrPanel"
 
 const Page: NextPageWithLayout = () => {
   const { data: session } = useSession()
@@ -38,7 +38,7 @@ const Page: NextPageWithLayout = () => {
       {dreams.length > 0 ? (
         <div className="grid grid-cols-2 md:grid-cols-3 md:gap-2 lg:grid-cols-4">
           {dreams.map((dream) => (
-            <DreamCard
+            <DreamCardOrPanel
               key={dream.id}
               dreamId={dream.id}
               dreamTitle={dream.title}
