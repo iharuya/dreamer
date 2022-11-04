@@ -1,5 +1,6 @@
 import { FC } from "react"
 import { Get as TicketGet } from "@/api/dreams/tickets/[id]"
+import Link from "next/link"
 
 type Props = {
   dream: TicketGet["dream"]
@@ -29,6 +30,13 @@ const Component: FC<Props> = ({ dream }) => {
             {dream.caption || "キャプションなし"}
           </p>
         </div>
+        {dream.parentId !== null && (
+          <div className="mt-4">
+            <Link href={`/dreams/${dream.parentId}`}>
+              <a className="btn btn-info btn-sm">元のドリーム</a>
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   )

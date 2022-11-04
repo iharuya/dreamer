@@ -9,7 +9,9 @@ export const publishedDreamsFetcher = (keyName: string, address?: string) => {
     "keyName must be 'dreams' to make a global key."
   )
   return axios
-    .get("/api/dreams", { params: { dreamerAddress: address || null } })
+    .get("/api/dreams/published", {
+      params: { dreamerAddress: address || null },
+    })
     .then((res) => res.data)
 }
 

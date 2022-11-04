@@ -1,7 +1,7 @@
 import { GetPublishedDream } from "@/schema/dreams"
 import { NextPage } from "next"
 import { useRouter } from "next/router"
-import { Get as DreamGet } from "@/api/dreams/[id]"
+import { Get as DreamGet } from "@/api/dreams/published/[id]"
 import useSWR from "swr"
 import { LScale } from "@/components/common/Loading"
 import Error from "@/components/common/Error"
@@ -14,7 +14,7 @@ const Page: NextPage = () => {
   const parsed = GetPublishedDream.shape.query.shape.id.safeParse(queryId)
   const isOkToLoadDream = parsed.success
   const { data: dream, error: dreamError } = useSWR<DreamGet>(
-    isOkToLoadDream ? `/api/dreams/${queryId}` : null
+    isOkToLoadDream ? `/api/dreams/published/${queryId}` : null
   )
 
   if (!isOkToLoadDream) {

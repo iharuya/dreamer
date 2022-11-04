@@ -3,7 +3,7 @@ import Link from "next/link"
 import Avatar from "@/components/common/Avatar"
 import ReadMore from "@/components/common/ReadMore"
 import RedreamButton from "./RedreamButton"
-import { Get as DreamGet } from "@/api/dreams/[id]"
+import { Get as DreamGet } from "@/api/dreams/published/[id]"
 import { FC } from "react"
 
 type Props = {

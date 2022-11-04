@@ -12,9 +12,9 @@ import Error from "@/components/common/Error"
 import DeleteModal from "@/components/common/DeleteModal"
 import { MdDelete } from "react-icons/md"
 import IssueTicketModal from "@/components/dream/ticket/IssueModal"
+import ParentDream from "./ParentDream"
 import { Get as DraftGet } from "@/api/dreams/drafts/[id]"
 import { Get as DraftsGet } from "@/api/dreams/drafts/index"
-// Todo: redream
 
 const schema = UpdateDraft.shape.body.pick({
   title: true,
@@ -94,6 +94,11 @@ const Component: FC<Props> = ({ draftId, close, draftsMutate }) => {
               チケット発行
             </button>
           </div>
+          {draft.parent && (
+            <div className="mb-4">
+              <ParentDream dream={draft.parent} />
+            </div>
+          )}
           <form onSubmit={handleSubmit(handleUpdate)}>
             <div className="form-control">
               <div className="mb-4">

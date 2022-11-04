@@ -1,6 +1,6 @@
 import { FC, useContext } from "react"
 import { BiRefresh } from "react-icons/bi"
-import { Get as DreamGet } from "@/api/dreams/[id]"
+import { Get as DreamGet } from "@/api/dreams/published/[id]"
 import { useMyAccount } from "@/lib/hooks/useMyAccount"
 import clsx from "clsx"
 import { CreateDraftCtx } from "@/lib/contexts/CreateDraft"

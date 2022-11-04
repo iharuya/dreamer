@@ -37,6 +37,8 @@ const Component: FC<{ children: ReactNode }> = ({ children }) => {
       return
     }
 
+    // Todo: Change in account should popup modal first
+
     setChangeChainModal(false)
     const success = await trySignIn(connectedAddress, connectedChain.id)
     if (success) {

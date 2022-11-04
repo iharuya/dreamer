@@ -4,7 +4,7 @@ import { ReactElement } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/router"
 import useSWR from "swr"
-import { Get as DreamsGet } from "@/api/dreams/index"
+import { Get as DreamsGet } from "@/api/dreams/published/index"
 import { publishedDreamsFetcher } from "@/lib/fetchers"
 import { LScale } from "@/components/common/Loading"
 import Error from "@/components/common/Error"
@@ -38,7 +38,13 @@ const Page: NextPageWithLayout = () => {
       {dreams.length > 0 ? (
         <div className="grid grid-cols-2 md:grid-cols-3 md:gap-2 lg:grid-cols-4">
           {dreams.map((dream) => (
-            <DreamCard key={dream.id} dream={dream} />
+            <DreamCard
+              key={dream.id}
+              dreamId={dream.id}
+              dreamTitle={dream.title}
+              imageFilename={dream.image.filename}
+              dreamer={dream.dreamer}
+            />
           ))}
         </div>
       ) : (

@@ -3,12 +3,20 @@ import { withZod } from "@/lib/zod"
 import { NextApiHandler } from "next"
 import { getToken } from "next-auth/jwt"
 import { GetDraft, UpdateDraft, DeleteDraft } from "@/schema/dreams"
-import { Dream } from "@prisma/client"
+import { Account, Dream, DreamImage } from "@prisma/client"
 
 const handleGet = withZod(GetDraft, async (req, res) => {
   const token = await getToken({ req })
   const draft = await prisma.dream.findFirst({
     where: { id: req.query.id, status: "DRAFT" },
+    include: {
+      parent: {
+        include: {
+          image: true,
+          dreamer: true,
+        },
+      },
+    },
   })
   if (!draft) {
     return res.status(404).json({ message: "Draft not found" })
@@ -20,7 +28,13 @@ const handleGet = withZod(GetDraft, async (req, res) => {
 
   return res.status(200).json(draft)
 })
-export type Get = Dream
+export type Get = Dream & {
+  parent?: Dream & {
+    status: "PUBLISHED"
+    image: DreamImage
+    dreamer: Account
+  }
+}
 
 const handleUpdate = withZod(UpdateDraft, async (req, res) => {
   const token = await getToken({ req })

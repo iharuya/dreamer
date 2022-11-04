@@ -7,7 +7,6 @@ import { toast } from "react-toastify"
 import axios from "axios"
 import clsx from "clsx"
 import { useSWRConfig } from "swr"
-// Todo: Integrate "redream"
 
 const formSchema = CreateDraftSchema.shape.body.pick({
   title: true,

@@ -1,6 +1,6 @@
 import { NextPage } from "next"
 import useSWR from "swr"
-import { Get as DreamsGet } from "@/api/dreams/index"
+import { Get as DreamsGet } from "@/api/dreams/published/index"
 import { publishedDreamsFetcher } from "@/lib/fetchers"
 import { LScale } from "@/components/common/Loading"
 import Error from "@/components/common/Error"
@@ -31,7 +31,13 @@ const Page: NextPage = () => {
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 md:gap-2 lg:grid-cols-4 mb-24">
         {dreams.map((dream) => (
-          <DreamCard key={dream.id} dream={dream} />
+          <DreamCard
+            key={dream.id}
+            dreamId={dream.id}
+            dreamTitle={dream.title}
+            imageFilename={dream.image.filename}
+            dreamer={dream.dreamer}
+          />
         ))}
       </div>
     </>

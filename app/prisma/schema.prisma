@@ -39,7 +39,7 @@ model Dream {
   parent         Dream?       @relation("ParentChildren", fields: [parentId], references: [id])
   parentId       Int?
   children       Dream[]      @relation("ParentChildren")
-  generation     Int // The first one will be 0
+  generation     Int          @default(1)
   publishedAt    DateTime?
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @default(now()) @updatedAt

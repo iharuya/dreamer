@@ -55,7 +55,6 @@ const handlePost = withZod(CreateDraft, async (req, res) => {
         caption: req.body.caption,
         prompt: req.body.prompt,
         dreamerAddress: address,
-        generation: 0,
       },
     })
   }

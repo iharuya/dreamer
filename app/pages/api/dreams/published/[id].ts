@@ -12,7 +12,10 @@ const handleGet = withZod(GetPublishedDream, async (req, res) => {
       ticket: true,
       dreamer: true,
       parent: { include: { image: true, dreamer: true } },
-      children: { include: { image: true, dreamer: true } },
+      children: {
+        include: { image: true, dreamer: true },
+        where: { status: "PUBLISHED" },
+      },
     },
   })
   if (!dream || dream.status !== "PUBLISHED") {
