@@ -39,6 +39,3 @@ types/contracts
 # prisma
 prisma/.env
 postgres
-
-public/seed-images/*
-!public/seed-images/.gitkeep
