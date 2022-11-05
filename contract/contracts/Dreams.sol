@@ -16,13 +16,7 @@ contract Dreams is ERC1155, Ownable, ERC1155Supply {
 
     event Minted(address indexed to, uint256 indexed tokenId, uint256 indexed ticketId);
 
-    constructor(
-        uint256 alpha,
-        uint256 beta,
-        uint256 delta,
-        address signer,
-        string memory uri
-    ) ERC1155(uri) {
+    constructor(uint256 alpha, uint256 beta, uint256 delta, address signer, string memory uri) ERC1155(uri) {
         ALPHA = alpha;
         BETA = beta;
         DELTA = delta;
@@ -33,12 +27,7 @@ contract Dreams is ERC1155, Ownable, ERC1155Supply {
         _setURI(uri);
     }
 
-    function mint(
-        uint256 ticketId,
-        uint256 tokenId,
-        uint256 expiresAt,
-        bytes memory signature
-    ) external payable {
+    function mint(uint256 ticketId, uint256 tokenId, uint256 expiresAt, bytes memory signature) external payable {
         require(!ticketIds[ticketId], "Ticket has already been used");
         bytes32 messageHash = keccak256(abi.encodePacked(ticketId, msg.sender, tokenId, expiresAt));
         bytes32 ethSignedMessageHash = ECDSA.toEthSignedMessageHash(messageHash);
@@ -50,11 +39,7 @@ contract Dreams is ERC1155, Ownable, ERC1155Supply {
         emit Minted(msg.sender, tokenId, ticketId);
     }
 
-    function burn(
-        address account,
-        uint256 tokenId,
-        uint256 amount
-    ) external virtual {
+    function burn(address account, uint256 tokenId, uint256 amount) external virtual {
         require(
             account == msg.sender || isApprovedForAll(account, msg.sender),
             "caller is not token owner nor approved"

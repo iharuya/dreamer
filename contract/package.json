@@ -1,6 +1,6 @@
 {
   "name": "contract",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "scripts": {
     "dev": "dotenv -- bash -c 'hardhat node --port $PORT'",
     "compile": "hardhat compile",

@@ -51,7 +51,7 @@ const App = ({
     <>
       <Head>
         <title>{APP_NAME}</title>
-        <meta name="description" content="ヒトとAIが紡ぐユメ" />
+        <meta name="description" content="ヒトと機械が紡ぐユメ" />
         <link rel="icon" href="/logo.png" />
       </Head>
       <WagmiConfig client={client}>
